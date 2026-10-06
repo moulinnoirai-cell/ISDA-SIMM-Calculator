@@ -1,0 +1,12 @@
+{
+  "version": "2.8+2512",
+  "status": "REFERENCE_ONLY",
+  "sha256": "f7a97c1ae51ef6ababed4086da8192faa0812b0799960d13c187fb1384ace0aa",
+  "source_url": "https://www.isda.org/a/hhkiE/ISDA-SIMM_v2.82512_PUBLIC.pdf",
+  "notes": [
+    "Transcribed from the ISDA public methodology PDF listed in sources.url.",
+    "Cross-checked value by value against an independent open-source transcription (no differences)."
+  ],
+  "official_isda_unit_tests": "NOT_RUN",
+  "production_approved": false
+}

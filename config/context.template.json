@@ -1,0 +1,108 @@
+{
+  "direction": "collect | post",
+  "regulation": "",
+  "crif_profile": "public_rds_1_36_methodology_2_8",
+  "currency_codes": [
+    "USD",
+    "EUR",
+    "JPY",
+    "GBP",
+    "CHF",
+    "AUD",
+    "CAD",
+    "KRW",
+    "HKD",
+    "SGD",
+    "CNY",
+    "SEK",
+    "NOK",
+    "DKK",
+    "NZD",
+    "TWD"
+  ],
+  "legal_entity": "",
+  "csa": "",
+  "netting_set": "",
+  "unit_declarations": {
+    "Risk_IRCurve": {
+      "unit": "PV01_PER_1BP",
+      "source": ""
+    },
+    "Risk_Inflation": {
+      "unit": "PV01_PER_1BP",
+      "source": ""
+    },
+    "Risk_XCcyBasis": {
+      "unit": "PV01_PER_1BP",
+      "source": ""
+    },
+    "Risk_CreditQ": {
+      "unit": "CS01_PER_1BP",
+      "source": ""
+    },
+    "Risk_CreditNonQ": {
+      "unit": "CS01_PER_1BP",
+      "source": ""
+    },
+    "Risk_BaseCorr": {
+      "unit": "BC01_PER_1PERCENTAGE_POINT",
+      "source": ""
+    },
+    "Risk_Equity": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": ""
+    },
+    "Risk_Commodity": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": ""
+    },
+    "Risk_FX": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": ""
+    },
+    "Risk_IRVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": ""
+    },
+    "Risk_InflationVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": ""
+    },
+    "Risk_CreditVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": ""
+    },
+    "Risk_CreditVolNonQ": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": ""
+    },
+    "Risk_EquityVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": ""
+    },
+    "Risk_CommodityVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": ""
+    },
+    "Risk_FXVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": ""
+    },
+    "Param_ProductClassMultiplier": {
+      "unit": "SCALAR",
+      "source": ""
+    },
+    "Param_AddOnNotionalFactor": {
+      "unit": "PERCENT",
+      "source": ""
+    },
+    "Notional": {
+      "unit": "NOTIONAL",
+      "source": ""
+    },
+    "AddOnFixedAmount": {
+      "unit": "MONETARY_AMOUNT",
+      "source": ""
+    }
+  }
+}

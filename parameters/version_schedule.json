@@ -1,0 +1,56 @@
+{
+  "rule": "A version applies to valuation (COB) dates on or after its ISDA 'use from COB' date and before the next entry's date.",
+  "verified_through": "2026-10-06",
+  "verified_through_note": "Date the schedule was last checked against ISDA announcements. Later valuation dates are flagged until it is re-checked for newer releases.",
+  "versions": [
+    {
+      "version": "2.5",
+      "use_from_cob": "2022-12-02",
+      "isda_effective_date": "2022-12-03",
+      "announcement": "https://www.isda.org/2022/09/07/isda-publishes-isda-simm-v2-5/",
+      "methodology_pdf": "https://www.isda.org/a/Pf2gE/ISDA-SIMM-v2.5.pdf"
+    },
+    {
+      "version": "2.5A",
+      "use_from_cob": "2023-07-14",
+      "isda_effective_date": "2023-07-15",
+      "announcement": "https://www.isda.org/2023/05/05/isda-publishes-isda-simm-methodology-version-2-5a",
+      "methodology_pdf": "https://www.isda.org/a/FBLgE/ISDA-SIMM_v2.5A.pdf"
+    },
+    {
+      "version": "2.6",
+      "use_from_cob": "2023-12-01",
+      "isda_effective_date": "2023-12-02",
+      "announcement": "https://www.isda.org/2023/09/15/isda-publishes-isda-simm-methodology-version-2-6",
+      "methodology_pdf": "https://www.isda.org/a/b4ugE/ISDA-SIMM_v2.6_PUBLIC.pdf"
+    },
+    {
+      "version": "2.7",
+      "use_from_cob": "2024-12-06",
+      "isda_effective_date": "2024-12-07",
+      "announcement": "https://www.isda.org/2024/09/19/isda-publishes-isda-simm-methodology-version-2-7",
+      "methodology_pdf": "https://www.isda.org/a/2IOgE/ISDA_SIMM_v2.7_PUBLIC.pdf"
+    },
+    {
+      "version": "2.7+2412",
+      "use_from_cob": "2025-07-11",
+      "isda_effective_date": "2025-07-12",
+      "announcement": "https://www.isda.org/2025/05/22/isda-publishes-isda-simm-methodology-version-2-7-2412/",
+      "methodology_pdf": "https://www.isda.org/a/DRfgE/ISDA-SIMM_v2.72412_PUBLIC.pdf"
+    },
+    {
+      "version": "2.8+2506",
+      "use_from_cob": "2025-12-05",
+      "isda_effective_date": "2025-12-06",
+      "announcement": "https://www.isda.org/2025/10/31/isda-publishes-isda-simm-methodology-version-2-8-2506/",
+      "methodology_pdf": "https://www.isda.org/a/f2RgE/ISDA-SIMM_v2.82506_PUBLIC.pdf"
+    },
+    {
+      "version": "2.8+2512",
+      "use_from_cob": "2026-07-10",
+      "isda_effective_date": "2026-07-11",
+      "announcement": "https://www.isda.org/2026/06/12/isda-publishes-isda-simm-methodology-version-2-8-2512/",
+      "methodology_pdf": "https://www.isda.org/a/hhkiE/ISDA-SIMM_v2.82512_PUBLIC.pdf"
+    }
+  ]
+}

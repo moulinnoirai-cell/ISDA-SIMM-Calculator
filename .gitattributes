@@ -1,0 +1,3 @@
+# Keep LF line endings on every platform: parameters/*/parameters.json is checked
+# byte-for-byte against the SHA-256 in its manifest.json.
+* text=auto eol=lf

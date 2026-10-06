@@ -1,0 +1,108 @@
+{
+  "direction": "collect",
+  "regulation": "EXAMPLE_REGULATION",
+  "crif_profile": "public_rds_1_36_methodology_2_8",
+  "currency_codes": [
+    "USD",
+    "EUR",
+    "JPY",
+    "GBP",
+    "CHF",
+    "AUD",
+    "CAD",
+    "KRW",
+    "HKD",
+    "SGD",
+    "CNY",
+    "SEK",
+    "NOK",
+    "DKK",
+    "NZD",
+    "TWD"
+  ],
+  "legal_entity": "ENTITY_1",
+  "csa": "CSA_1",
+  "netting_set": "DEFAULT_NETTING_SET",
+  "unit_declarations": {
+    "Risk_IRCurve": {
+      "unit": "PV01_PER_1BP",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_Inflation": {
+      "unit": "PV01_PER_1BP",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_XCcyBasis": {
+      "unit": "PV01_PER_1BP",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_CreditQ": {
+      "unit": "CS01_PER_1BP",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_CreditNonQ": {
+      "unit": "CS01_PER_1BP",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_BaseCorr": {
+      "unit": "BC01_PER_1PERCENTAGE_POINT",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_Equity": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_Commodity": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_FX": {
+      "unit": "DELTA_PER_1PERCENT_RELATIVE",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_IRVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_InflationVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_CreditVol": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_CreditVolNonQ": {
+      "unit": "SIGMA_TIMES_VEGA",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_EquityVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_CommodityVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": "Synthetic example data written in these units"
+    },
+    "Risk_FXVol": {
+      "unit": "VEGA_PER_1PERCENTAGE_POINT_LOGNORMAL",
+      "source": "Synthetic example data written in these units"
+    },
+    "Param_ProductClassMultiplier": {
+      "unit": "SCALAR",
+      "source": "Synthetic example data written in these units"
+    },
+    "Param_AddOnNotionalFactor": {
+      "unit": "PERCENT",
+      "source": "Synthetic example data written in these units"
+    },
+    "Notional": {
+      "unit": "NOTIONAL",
+      "source": "Synthetic example data written in these units"
+    },
+    "AddOnFixedAmount": {
+      "unit": "MONETARY_AMOUNT",
+      "source": "Synthetic example data written in these units"
+    }
+  }
+}

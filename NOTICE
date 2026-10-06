@@ -1,0 +1,25 @@
+isda-simm-calculator
+Copyright 2026 The isda-simm-calculator authors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE),
+except for the material described below.
+
+ISDA SIMM material
+------------------
+ISDA SIMM(R) is a registered trademark of the International Swaps and
+Derivatives Association, Inc. (ISDA). ISDA SIMM is protected by copyright and
+other intellectual property rights of ISDA and is subject to U.S. Patent
+No. 10,515,410.
+
+The files under parameters/ contain risk weights, correlations, concentration
+thresholds and related values transcribed from the ISDA SIMM methodology
+documents published by ISDA (source links in each manifest.json). Rights in that
+material remain with ISDA. It is NOT licensed under the Apache License by this
+project, and this project grants no rights under ISDA's copyrights, trademarks or
+patents. The ISDA documents themselves are not redistributed here.
+
+Use of ISDA SIMM for the calculation of initial margin may require a licence from
+ISDA. See https://www.isda.org/2021/04/08/isda-simm-licensing-faq/ or contact
+isdalegal@isda.org.
+
+This project is not affiliated with, sponsored by or endorsed by ISDA.
