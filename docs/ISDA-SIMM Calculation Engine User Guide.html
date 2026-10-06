@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISDA-SIMM Calculation Engine User Guide</title>
+<style>
+  :root {
+    --navy: #1f3a5f; --navy-2: #2d5281; --teal: #0f7b74; --ink: #1f2328; --muted: #5b6672;
+    --line: #d0d7de; --soft: #f3f6f9; --soft-2: #eaf1f8;
+    --tip-bg: #e9f6ef; --tip-line: #2e8b57; --warn-bg: #fff4e5; --warn-line: #d9822b; --note-bg: #eaf2fb; --note-line: #2d6cb5;
+  }
+  @page { size: A4; margin: 17mm 15mm 17mm 15mm;
+    @bottom-center { content: counter(page) " / " counter(pages); font-family: "Segoe UI", Arial, sans-serif; font-size: 8.5pt; color: #8a94a0; }
+    @top-right { content: "ISDA-SIMM Calculation Engine User Guide"; font-family: "Segoe UI", Arial, sans-serif; font-size: 8pt; color: #a0a8b2; }
+  }
+  @page :first { @bottom-center { content: none; } @top-right { content: none; } }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html { background: #fff; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9.6pt; line-height: 1.5; color: var(--ink); background: #fff; overflow-wrap: break-word; }
+  .page { break-before: page; }
+  h1, h2, h3, h4 { color: var(--navy); line-height: 1.3; break-after: avoid; }
+  h2 { font-size: 15pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid var(--navy); }
+  h3 { font-size: 11.5pt; margin: 4.5mm 0 1.5mm; }
+  h4 { font-size: 10.2pt; margin: 3.5mm 0 1.2mm; color: var(--navy-2); }
+  p { margin: 1.2mm 0 2mm; }
+  ul, ol { margin: 0.8mm 0 2.2mm; padding-left: 6mm; }
+  li { margin: 0.4mm 0; }
+  a { color: var(--navy-2); text-decoration: none; }
+  code { font-family: Consolas, monospace; font-size: 9pt; background: var(--soft); border: 1px solid #e1e6eb; border-radius: 3px; padding: 0 1.2mm; }
+  pre { font-family: Consolas, monospace; font-size: 8.3pt; line-height: 1.45; margin: 1.5mm 0 2.2mm; padding: 2.2mm 3.5mm; border-radius: 2mm; white-space: pre-wrap; break-inside: avoid; }
+  pre.cmd { background: #1d2733; color: #e6edf3; }
+  pre.cmd .c { color: #8b98a5; }
+  pre.out { background: var(--soft); color: #24292f; border-left: 3px solid #9aa7b4; }
+  pre.out .hl { color: var(--teal); font-weight: bold; }
+  pre .m { color: #fff; background: var(--teal); border-radius: 50%; padding: 0 1mm; font-family: "Segoe UI", Arial, sans-serif; font-size: 7.5pt; font-weight: bold; }
+  pre.out .m { color: #fff; }
+  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; font-size: 8.6pt; line-height: 1.4; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: bold; padding: 1.3mm 1.8mm; border: 1px solid var(--navy); }
+  td { padding: 1.1mm 1.8mm; border: 1px solid var(--line); vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f8fafc; }
+  td code, th code { font-size: 8.3pt; padding: 0 0.8mm; }
+  .callout { border-left: 4px solid; border-radius: 1.5mm; padding: 2mm 3.5mm; margin: 2.2mm 0; break-inside: avoid; }
+  .callout b.t { display: block; margin-bottom: 0.8mm; }
+  .callout ul { margin-bottom: 0; }
+  .tip { background: var(--tip-bg); border-color: var(--tip-line); }
+  .tip b.t { color: #1f6b43; }
+  .warn { background: var(--warn-bg); border-color: var(--warn-line); }
+  .warn b.t { color: #9a5212; }
+  .note { background: var(--note-bg); border-color: var(--note-line); }
+  .note b.t { color: #1d4f8a; }
+
+  /* cover */
+  .cover { height: 258mm; display: flex; flex-direction: column; }
+  .cover .band { background: var(--navy); color: #fff; border-radius: 3mm; padding: 16mm 12mm 14mm; margin-top: 22mm; }
+  .cover .kicker { font-size: 10pt; letter-spacing: 0.5mm; opacity: 0.8; }
+  .cover h1 { color: #fff; font-size: 27pt; margin: 3mm 0 4mm; }
+  .cover .sub { font-size: 12pt; opacity: 0.92; }
+  .cover .howto { margin-top: 12mm; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  .cover .howto div { border: 1px solid var(--line); border-radius: 2.5mm; padding: 4mm; background: var(--soft); }
+  .cover .howto b { display: block; color: var(--navy); font-size: 11pt; margin-bottom: 1mm; }
+  .cover .howto .pg { font-size: 9pt; color: var(--teal); font-weight: bold; }
+  .cover .howto p { font-size: 9pt; margin: 1mm 0 0; color: var(--muted); }
+  .cover .meta { margin-top: auto; font-size: 9pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+  .cover .meta td { border: none; padding: 0.5mm 2mm 0.5mm 0; background: none !important; }
+
+  /* part banners and summary label */
+  .part { background: var(--soft-2); border-radius: 2mm; padding: 2.5mm 5mm; margin-bottom: 4mm; display: flex; align-items: baseline; gap: 4mm; }
+  .part .tag { background: var(--navy); color: #fff; font-weight: bold; font-size: 9pt; border-radius: 1.5mm; padding: 0.8mm 2.5mm; white-space: nowrap; }
+  .part .tag.sum { background: var(--teal); }
+  .part .ttl { font-size: 10pt; color: var(--navy); font-weight: bold; }
+  .part .desc { font-size: 9pt; color: var(--muted); margin-left: auto; }
+
+  /* flow diagram */
+  .flow { display: flex; align-items: stretch; gap: 2mm; margin: 2mm 0 3mm; }
+  .flow .box { flex: 1; border: 1.5px solid var(--navy-2); border-radius: 2mm; padding: 2.5mm 2mm; text-align: center; background: #fff; font-weight: bold; color: var(--navy); font-size: 9.5pt; }
+  .flow .box small { display: block; font-weight: normal; color: var(--muted); font-size: 8pt; margin-top: 0.8mm; line-height: 1.35; }
+  .flow .box.in { background: var(--soft); }
+  .flow .box.out { background: var(--navy); color: #fff; }
+  .flow .box.out small { color: #d6e2ef; }
+  .flow .arr { align-self: center; color: var(--teal); font-weight: bold; font-size: 13pt; }
+
+  /* numbered steps */
+  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; margin: 1.8mm 0 2.2mm; }
+  .step .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--teal); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 10.5pt; margin-top: 0.3mm; }
+  .step .n.l { font-size: 9.5pt; }
+  .step .b > b.t { display: block; font-size: 10.6pt; color: var(--navy); margin-bottom: 0.5mm; }
+  .step .b p { margin: 0.5mm 0 1.5mm; }
+  .step .b pre { margin: 1.5mm 0 1.5mm; }
+  .ok { color: var(--teal); font-weight: bold; }
+
+  /* two columns */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .cols > div { min-width: 0; }
+  .rule { display: grid; grid-template-columns: 6mm 1fr; gap: 1.5mm; margin: 1.2mm 0; break-inside: avoid; }
+  .rule .k { color: #fff; background: var(--navy-2); border-radius: 1mm; text-align: center; font-weight: bold; font-size: 8.5pt; height: 5mm; line-height: 5mm; margin-top: 0.4mm; }
+
+  /* tree */
+  .tree { border: 1px solid var(--line); border-radius: 2mm; padding: 3mm 4mm; background: #fff; font-size: 9.2pt; break-inside: avoid; margin: 2mm 0 4mm; }
+  .tree .lv { display: grid; grid-template-columns: 40mm 1fr; gap: 3mm; padding: 1.2mm 0; border-bottom: 1px dashed #e1e6eb; }
+  .tree .lv:last-child { border-bottom: none; }
+  .tree .lv > b { color: var(--navy); }
+  .tree .i1 > b { padding-left: 4mm; } .tree .i2 > b { padding-left: 8mm; } .tree .i3 > b { padding-left: 12mm; } .tree .i4 > b { padding-left: 16mm; }
+
+  .toc { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; font-size: 9.3pt; margin-top: 5mm; }
+  .toc > div > div { margin: 0.6mm 0; }
+  .toc .p { font-weight: bold; color: var(--navy); border-bottom: 1px solid var(--line); padding-bottom: 1mm; margin-bottom: 1mm; }
+  .flowsec { margin-top: 7mm; }
+  .keep { break-inside: avoid; }
+  table.tight { font-size: 8pt; table-layout: fixed; }
+  table.tight th { white-space: nowrap; padding: 1.2mm 1.2mm; font-size: 7.6pt; }
+  table.tight td { padding: 1mm 1.2mm; overflow-wrap: anywhere; }
+  table.rt td:first-child code { white-space: nowrap; }
+  .small { font-size: 8.8pt; color: var(--muted); }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<section class="cover">
+  <div class="band">
+    <div class="kicker">ISDA-SIMM-Calculator · User Guide</div>
+    <h1>ISDA-SIMM Calculation Engine<br>User Guide</h1>
+    <div class="sub">A Python program that calculates initial margin (IM) for<br>uncleared OTC derivatives in USD from a CRIF file</div>
+  </div>
+
+  <div class="howto">
+    <div><span class="pg">Pages 2 - 5</span><b>Quick start</b><p>New users only need these pages: setup, a first run, your own data and troubleshooting.</p></div>
+    <div><span class="pg">Page 6 -</span><b>Reference</b><p>CRIF rules, the context file, run options, reading results and version selection in detail.</p></div>
+    <div><span class="pg">Appendix</span><b>Error codes · Glossary</b><p>Look up an error code from the screen, or a term you have not seen before.</p></div>
+  </div>
+
+  <div class="toc">
+    <div><div class="p">Quick start</div>
+      <div>Q1. At a glance</div><div>Q2. First run (example data)</div><div>Q3. Calculate your own data</div><div>Q4. Rules and troubleshooting</div></div>
+    <div><div class="p">Reference</div>
+      <div>1. Installation and environment</div><div>2. Writing the CRIF file</div><div>3. Writing the context file</div><div>4. Run command and options</div><div>5. Reading the results</div>
+      <div>6. SIMM version selection</div><div>7. Using the engine from Python</div><div>8. Adding a new SIMM version</div><div>9. Notices and limitations</div><div>10. FAQ</div></div>
+    <div><div class="p">Appendix</div>
+      <div>A. All error codes</div><div>B. Glossary</div></div>
+  </div>
+
+  <div class="meta">
+    <table>
+      <tr><td><b>SIMM versions</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512</td></tr>
+      <tr><td><b>Repository</b></td><td>https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</td></tr>
+      <tr><td><b>Document date</b></td><td>2026-10-06</td></tr>
+      <tr><td><b>Licence</b></td><td>Code and documents: Apache-2.0 / ISDA SIMM parameter values are not covered (rights remain with ISDA)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================== SUMMARY 1 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">Quick start 1</span><span class="ttl">At a glance</span><span class="desc">Pages 2-5 are enough to run the engine</span></div>
+
+  <h3 style="margin-top:0">What does it do?</h3>
+  <ul>
+    <li>Give it a <b>sensitivity file (CRIF)</b> for your derivatives and it calculates <b>initial margin (IM)</b> with the ISDA SIMM method, in <b>USD</b>.</li>
+    <li>It checks the input file strictly before calculating. If something is wrong, it does not calculate and tells you <b>what is wrong and on which line</b>.</li>
+    <li>It selects the <b>SIMM version</b> (2.5 to 2.8+2512) that applies to the valuation date.</li>
+  </ul>
+
+  <h3>How it works</h3>
+  <div class="flow">
+    <div class="box in">CRIF file<small>sensitivities<br>(CSV)</small></div>
+    <div class="arr">+</div>
+    <div class="box in">Context file<small>direction, rules,<br>currencies (JSON)</small></div>
+    <div class="arr">→</div>
+    <div class="box">① Validate<small>stops and reports<br>any problem</small></div>
+    <div class="arr">→</div>
+    <div class="box">② Version<small>picked by<br>valuation date</small></div>
+    <div class="arr">→</div>
+    <div class="box">③ Calculate<small>delta, vega,<br>curvature, ...</small></div>
+    <div class="arr">→</div>
+    <div class="box out">Results<small>screen<br>JSON · CSV</small></div>
+  </div>
+
+  <h3>What you need</h3>
+  <table>
+    <thead><tr><th style="width:24%">Item</th><th style="width:44%">Description</th><th>Where to get it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Python 3.11 or later</b></td><td>Runs the engine. No other packages are needed.</td><td>python.org</td></tr>
+      <tr><td><b>Engine files</b></td><td>This program.</td><td>Download the ZIP from GitHub (Quick start 2)</td></tr>
+      <tr><td><b>CRIF file</b></td><td>The sensitivities to calculate (CSV).</td><td>Your risk system, or fill in the template</td></tr>
+      <tr><td><b>Context file</b></td><td>Run settings (JSON): direction (collect/post), regulation, currency list and so on.</td><td>Copy and fill in the template (Quick start 3)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>What the results look like</h3>
+<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW                 <span class="m">1</span>
+Portfolio total: 33,496,812.42 USD                                  <span class="m">2</span>
+
+[CP_A] total 14,300,634.89 USD                                      <span class="m">3</span>
+  netting set NS_A1 / CSA CSA_1: 14,300,634.89 (add-on 50,000.00)   <span class="m">4</span>
+    RatesFX: 7,290,168.27                                           <span class="m">5</span>
+      InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)  <span class="m">6</span></pre>
+  <div class="small">① SIMM version, valuation date, currency and the reference-only flag &nbsp;② total of all counterparties &nbsp;③ counterparty total
+  &nbsp;④ netting set (CSA) total and its add-on &nbsp;⑤ product class &nbsp;⑥ risk class and its components. All amounts are in USD.</div>
+
+  <div class="callout warn"><b class="t">Keep in mind</b>
+    <ul>
+      <li><b>Results are in USD only.</b> There is no FX conversion: the CRIF <code>AmountUSD</code> values are used as they are.</li>
+      <li><b>No network access.</b> Your data never leaves the machine during a run.</li>
+      <li>Results are <b>for reference (SHADOW)</b>. Validate them independently before relying on them. Using ISDA SIMM for margin calculations may require a licence from ISDA (Reference, section 9).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================== SUMMARY 2 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">Quick start 2</span><span class="ttl">First run</span><span class="desc">About 10 minutes with the example data · Windows</span></div>
+
+  <div class="step"><div class="n">1</div><div class="b">
+    <b class="t">Check that Python is installed</b>
+    <p>Open <b>Terminal</b> (or PowerShell) from the Start menu and type:</p>
+<pre class="cmd">python --version</pre>
+    <p>If it shows <span class="ok">Python 3.11.x</span> or later, go to the next step.</p>
+    <div class="callout tip"><b class="t">If you get an error or the Microsoft Store opens</b>Python is not installed. Download it from python.org and install it. If the installer shows <b>"Add python.exe to PATH"</b>, tick it. Open a new terminal after installing.</div>
+  </div></div>
+
+  <div class="step"><div class="n">2</div><div class="b">
+    <b class="t">Download the engine</b>
+    <ol>
+      <li>Go to <b>github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</b> in your browser.</li>
+      <li>Click the green <b>[Code]</b> button, then <b>[Download ZIP]</b>.</li>
+      <li>Unzip it somewhere (for example <code>C:\SIMM</code>). You get a folder named <code>ISDA-SIMM-Calculator-main</code>.</li>
+    </ol>
+  </div></div>
+
+  <div class="step"><div class="n">3</div><div class="b">
+    <b class="t">Open a terminal in the engine folder</b>
+    <p>Open the <code>ISDA-SIMM-Calculator-main</code> folder, right-click an empty area and choose <b>[Open in Terminal]</b>.
+    You should be where the <code>src</code>, <code>examples</code> and <code>crif</code> folders are.</p>
+  </div></div>
+
+  <div class="step"><div class="n">4</div><div class="b">
+    <b class="t">Prepare the terminal</b> <span class="small">(type the first line once every time you open a new terminal)</span>
+<pre class="cmd">$env:PYTHONPATH = "src"
+python -m simm versions</pre>
+    <p>If you see the list of versions, you are <span class="ok">ready</span>.</p>
+<pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
+...
+2.8+2512  use from COB 2026-07-10  https://www.isda.org/...</pre>
+  </div></div>
+
+  <div class="step"><div class="n">5</div><div class="b">
+    <b class="t">Run the example</b>
+<pre class="cmd">python -m simm run `
+  --crif examples\crif_example.csv `
+  --valuation-date 2026-06-30 `
+  --context examples\context.json</pre>
+    <p>If you see this line, it <span class="ok">worked</span>.</p>
+<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW
+<span class="hl">Portfolio total: 33,496,812.42 USD</span></pre>
+    <div class="callout note"><b class="t">Typing commands</b>A <code>`</code> (backtick) at the end of a line means "continued on the next line". You can paste all lines at once, or type the whole command on one line without the backticks.</div>
+    <p class="small">The valuation date is 2026-06-30, so 2.8+2506 is used: 2.8+2512 applies from 2026-07-10 (Reference, section 6).</p>
+  </div></div>
+</section>
+
+<!-- ============================== SUMMARY 3 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">Quick start 3</span><span class="ttl">Calculate your own data</span><span class="desc">Prepare two files, run one command</span></div>
+
+  <div class="step"><div class="n l">A</div><div class="b">
+    <b class="t">Create the CRIF file</b>
+    <ol>
+      <li>Copy <code>crif\crif_template.csv</code> into the engine folder and rename it <code>my_crif.csv</code>.</li>
+      <li>Open it in Excel. <b>Keep the first line (column names)</b> and fill in your data from the second line. The rules are in <b>Quick start 4</b>.</li>
+      <li>Use <b>[Save As] → "CSV UTF-8 (Comma delimited)"</b>.</li>
+    </ol>
+    <div class="callout tip"><b class="t">Need an example?</b>Open <code>examples\crif_example.csv</code>. It has an example of every kind of row: rates, FX, credit, equity, commodity and add-ons.</div>
+  </div></div>
+
+  <div class="step"><div class="n l">B</div><div class="b">
+    <b class="t">Create the context file</b>
+    <p>Copy <code>config\context.template.json</code> into the engine folder, rename it <code>my_context.json</code>, open it in Notepad and fill in:</p>
+    <table>
+      <thead><tr><th style="width:22%">Field</th><th style="width:48%">What to enter</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>direction</code></td><td><code>collect</code> (margin you receive) or <code>post</code> (margin you give)</td><td><code>"collect"</code></td></tr>
+        <tr><td><code>regulation</code></td><td>Name of the regulation. Must not be empty.</td><td><code>"REG_A"</code></td></tr>
+        <tr><td><code>legal_entity</code></td><td>Your legal entity</td><td><code>"MY_ENTITY"</code></td></tr>
+        <tr><td><code>csa</code></td><td>Name of the CSA (collateral agreement)</td><td><code>"CSA_1"</code></td></tr>
+        <tr><td><code>currency_codes</code></td><td>Every currency in your CRIF. Add only those missing from the default list.</td><td><code>"USD", "EUR", ...</code></td></tr>
+        <tr><td><code>source</code><br><span class="small">(in unit_declarations)</span></td><td>For each risk type in your CRIF, the evidence that it was produced in that unit. Risk types you do not use may stay empty.</td><td><code>"Risk system spec v3.2, 4.1"</code></td></tr>
+      </tbody>
+    </table>
+<pre class="out">"direction": "collect",
+"regulation": "REG_A",
+"Risk_IRCurve": { "unit": "PV01_PER_1BP", "source": "Risk system spec v3.2, 4.1" },</pre>
+    <div class="callout warn"><b class="t">Note</b>Do not change the <code>unit</code> values. If the <code>source</code> of a risk type you use is empty, the run is blocked. This is deliberate: a wrong unit can distort the result badly.</div>
+  </div></div>
+
+  <div class="step"><div class="n l">C</div><div class="b">
+    <b class="t">Run</b> <span class="small">(in a new terminal, run <code>$env:PYTHONPATH = "src"</code> first)</span>
+<pre class="cmd">python -m simm run `
+  --crif my_crif.csv `
+  --valuation-date 2026-06-30 `
+  --context my_context.json `
+  --output result.json `
+  --summary-csv summary.csv</pre>
+    <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>summary.csv</code></b> (a table for Excel) are written to the engine folder.
+    Replace <code>2026-06-30</code> with the <code>ValuationDate</code> of your CRIF.</p>
+  </div></div>
+</section>
+
+<!-- ============================== SUMMARY 4 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">Quick start 4</span><span class="ttl">Rules and troubleshooting</span><span class="desc">The most common mistakes</span></div>
+
+  <h4 style="margin-top:0">Six CRIF rules</h4>
+  <div class="cols">
+    <div>
+      <div class="rule"><span class="k">1</span><div>Dates as <code>2026-06-30</code>, equal to the valuation date you run with.</div></div>
+      <div class="rule"><span class="k">2</span><div>No thousands separators: <code>1000</code> (yes), <code>1,000</code> (no).</div></div>
+      <div class="rule"><span class="k">3</span><div>No spaces before or after a cell value.</div></div>
+    </div>
+    <div>
+      <div class="rule"><span class="k">4</span><div>Only <code>AmountUSD</code> is used. On USD rows <code>Amount</code> must equal <code>AmountUSD</code>.</div></div>
+      <div class="rule"><span class="k">5</span><div>Standard lower-case tenors only: <code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code> (credit: <code>1y 2y 3y 5y 10y</code>)</div></div>
+      <div class="rule"><span class="k">6</span><div>Some cells must be empty depending on the risk type. See the examples below and Reference, section 2.</div></div>
+    </div>
+  </div>
+
+  <h4>Common risk type examples</h4>
+  <table class="tight">
+    <colgroup><col style="width:11%"><col style="width:15%"><col style="width:20%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:9%"><col style="width:13%"><col style="width:11%"></colgroup>
+    <thead><tr><th>ProductClass</th><th>RiskType</th><th>Qualifier</th><th>Bucket</th><th>Label1</th><th>Label2</th><th>Amount</th><th>AmountCurrency</th><th>AmountUSD</th></tr></thead>
+    <tbody>
+      <tr><td>RatesFX</td><td><code>Risk_IRCurve</code></td><td>USD</td><td>1</td><td>5y</td><td>OIS</td><td>25000</td><td>USD</td><td>25000</td></tr>
+      <tr><td>RatesFX</td><td><code>Risk_FX</code></td><td>EUR</td><td></td><td></td><td></td><td>900000</td><td>USD</td><td>900000</td></tr>
+      <tr><td>RatesFX</td><td><code>Risk_FXVol</code></td><td>EURUSD</td><td></td><td>1y</td><td></td><td>30000</td><td>USD</td><td>30000</td></tr>
+      <tr><td>Equity</td><td><code>Risk_Equity</code></td><td>ISIN:KR0000000036</td><td>1</td><td></td><td></td><td>200000</td><td>USD</td><td>200000</td></tr>
+      <tr><td>Credit</td><td><code>Risk_CreditQ</code> *</td><td>ISIN:XS0000000016</td><td>3</td><td>5y</td><td></td><td>15000</td><td>USD</td><td>15000</td></tr>
+    </tbody>
+  </table>
+  <div class="small" style="margin-top:-1.5mm">Leave blank cells empty. The first five columns (ValuationDate to IMModel) are omitted here. * Credit rows also need <code>PaymentCurrency</code>.</div>
+
+  <h4>When you get stuck</h4>
+  <table>
+    <thead><tr><th style="width:34%">Message on the screen</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td><code>No module named simm</code></td><td>Check that the terminal is open in the engine folder and run <code>$env:PYTHONPATH = "src"</code> again.</td></tr>
+      <tr><td><code>DATE_MISMATCH</code></td><td>Make the CRIF date and <code>--valuation-date</code> the same.</td></tr>
+      <tr><td><code>UNIT_EVIDENCE_REQUIRED</code></td><td>Fill in the <code>source</code> of that risk type in the context file.</td></tr>
+      <tr><td><code>SCOPE_REQUIRED</code></td><td>Fill in <code>legal_entity</code> and <code>csa</code> in the context file.</td></tr>
+      <tr><td><code>DIRECTION_REQUIRED</code></td><td>Set <code>direction</code> to <code>"collect"</code> or <code>"post"</code>.</td></tr>
+      <tr><td><code>INVALID_AMOUNT</code></td><td>Remove commas or fill empty amount cells.</td></tr>
+      <tr><td><code>WHITESPACE</code></td><td>Remove spaces around the cell values on that line.</td></tr>
+      <tr><td><code>INVALID_TENOR</code></td><td>Use a standard tenor in Label1 (rule 5).</td></tr>
+      <tr><td><code>INVALID_CURRENCY</code></td><td>Add the currency to <code>currency_codes</code> in the context file.</td></tr>
+      <tr><td><code>Inconsistent CSV field count</code></td><td>Lines have different numbers of cells. Put values that contain commas in double quotes.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout note"><b class="t">Reading an error message</b><code>CRITICAL DATE_MISMATCH row:5</code> means "the date on line 5 of the CSV file (Excel row 5) is different". Only the first 20 issues are shown; add <code>--output issues.json</code> to the command to get all of them. Other error codes are in <b>Appendix A</b>.</div>
+</section>
+
+<!-- ============================== DETAIL 1 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag">Reference</span><span class="ttl">Everything the quick start does not cover, in detail</span></div>
+  <h2>1. Installation and environment</h2>
+
+  <h3 style="margin-top:2mm">1.1 Requirements</h3>
+  <table>
+    <thead><tr><th style="width:22%">Item</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td>Python</td><td>3.11 or later. With several versions installed you can pick one, for example <code>py -3.11</code>.</td></tr>
+      <tr><td>Extra packages</td><td>None. Only reading an Excel (XLSX) CRIF directly needs <code>pip install openpyxl</code>.</td></tr>
+      <tr><td>Operating system</td><td>Windows, macOS and Linux.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.2 Folder layout</h3>
+  <table>
+    <thead><tr><th style="width:24%">Folder / file</th><th>Contents</th></tr></thead>
+    <tbody>
+      <tr><td><code>crif\</code></td><td><b>CRIF template</b> (<code>crif_template.csv</code>) and the format description (<code>CRIF_FORMAT.md</code>)</td></tr>
+      <tr><td><code>config\</code></td><td><b>Context file template</b> (<code>context.template.json</code>)</td></tr>
+      <tr><td><code>examples\</code></td><td><b>Synthetic example</b> CRIF and context file, ready to run (not real trades)</td></tr>
+      <tr><td><code>parameters\</code></td><td>Risk weights, correlations and other values per SIMM version (transcribed from ISDA's public documents)</td></tr>
+      <tr><td><code>src\</code>, <code>tests\</code></td><td>Program code and tests</td></tr>
+      <tr><td><code>docs\</code></td><td>This guide (English and Korean) and the methodology notes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 Downloading with git (optional)</h3>
+  <p>With git you can clone instead of downloading the ZIP. The folder is then named <code>ISDA-SIMM-Calculator</code>.</p>
+<pre class="cmd">git clone https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator.git</pre>
+
+  <h3>1.4 Preparing each kind of terminal</h3>
+  <p>The engine code is in the <code>src</code> folder. Tell Python where it is every time you open a terminal.</p>
+  <table>
+    <thead><tr><th style="width:30%">Terminal</th><th style="width:34%">Preparation command</th><th>Line continuation character</th></tr></thead>
+    <tbody>
+      <tr><td>Windows PowerShell / Terminal</td><td><code>$env:PYTHONPATH = "src"</code></td><td><code>`</code> (backtick) at the end of the line</td></tr>
+      <tr><td>Windows Command Prompt (cmd)</td><td><code>set PYTHONPATH=src</code></td><td><code>^</code> at the end of the line</td></tr>
+      <tr><td>macOS / Linux</td><td><code>export PYTHONPATH=src</code></td><td><code>\</code> at the end of the line</td></tr>
+    </tbody>
+  </table>
+  <p>On macOS and Linux use <code>/</code> in paths (for example <code>examples/crif_example.csv</code>). Some systems use <code>python3</code> instead of <code>python</code>.</p>
+
+  <h3>1.5 Installing (optional)</h3>
+  <p>Running <code>pip install -e .</code> in the engine folder gives you a <code>simm</code> command that works without the preparation step.</p>
+  <ul>
+    <li><b>Keep the <code>-e</code>.</b> The engine reads the <code>parameters</code> folder of the downloaded copy, so a regular install (<code>pip install .</code>) does not work.</li>
+    <li>Installing downloads build tools from the internet. If that fails (for example behind a corporate network), use the no-install method in 1.4.</li>
+  </ul>
+
+  <div class="keep"><h3>1.6 Checking that everything works</h3>
+  <p>Run the built-in tests. <span class="ok">Ran 60 tests ... OK</span> at the end means all is well.</p>
+<pre class="cmd">python -m unittest discover -s tests -t .</pre></div>
+
+  <h2 style="margin-top:8mm">2. Writing the CRIF file</h2>
+  <p>CRIF (Common Risk Interchange Format) is the standard format for exchanging SIMM sensitivities. Each line is the sensitivity to one risk factor.
+  The engine reads CSV, TSV and single-sheet XLSX files.</p>
+
+  <h3>2.1 Columns</h3>
+  <table>
+    <thead><tr><th style="width:18%">Column</th><th style="width:13%">Required</th><th>Description</th><th style="width:15%">Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>ValuationDate</code></td><td>Recommended</td><td>Valuation date (<code>YYYY-MM-DD</code>). Must equal the date given on the command line.</td><td>2026-06-30</td></tr>
+      <tr><td><code>Counterparty</code></td><td>Yes *</td><td>Counterparty identifier</td><td>CP_A</td></tr>
+      <tr><td><code>NettingSet</code></td><td>Yes *</td><td>Netting set (CSA portfolio). Netting sets are <b>added up, never offset</b>.</td><td>NS_A1</td></tr>
+      <tr><td><code>TradeID</code></td><td>Optional</td><td>Trade identifier. Keeps identical rows of different trades apart.</td><td>T001</td></tr>
+      <tr><td><code>IMModel</code></td><td>Optional</td><td>Only <code>SIMM</code> is allowed. <code>Schedule</code> or anything else blocks the run.</td><td>SIMM</td></tr>
+      <tr><td><code>ProductClass</code></td><td>Yes</td><td><code>RatesFX</code>, <code>Credit</code>, <code>Equity</code> or <code>Commodity</code></td><td>RatesFX</td></tr>
+      <tr><td><code>RiskType</code></td><td>Yes</td><td>See the table in 2.2</td><td>Risk_IRCurve</td></tr>
+      <tr><td><code>Qualifier</code></td><td>Yes</td><td>Currency, issuer, index and so on</td><td>USD</td></tr>
+      <tr><td><code>Bucket</code></td><td>Yes (may be blank)</td><td>Bucket of the risk type</td><td>1</td></tr>
+      <tr><td><code>Label1</code></td><td>Yes (may be blank)</td><td>Tenor or option expiry</td><td>5y</td></tr>
+      <tr><td><code>Label2</code></td><td>Yes (may be blank)</td><td>Curve type and similar</td><td>OIS</td></tr>
+      <tr><td><code>Amount</code></td><td>Yes</td><td>Sensitivity in <code>AmountCurrency</code></td><td>25000</td></tr>
+      <tr><td><code>AmountCurrency</code></td><td>Yes</td><td>Currency of <code>Amount</code> (ISO code)</td><td>USD</td></tr>
+      <tr><td><code>AmountUSD</code></td><td>Yes</td><td>Sensitivity in USD. <b>This is the only amount used.</b></td><td>25000</td></tr>
+      <tr><td><code>PaymentCurrency</code></td><td>Credit only</td><td>Payment currency of credit delta and vega rows. The same issuer in different payment currencies gives different risk factors.</td><td>USD</td></tr>
+      <tr><td><code>GroupName</code></td><td>Credit non-qualifying only</td><td>Group name of non-qualifying credit. The correlation depends on whether the group is the same.</td><td>CMBX</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* <code>Counterparty</code> and <code>NettingSet</code> may be left out and taken from the context file defaults. Your legal entity (<code>LegalEntity</code>) and <code>CSA</code> work the same way. The template has no <code>LegalEntity</code> or <code>CSA</code> column, so put defaults in the context file.</p>
+
+  <h4>Optional columns not in the template</h4>
+  <table>
+    <thead><tr><th style="width:32%">Column</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>LegalEntity</code>, <code>CSA</code></td><td>Use them when the legal entity or CSA differs between rows.</td></tr>
+      <tr><td><code>SIMMVersion</code></td><td>If present, it must equal the selected version.</td></tr>
+      <tr><td><code>CollectRegulations</code>, <code>PostRegulations</code></td><td>If present, rows whose list does not include the context <code>regulation</code> are excluded. The number of excluded rows is recorded in the result.</td></tr>
+      <tr><td><code>Unit</code>, <code>SensitivityUnit</code></td><td>If present, they must equal the unit declared in the context file.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== DETAIL 2: risk types ============================== -->
+<section class="flowsec">
+  <h3 style="margin-top:0">2.2 Rules for each risk type</h3>
+  <p>Tenors (<code>Label1</code>) are standard lower-case values only: <code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code>. Credit tenors are <code>1y 2y 3y 5y 10y</code>.
+  Other tenors (for example <code>7y</code>) are rejected rather than re-gridded. Cells marked "blank" must be empty.</p>
+  <table class="tight rt">
+    <colgroup><col style="width:22%"><col style="width:20%"><col style="width:14%"><col style="width:10%"><col style="width:16%"><col style="width:18%"></colgroup>
+    <thead><tr><th>RiskType</th><th>Qualifier</th><th>Bucket</th><th>Label1</th><th>Label2</th><th>Amount unit</th></tr></thead>
+    <tbody>
+      <tr><td><code>Risk_IRCurve</code></td><td>Currency</td><td><code>1</code> regular, <code>2</code> low vol (JPY), <code>3</code> high vol</td><td>Tenor</td><td><code>OIS</code>, <code>Libor1m</code>, <code>Libor3m</code>, <code>Libor6m</code>, <code>Libor12m</code> (USD also <code>Prime</code>, <code>Municipal</code>)</td><td>PV01 per 1bp</td></tr>
+      <tr><td><code>Risk_Inflation</code></td><td>Currency</td><td>blank</td><td>blank</td><td>blank</td><td>PV01 per 1bp</td></tr>
+      <tr><td><code>Risk_XCcyBasis</code></td><td>Currency</td><td>blank</td><td>blank</td><td>blank</td><td>PV01 per 1bp</td></tr>
+      <tr><td><code>Risk_IRVol</code></td><td>Currency</td><td>blank</td><td>Option expiry</td><td>blank</td><td>Vol-weighted vega (σ×∂V/∂σ)</td></tr>
+      <tr><td><code>Risk_InflationVol</code></td><td>Currency</td><td>blank</td><td>Option expiry</td><td>blank</td><td>Vol-weighted vega</td></tr>
+      <tr><td><code>Risk_CreditQ</code></td><td><code>ISIN:</code> + 12-character ISIN</td><td><code>1</code>-<code>12</code>, <code>Residual</code></td><td>Credit tenor</td><td>blank or <code>Sec</code></td><td>CS01 per 1bp</td></tr>
+      <tr><td><code>Risk_CreditVol</code></td><td>Issuer</td><td><code>1</code>-<code>12</code>, <code>Residual</code></td><td>Credit tenor</td><td>blank</td><td>Vol-weighted vega</td></tr>
+      <tr><td><code>Risk_BaseCorr</code></td><td>Index family (e.g. <code>CDX IG</code>)</td><td>blank</td><td>blank</td><td>blank</td><td>BC01 per 1 correlation point</td></tr>
+      <tr><td><code>Risk_CreditNonQ</code></td><td>Tranche</td><td><code>1</code>, <code>2</code>, <code>Residual</code></td><td>Credit tenor</td><td>blank</td><td>CS01 per 1bp</td></tr>
+      <tr><td><code>Risk_CreditVolNonQ</code></td><td>Tranche</td><td><code>1</code>, <code>2</code>, <code>Residual</code></td><td>Credit tenor</td><td>blank</td><td>Vol-weighted vega</td></tr>
+      <tr><td><code>Risk_Equity</code></td><td>Buckets 1-10, Residual: <code>ISIN:</code> + ISIN<br>Buckets 11-12: any name</td><td><code>1</code>-<code>12</code>, <code>Residual</code></td><td>blank</td><td>blank</td><td>Delta per 1% relative move</td></tr>
+      <tr><td><code>Risk_EquityVol</code></td><td>As <code>Risk_Equity</code></td><td><code>1</code>-<code>12</code>, <code>Residual</code></td><td>Option expiry</td><td>blank</td><td>Vega per 1 vol point (σ applied by the engine)</td></tr>
+      <tr><td><code>Risk_Commodity</code></td><td>Commodity</td><td><code>1</code>-<code>17</code></td><td>blank</td><td>blank</td><td>Delta per 1% relative move</td></tr>
+      <tr><td><code>Risk_CommodityVol</code></td><td>Commodity</td><td><code>1</code>-<code>17</code></td><td>Option expiry</td><td>blank</td><td>Vega per 1 vol point</td></tr>
+      <tr><td><code>Risk_FX</code></td><td>Currency (USD rows are allowed and excluded)</td><td>blank</td><td>blank</td><td>blank</td><td>Delta per 1% relative move</td></tr>
+      <tr><td><code>Risk_FXVol</code></td><td>Currency pair, 6 letters (<code>EURUSD</code> = <code>USDEUR</code>)</td><td>blank</td><td>Option expiry</td><td>blank</td><td>Vega per 1 vol point</td></tr>
+    </tbody>
+  </table>
+
+  <div class="keep"><h3>2.3 Add-on and multiplier rows</h3>
+  <p>Additional margin from section L of the SIMM methodology. It applies to the row's netting set. Leave <code>Bucket</code>, <code>Label1</code> and <code>Label2</code> blank.</p>
+  <table>
+    <thead><tr><th style="width:30%">RiskType</th><th style="width:20%">ProductClass</th><th style="width:17%">Qualifier</th><th>AmountUSD</th></tr></thead>
+    <tbody>
+      <tr><td><code>Param_ProductClassMultiplier</code></td><td>Same as Qualifier</td><td>Product class</td><td>Multiplier of 1 or more (e.g. 1.2)</td></tr>
+      <tr><td><code>Param_AddOnNotionalFactor</code></td><td>blank</td><td>Product name</td><td>Add-on factor in percent (5 = 5%)</td></tr>
+      <tr><td><code>Notional</code></td><td>blank</td><td>Product name</td><td>Trade notional (absolute values are summed)</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Add-on = sum of absolute notionals × factor ÷ 100. <code>Param_AddOnNotionalFactor</code> and <code>Notional</code> rows must pair up by product name.</li>
+    <li>On these rows <code>Amount</code> must equal <code>AmountUSD</code>.</li>
+    <li>A fixed add-on amount is not a CRIF row; it is given through Python configuration (section 7).</li>
+  </ul>
+<pre class="out">2026-06-30,CP_A,NS_A1,,SIMM,RatesFX,Param_ProductClassMultiplier,RatesFX,,,,1.2,USD,1.2,,
+2026-06-30,CP_A,NS_A1,,SIMM,,Param_AddOnNotionalFactor,ProductX,,,,5,USD,5,,
+2026-06-30,CP_A,NS_A1,T018,SIMM,,Notional,ProductX,,,,1000000,USD,1000000,,</pre>
+
+  <h3>2.4 Working in Excel</h3>
+  <ul>
+    <li><b>File type:</b> save as "CSV UTF-8 (Comma delimited)". Other CSV types may garble non-ASCII text or fail to load.</li>
+    <li><b>Dates:</b> open the saved file in Notepad and check that Excel did not turn <code>2026-06-30</code> into something like <code>6/30/2026</code>. If dates were saved as numbers such as <code>46203</code>, add <code>--excel-serial-dates</code> when running.</li>
+    <li><b>Numbers:</b> <code>1000</code> and <code>1E+5</code> are fine; thousands separators are not.</li>
+    <li><b>Loading XLSX directly:</b> one sheet only and no formulas (paste as values). Needs <code>openpyxl</code>.</li>
+  </ul>
+
+  <h3>2.5 Rows in currencies other than USD</h3>
+  <ul>
+    <li><code>AmountCurrency</code> may be EUR and so on. <code>AmountUSD</code> must then hold the <b>USD value converted by whoever produced the CRIF</b>. The engine does not check FX rates; it only records a <code>FX_RATE_UNVERIFIED</code> warning.</li>
+    <li>If <code>Amount</code> and <code>AmountUSD</code> have different signs, or only one of them is zero, the row is rejected.</li>
+  </ul>
+</section>
+
+<!-- ============================== DETAIL 3: context & run ============================== -->
+<section class="flowsec">
+  <h2>3. Writing the context file</h2>
+  <p>The template is <code>config\context.template.json</code>; a filled-in example is <code>examples\context.json</code>.</p>
+  <table>
+    <thead><tr><th style="width:20%">Field</th><th>Description</th><th style="width:20%">Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>direction</code></td><td><code>collect</code> (margin you receive) or <code>post</code> (margin you give). It does not change the amounts; it labels the result and selects the regulation column.</td><td>"collect"</td></tr>
+      <tr><td><code>regulation</code></td><td>Name of the regulation; must not be empty. If the CRIF has <code>CollectRegulations</code> / <code>PostRegulations</code> columns, rows are filtered by this name.</td><td>"REG_A"</td></tr>
+      <tr><td><code>crif_profile</code></td><td>Leave as it is (<code>public_rds_1_36_methodology_2_8</code>).</td><td></td></tr>
+      <tr><td><code>currency_codes</code></td><td>Accepted currencies. Must include every currency in the CRIF (<code>AmountCurrency</code>, rates and FX <code>Qualifier</code>, <code>PaymentCurrency</code>).</td><td>["USD","EUR","KRW"]</td></tr>
+      <tr><td><code>counterparty</code></td><td>(Optional) default when the CRIF has no <code>Counterparty</code> column. Not in the template; add it if needed.</td><td>"CP_A"</td></tr>
+      <tr><td><code>legal_entity</code></td><td>Default when the CRIF has no <code>LegalEntity</code> column</td><td>"MY_ENTITY"</td></tr>
+      <tr><td><code>csa</code></td><td>Default when the CRIF has no <code>CSA</code> column</td><td>"CSA_1"</td></tr>
+      <tr><td><code>netting_set</code></td><td>Default when a CRIF <code>NettingSet</code> value is blank</td><td>"DEFAULT"</td></tr>
+      <tr><td><code>unit_declarations</code></td><td>For each risk type, the unit your CRIF uses (<code>unit</code>) and the evidence for it (<code>source</code>)</td><td>see below</td></tr>
+    </tbody>
+  </table>
+  <h4>Filling in unit_declarations</h4>
+  <p>A wrong sensitivity unit (for example per 1% instead of per 1bp) can make the result 100 times too large or too small. So for each risk type you record the evidence that your CRIF was produced in that unit.</p>
+<pre class="out">"Risk_IRCurve": { "unit": "PV01_PER_1BP", "source": "Risk system CRIF specification v3.2, section 4.1" }</pre>
+  <ul>
+    <li><b><code>unit</code>:</b> keep the template value. Changing it causes a <code>UNIT_MISMATCH</code> error.</li>
+    <li><b><code>source</code>:</b> the document or check that confirms the unit. If it is empty for a risk type in your CRIF, the run is blocked. Risk types you do not use may stay empty.</li>
+  </ul>
+  <div class="callout note"><b class="t">Credential guard</b>The run is refused if the context file has a field name containing <code>password</code>, <code>token</code>, <code>secret</code>, <code>api_key</code>, <code>cookie</code> or <code>credential</code>.</div>
+
+  <h2 style="margin-top:8mm">4. Run command and options</h2>
+<pre class="cmd">python -m simm run --crif &lt;CRIF file&gt; --valuation-date &lt;YYYY-MM-DD&gt; --context &lt;context file&gt; [options]</pre>
+  <table>
+    <thead><tr><th style="width:34%">Option</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>--crif</code> file</td><td>(Required) CRIF file path</td></tr>
+      <tr><td><code>--valuation-date</code> date</td><td>(Required) Valuation date. Must equal the CRIF <code>ValuationDate</code>.</td></tr>
+      <tr><td><code>--context</code> file</td><td>(Required) Context file path</td></tr>
+      <tr><td><code>--output</code> result.json</td><td>Writes the result as JSON. If the run is blocked, it writes the full list of issues instead.</td></tr>
+      <tr><td><code>--include-trace</code></td><td>Adds the full calculation trace to <code>--output</code>. The file gets large.</td></tr>
+      <tr><td><code>--summary-csv</code> summary.csv</td><td>Writes the counterparty / netting set / product class / risk class table as CSV.</td></tr>
+      <tr><td><code>--version</code> 2.7</td><td>Sets the SIMM version explicitly. A warning is shown if it differs from the scheduled one.</td></tr>
+      <tr><td><code>--netting-set-column</code> name</td><td>Uses another CRIF column (e.g. <code>PortfolioId</code>) as the netting set. Not allowed if the CRIF already has a <code>NettingSet</code> column.</td></tr>
+      <tr><td><code>--excel-serial-dates</code></td><td>Converts Excel date numbers (e.g. 46203) to <code>2026-06-30</code> format.</td></tr>
+      <tr><td><code>--quiet</code></td><td>Does not print the summary. Use it when you only need the files.</td></tr>
+    </tbody>
+  </table>
+  <p>Options that change the input, such as <code>--netting-set-column</code> and <code>--excel-serial-dates</code>, are recorded in <code>input_transformations</code> in the JSON result.</p>
+
+  <h4>Exit codes</h4>
+  <table>
+    <thead><tr><th style="width:12%">Code</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td class="center">0</td><td>Calculation succeeded</td></tr>
+      <tr><td class="center">1</td><td>Run error (file not found, wrong format, unsupported date, ...)</td></tr>
+      <tr><td class="center">2</td><td>Blocked by validation; the issues are listed on screen.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Running several dates at once (PowerShell)</h4>
+<pre class="cmd">foreach ($d in "2026-03-31", "2026-06-30") {
+  python -m simm run --crif "data\crif_$d.csv" --valuation-date $d `
+    --context my_context.json --output "out\result_$d.json" --quiet
+  if ($LASTEXITCODE -ne 0) { Write-Host "$d failed (code $LASTEXITCODE)" }
+}</pre>
+  <p class="small">Create the <code>data</code> and <code>out</code> folders first.</p>
+</section>
+
+<!-- ============================== DETAIL 4: results ============================== -->
+<section class="flowsec">
+  <h2>5. Reading the results</h2>
+  <h3 style="margin-top:2mm">5.1 How amounts add up</h3>
+  <div class="tree">
+    <div class="lv"><b>Portfolio total</b><span>Simple sum of the counterparty totals</span></div>
+    <div class="lv i1"><b>└ Counterparty</b><span>Simple sum of its netting set totals</span></div>
+    <div class="lv i2"><b>└ Netting set</b><span>Simple sum of its product class IMs plus add-ons. <strong>Netting sets never offset each other.</strong></span></div>
+    <div class="lv i3"><b>└ Product class</b><span>Risk class IMs combined with correlations (square root of the sum of squares) × multiplier</span></div>
+    <div class="lv i4"><b>└ Risk class</b><span>Delta + Vega + Curvature (+ BaseCorr for qualifying credit)</span></div>
+  </div>
+
+  <h3>5.2 Screen output (full example)</h3>
+<pre class="out" style="font-size:7.5pt">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW
+Portfolio total: 33,496,812.42 USD
+
+[CP_A] total 14,300,634.89 USD
+  netting set NS_A1 / CSA CSA_1: 14,300,634.89 (add-on 50,000.00)
+    RatesFX: 7,290,168.27
+      InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)
+      FX: 5,697,557.53  (Delta 5,545,277.27, Vega 94,228.44, Curvature 58,051.83)
+    Credit: 6,960,466.62
+      InterestRate: 91,500.00  (Delta 91,500.00)
+      CreditQualifying: 1,268,337.75  (Delta 1,228,592.85, Vega 8,400.00, Curvature 2,544.89, BaseCorr 28,800.00)
+      CreditNonQualifying: 6,111,433.76  (Delta 6,108,150.29, Vega 2,520.00, Curvature 763.47)
+
+[CP_B] total 19,196,177.54 USD
+  netting set NS_B1 / CSA CSA_1: 18,708,177.54 (add-on 0.00)
+    Equity: 12,135,837.73
+      InterestRate: 198,000.00  (Delta 198,000.00)
+      Equity: 11,559,433.25  (Delta 10,440,818.93, Vega 470,673.89, Curvature 647,940.42)
+      FX: 1,775,000.00  (Delta 1,775,000.00)
+    Commodity: 6,572,339.80
+      Commodity: 6,572,339.80  (Delta 6,046,261.65, Vega 379,453.70, Curvature 146,624.45)
+  netting set NS_B2 / CSA CSA_1: 488,000.00 (add-on 0.00)
+    RatesFX: 488,000.00
+      InterestRate: 488,000.00  (Delta 488,000.00)</pre>
+  <p>A product class IM (e.g. RatesFX 7,290,168.27) is smaller than the simple sum of its risk class IMs (1,614,228.80 + 5,697,557.53) because of diversification between risk classes. It also includes the multiplier of 1.2.</p>
+
+  <h3>5.3 CSV output (<code>--summary-csv</code>)</h3>
+  <p>One line per counterparty × netting set × product class × risk class. The file is UTF-8 with a BOM, so Excel opens it correctly.</p>
+  <table>
+    <thead><tr><th style="width:42%">Columns</th><th>Contents</th></tr></thead>
+    <tbody>
+      <tr><td><code>counterparty</code>, <code>netting_set</code>, <code>csa</code>, <code>direction</code></td><td>Scope</td></tr>
+      <tr><td><code>product_class</code>, <code>risk_class</code></td><td>Classification</td></tr>
+      <tr><td><code>delta</code>, <code>vega</code>, <code>curvature</code>, <code>basecorr</code></td><td>IM per component</td></tr>
+      <tr><td><code>risk_class_margin</code></td><td>Stand-alone risk class IM</td></tr>
+      <tr><td><code>product_margin</code>, <code>netting_set_total</code>, <code>counterparty_total</code></td><td>Higher-level totals, repeated on several lines. Do not add them up again in Excel.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><b class="t">If the numbers look very long</b>The engine calculates with 50-digit precision and writes unrounded values. Format the cells in Excel as "Number, 2 decimal places".</div>
+
+  <h3>5.4 JSON output (<code>--output</code>)</h3>
+  <table>
+    <thead><tr><th style="width:30%">Location</th><th>Contents</th></tr></thead>
+    <tbody>
+      <tr><td><code>metadata</code></td><td>Input file and its hash (<code>crif_sha256</code>), valuation date, selected version and warning, parameter hash, input transformations, validation status, warning counts, and rows read, used and excluded</td></tr>
+      <tr><td><code>result.counterparties[]</code></td><td>Results in the order counterparty → <code>netting_sets[]</code> → <code>products[]</code> → <code>risk_classes[]</code>, with amounts at every level</td></tr>
+      <tr><td><code>risk_classes[].contribution</code></td><td>The product class IM split by risk class. Within a product class they add up to the product class IM.</td></tr>
+      <tr><td><code>result.trace</code></td><td>Only with <code>--include-trace</code>. Every intermediate value from the CRIF rows to the totals, with the SIMM methodology paragraph, so you can follow how any number was produced.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== DETAIL 5: versions, python ============================== -->
+<section class="flowsec">
+  <h2>6. SIMM version selection</h2>
+  <p>ISDA announces each version with a "use from close of business (COB)" date. The engine uses the latest version whose date is on or before the valuation date.</p>
+  <table>
+    <thead><tr><th style="width:18%">Version</th><th style="width:22%">Use from (COB)</th><th>Valuation dates it is used for</th></tr></thead>
+    <tbody>
+      <tr><td>2.5</td><td>2022-12-02</td><td>2022-12-02 to 2023-07-13</td></tr>
+      <tr><td>2.5A</td><td>2023-07-14</td><td>2023-07-14 to 2023-11-30</td></tr>
+      <tr><td>2.6</td><td>2023-12-01</td><td>2023-12-01 to 2024-12-05</td></tr>
+      <tr><td>2.7</td><td>2024-12-06</td><td>2024-12-06 to 2025-07-10</td></tr>
+      <tr><td>2.7+2412</td><td>2025-07-11</td><td>2025-07-11 to 2025-12-04</td></tr>
+      <tr><td>2.8+2506</td><td>2025-12-05</td><td>2025-12-05 to 2026-07-09</td></tr>
+      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 onwards</td></tr>
+    </tbody>
+  </table>
+  <p>To see which version applies to a date:</p>
+<pre class="cmd">python -m simm versions --date 2025-03-31</pre>
+<pre class="out">{ "version": "2.7", "use_from_cob": "2024-12-06", "valuation_date": "2025-03-31",
+  "beyond_verified_schedule": false, "schedule_verified_through": "2026-10-06", "warning": null }</pre>
+  <ul>
+    <li><b>Before 2022-12-02:</b> not supported (<code>No SIMM package scheduled</code> error).</li>
+    <li><b>After 2026-10-06:</b> calculated with the latest version and flagged with a warning, because ISDA may have published a newer version since. Check the ISDA website; if there is a new version, add it as described in section 8.</li>
+    <li><b>Setting the version yourself:</b> if you agreed a different version with your counterparty, use <code>--version</code>. A warning is recorded on screen and in the JSON.</li>
+  </ul>
+<pre class="out">SIMM 2.7 | valuation 2026-06-30 | USD | SHADOW
+WARNING: Version override 2.7 differs from scheduled 2.8+2506</pre>
+
+  <h2 style="margin-top:8mm">7. Using the engine from Python</h2>
+  <p>You can call the engine from Python code instead of the command line. A <b>fixed add-on amount</b> can only be given this way.</p>
+<pre class="cmd">import json
+from simm.crif import read_crif, validate
+from simm.engine import Engine
+from simm.parameters import ParameterPackage
+from simm.versioning import select_version
+
+valuation_date = '2026-06-30'
+context = json.load(open('examples/context.json', encoding='utf-8'))
+context['valuation_date'] = valuation_date
+
+selection = select_version(valuation_date)            <span class="c"># select the version</span>
+package = ParameterPackage(selection['version'])      <span class="c"># load parameters (hash checked)</span>
+headers, rows = read_crif('examples/crif_example.csv')
+validation = validate(headers, rows, package, context)
+
+if validation.blocked:
+    for issue in validation.issues:
+        print(issue.severity, issue.code, issue.row_id, issue.message)
+else:
+    config = {'fixed_addons': [{
+        'scope': {'counterparty': 'CP_B', 'legal_entity': 'ENTITY_1', 'netting_set': 'NS_B2',
+                  'csa': 'CSA_1', 'direction': 'collect', 'regulation': 'EXAMPLE_REGULATION'},
+        'amount_usd': '10000',
+        'source': 'CSA side letter 2026-01-15'}]}
+    result = Engine(package).calculate(validation, config)
+    print(result['simm_version'], result['total_simm'])</pre>
+  <ul>
+    <li><b><code>scope</code>:</b> all six fields must match a <code>scope</code> in the JSON result. If no netting set matches, an error is raised.</li>
+    <li><b><code>amount_usd</code>:</b> a USD amount of 0 or more. Pass it as a string to keep full precision. <b><code>source</code></b> (the agreement reference) must not be empty.</li>
+    <li>Running this example raises NS_B2 from 488,000 to 498,000 and the total to 33,506,812.42.</li>
+  </ul>
+</section>
+
+<!-- ============================== DETAIL 6: new version, limits, FAQ ============================== -->
+<section class="flowsec">
+  <h2>8. Adding a new SIMM version</h2>
+  <p>When ISDA publishes a new version and the formulas (methodology sections B-C) are unchanged, adding its parameters is enough.</p>
+  <div class="step"><div class="n">1</div><div class="b"><b class="t">Create the folder</b><p>Create <code>parameters\simm_&lt;version&gt;</code>, replacing <code>.</code> and <code>+</code> with <code>_</code> (e.g. 2.8+2512 → <code>simm_2_8_2512</code>).</p></div></div>
+  <div class="step"><div class="n">2</div><div class="b"><b class="t">Write parameters.json</b><p>Copy the file of an existing version and change the values according to the new ISDA methodology document. Update <code>version</code> and <code>sources</code> as well.</p></div></div>
+  <div class="step"><div class="n">3</div><div class="b"><b class="t">Compute the hash</b><p>Put the file's SHA-256 into <code>sha256</code> of <code>manifest.json</code>, <b>in lower case</b>.</p>
+<pre class="cmd">(Get-FileHash parameters\simm_X_Y\parameters.json).Hash.ToLower()    <span class="c"># Windows PowerShell</span>
+shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="c"># macOS / Linux</span></pre></div></div>
+  <div class="step"><div class="n">4</div><div class="b"><b class="t">Add it to the schedule</b><p>Append <code>version</code>, <code>use_from_cob</code>, <code>announcement</code> and <code>methodology_pdf</code> to <code>versions</code> in <code>parameters\version_schedule.json</code>, and set <code>verified_through</code> to the date you checked ISDA's announcements.</p></div></div>
+  <div class="step"><div class="n">5</div><div class="b"><b class="t">Check</b><p>Run the tests and check that <code>python -m simm versions</code> lists the new version.</p></div></div>
+  <div class="callout warn"><b class="t">When parameters are not enough</b>If the formulas change or a new <code>methodology_id</code> appears, the engine code must change too (for example <code>SUPPORTED_METHODOLOGIES</code> in <code>src\simm\parameters.py</code>). Parameter files are checked when loaded: hash, symmetry and range of correlation matrices, and concentration thresholds.</div>
+
+  <h2 style="margin-top:7mm">9. Notices and limitations</h2>
+  <ul>
+    <li><b>ISDA rights:</b> ISDA SIMM® is a registered trademark and intellectual property of ISDA and is subject to U.S. Patent No. 10,515,410. The values in <code>parameters</code> are transcribed from ISDA's public documents and are not covered by this project's Apache-2.0 licence.</li>
+    <li><b>ISDA licence:</b> using SIMM for margin calculations may require a licence from ISDA. See the ISDA SIMM licensing FAQ (isda.org).</li>
+    <li><b>Validation:</b> the parameters were checked against independent transcriptions and the formulas against an independent re-implementation on synthetic portfolios. ISDA's official unit tests (licensed material) were not run. Details are in <code>docs\METHODOLOGY_NOTES.md</code>.</li>
+    <li><b>CRIF standard:</b> based on the public Risk Data Standards 1.36. The <code>PaymentCurrency</code> and <code>GroupName</code> columns and the fixed add-on configuration are extensions of this engine; check that they match your CRIF producer.</li>
+    <li><b>Not covered:</b> FX conversion, thresholds, minimum transfer amounts, collateral valuation and regulatory scope decisions.</li>
+    <li><b>Licence:</b> code, documents and templates are Apache-2.0. You may use, modify, redistribute and use them commercially without permission, provided you keep LICENSE and NOTICE and mark the files you change.</li>
+  </ul>
+
+  <h2 style="margin-top:7mm">10. FAQ</h2>
+  <h4>Q. I need results in another currency, such as KRW.</h4>
+  <p>The engine reports USD only. Multiply the result by the FX rate you need. Which rate (date, source) to use should follow your agreement with the counterparty.</p>
+  <h4>Q. Can two CSAs with the same counterparty be calculated together?</h4>
+  <p>Each CSA (netting set) is calculated separately and the results are added. To offset them, give rows of both CSAs the same <code>NettingSet</code> value, but only if the legal agreements actually allow it.</p>
+  <h4>Q. My CRIF contains trades under Schedule IM.</h4>
+  <p>Rows whose <code>IMModel</code> is not <code>SIMM</code> block the run. Move Schedule rows to a separate file.</p>
+  <h4>Q. I only get warnings (WARNING). Is that OK?</h4>
+  <p>Yes, the calculation runs. <code>LATEST_RDS_UNVERIFIED</code> always appears. <code>NETTED_ROWS</code> means several rows of the same risk factor were added together; check that this is intended.</p>
+  <h4>Q. My result differs slightly from my counterparty's or another system's.</h4>
+  <p>Check, in this order: ① the same SIMM version ② the same CRIF (<code>crif_sha256</code>) ③ the same netting sets ④ the same FX rates for non-USD rows ⑤ the same rounding. Comparing intermediate values with <code>--include-trace</code> helps find where the difference starts.</p>
+</section>
+
+<!-- ============================== APPENDIX A ============================== -->
+<section class="page">
+  <div class="part"><span class="tag">Appendix A</span><span class="ttl">All error codes</span><span class="desc">CRITICAL and REVIEW_REQUIRED block the run; WARNING does not</span></div>
+
+  <h4 style="margin-top:0">Files and settings</h4>
+  <table>
+    <thead><tr><th style="width:30%">Code</th><th style="width:33%">Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>MISSING_COLUMNS</code></td><td>A required column is missing</td><td>Use the template column names exactly (case-sensitive).</td></tr>
+      <tr><td><code>DIRECTION_REQUIRED</code></td><td><code>direction</code> is not collect/post</td><td>Replace the template's <code>"collect | post"</code> with one of them.</td></tr>
+      <tr><td><code>REGULATION_REQUIRED</code></td><td><code>regulation</code> is empty</td><td>Enter a regulation name.</td></tr>
+      <tr><td><code>PROFILE_REQUIRED</code></td><td>Wrong <code>crif_profile</code></td><td>Keep the template value.</td></tr>
+      <tr><td><code>CURRENCY_REGISTRY_REQUIRED</code></td><td><code>currency_codes</code> is empty</td><td>Enter the currency list.</td></tr>
+      <tr><td><code>UNIT_EVIDENCE_REQUIRED</code></td><td><code>unit</code> / <code>source</code> empty for a risk type in use</td><td>Enter the evidence (section 3).</td></tr>
+      <tr><td><code>UNIT_MISMATCH</code></td><td>Declared unit differs from the convention</td><td>Restore the template <code>unit</code> and check the CRIF units.</td></tr>
+      <tr><td><code>SCOPE_REQUIRED</code></td><td>Counterparty, legal entity, netting set or CSA is empty</td><td>Fill the column or set a context default.</td></tr>
+      <tr><td><code>EMPTY_PORTFOLIO</code></td><td>The CRIF has no data rows</td><td>Check the file contents.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Row contents</h4>
+  <table>
+    <thead><tr><th style="width:30%">Code</th><th style="width:33%">Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>DATE_MISMATCH</code></td><td>CRIF date ≠ <code>--valuation-date</code></td><td>Make the dates equal.</td></tr>
+      <tr><td><code>INVALID_DATE</code></td><td>Date not in <code>YYYY-MM-DD</code> format</td><td>Fix the format or use <code>--excel-serial-dates</code>.</td></tr>
+      <tr><td><code>WHITESPACE</code></td><td>Spaces around a cell value</td><td>Remove them at the source.</td></tr>
+      <tr><td><code>EXACT_DUPLICATE</code></td><td>The same row appears twice</td><td>Risk of double counting. If they are different trades, set <code>TradeID</code>.</td></tr>
+      <tr><td><code>UNSUPPORTED_MODEL</code></td><td><code>IMModel</code> is not SIMM</td><td>Move Schedule rows to another file.</td></tr>
+      <tr><td><code>VERSION_MISMATCH</code></td><td><code>SIMMVersion</code> column ≠ selected version</td><td>Check the column or <code>--version</code>.</td></tr>
+      <tr><td><code>UNKNOWN_RISK_TYPE</code></td><td>Unsupported RiskType</td><td>Check the spelling.</td></tr>
+      <tr><td><code>INVALID_PRODUCT_CLASS</code></td><td>Wrong product class</td><td>Use RatesFX, Credit, Equity or Commodity.</td></tr>
+      <tr><td><code>MISSING_QUALIFIER</code></td><td>Qualifier is empty</td><td>Enter a value.</td></tr>
+      <tr><td><code>INVALID_AMOUNT</code></td><td>Not a number (empty, commas, ...)</td><td>Use the <code>1000</code> format.</td></tr>
+      <tr><td><code>INVALID_CURRENCY</code></td><td><code>AmountCurrency</code> not in the currency list</td><td>Add it to <code>currency_codes</code>.</td></tr>
+      <tr><td><code>USD_AMOUNT_MISMATCH</code></td><td>USD row with Amount ≠ AmountUSD</td><td>Make them equal.</td></tr>
+      <tr><td><code>FX_SIGN_OR_ZERO</code></td><td>Non-USD row: different signs, or only one is zero</td><td>Check the converted value.</td></tr>
+      <tr><td><code>INVALID_QUALIFIER_CURRENCY</code></td><td>Rates/FX qualifier not in the currency list</td><td>Check the currency code.</td></tr>
+      <tr><td><code>INVALID_FX_PAIR</code></td><td>Wrong FX vol currency pair</td><td>Use the <code>EURUSD</code> format.</td></tr>
+      <tr><td><code>IR_BUCKET_MISMATCH</code></td><td>Rates bucket does not fit the currency</td><td>Use the value in the message (1/2/3).</td></tr>
+      <tr><td><code>CURVE_MAPPING</code></td><td>Rates Label2 not in the allowed list</td><td>Map it to OIS, Libor3m and so on.</td></tr>
+      <tr><td><code>INVALID_BUCKET</code></td><td>Credit/equity/commodity bucket out of range</td><td>Check the ranges in 2.2.</td></tr>
+      <tr><td><code>UNUSED_BUCKET</code> / <code>UNUSED_LABEL1</code></td><td>Value in a cell that must be blank</td><td>Empty the cell.</td></tr>
+      <tr><td><code>INVALID_TENOR</code></td><td>Tenor not allowed</td><td>Re-produce on standard tenors.</td></tr>
+      <tr><td><code>UNCONFIRMED_LABEL2</code></td><td>Label2 on a non-rates risk type</td><td>Empty it (except <code>Sec</code> on CreditQ).</td></tr>
+      <tr><td><code>PAYMENT_CURRENCY_REQUIRED</code></td><td>Credit row without payment currency</td><td>Fill <code>PaymentCurrency</code>.</td></tr>
+      <tr><td><code>NQ_GROUP_REQUIRED</code></td><td>Non-qualifying credit row without group</td><td>Fill <code>GroupName</code>.</td></tr>
+      <tr><td><code>QUALIFIER_MAPPING</code></td><td>CreditQ or equity (buckets 1-10, Residual) qualifier is not an ISIN</td><td>Use the <code>ISIN:US0378331005</code> format.</td></tr>
+      <tr><td><code>INCONSISTENT_BUCKET</code></td><td>Same qualifier with different buckets</td><td>Use one bucket.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Add-on rows</h4>
+  <table>
+    <thead><tr><th style="width:30%">Code</th><th style="width:33%">Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>ADDON_LABELS</code></td><td>Bucket/Label filled on an add-on row</td><td>Empty them.</td></tr>
+      <tr><td><code>INVALID_MULTIPLIER</code></td><td>Multiplier below 1 or wrong product class</td><td>Use 1 or more and a valid product class.</td></tr>
+      <tr><td><code>MULTIPLIER_CLASS_MISMATCH</code></td><td>ProductClass ≠ Qualifier</td><td>Make them equal.</td></tr>
+      <tr><td><code>NEGATIVE_ADDON</code></td><td>Negative add-on factor</td><td>Use 0 or more.</td></tr>
+      <tr><td><code>PARAM_AMOUNT_MISMATCH</code></td><td>Add-on row with Amount ≠ AmountUSD</td><td>Make them equal.</td></tr>
+      <tr><td><code>FIXED_ADDON_ENCODING</code></td><td>Fixed add-on given as a CRIF row</td><td>Use the Python <code>fixed_addons</code> setting (section 7).</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Warnings (the run continues)</h4>
+  <table>
+    <thead><tr><th style="width:30%">Code</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>LATEST_RDS_UNVERIFIED</code></td><td>Always shown. Not checked against the latest licensed Risk Data Standards and ISDA's official tests.</td></tr>
+      <tr><td><code>FX_RATE_UNVERIFIED</code></td><td>The <code>AmountUSD</code> of a non-USD row was used without checking.</td></tr>
+      <tr><td><code>NETTED_ROWS</code></td><td>Several rows of the same risk factor were added together.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Run errors (exit code 1)</h4>
+  <table>
+    <thead><tr><th style="width:40%">Message</th><th>Cause and fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>Inconsistent CSV field count</code></td><td>Lines have different numbers of cells. Quote values that contain commas.</td></tr>
+      <tr><td><code>Duplicate column names</code></td><td>A column name appears twice.</td></tr>
+      <tr><td><code>Column whitespace ...</code></td><td>A column name has spaces around it.</td></tr>
+      <tr><td><code>Select one CRIF worksheet ...</code></td><td>The XLSX has several sheets. Keep only one.</td></tr>
+      <tr><td><code>Excel formula cells are not accepted ...</code></td><td>The XLSX contains formulas. Paste as values.</td></tr>
+      <tr><td><code>Supported inputs: ...</code></td><td>Unsupported file type (e.g. .xls). Convert to CSV or XLSX.</td></tr>
+      <tr><td><code>No SIMM package scheduled for ...</code></td><td>Date before 2022-12-02.</td></tr>
+      <tr><td><code>Parameter package hash mismatch</code></td><td>A <code>parameters</code> file was changed. Download it again.</td></tr>
+      <tr><td><code>Credentials are prohibited ...</code></td><td>The context file has a credential-like field name. Remove it.</td></tr>
+      <tr><td><code>CRIF already has NettingSet ...</code></td><td><code>--netting-set-column</code> used although a <code>NettingSet</code> column exists. Use only one.</td></tr>
+      <tr><td><code>Notional/factor product coverage differs ...</code></td><td>Add-on factor rows and <code>Notional</code> rows do not pair up by product name.</td></tr>
+      <tr><td><code>Conflicting product class multipliers</code></td><td>Different multipliers for the same netting set and product class.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="part" style="margin-top:8mm"><span class="tag">Appendix B</span><span class="ttl">Glossary</span></div>
+  <table>
+    <thead><tr><th style="width:24%">Term</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>SIMM</td><td>ISDA's Standard Initial Margin Model for uncleared OTC derivatives</td></tr>
+      <tr><td>IM (initial margin)</td><td>Collateral exchanged up front to cover losses if a counterparty defaults</td></tr>
+      <tr><td>CRIF</td><td>Common Risk Interchange Format, the standard file format for SIMM sensitivities</td></tr>
+      <tr><td>Sensitivity</td><td>How much a trade's value changes when a market variable such as a rate moves slightly</td></tr>
+      <tr><td>Delta / Vega / Curvature</td><td>First-order price sensitivity / volatility sensitivity / non-linear effect of large moves</td></tr>
+      <tr><td>BaseCorr</td><td>Sensitivity of credit index tranches to base correlation</td></tr>
+      <tr><td>bp, PV01, CS01</td><td>bp = 0.01%. PV01 and CS01 = value change for a 1bp move in rates or credit spreads</td></tr>
+      <tr><td>Netting set</td><td>A group of trades that can be offset against each other, usually one CSA</td></tr>
+      <tr><td>CSA</td><td>Credit Support Annex, the collateral agreement</td></tr>
+      <tr><td>COB</td><td>Close of business, the valuation point in time</td></tr>
+      <tr><td>Product class</td><td>The four product groups RatesFX, Credit, Equity and Commodity</td></tr>
+      <tr><td>Risk class</td><td>The six risk groups InterestRate, CreditQualifying, CreditNonQualifying, Equity, Commodity and FX</td></tr>
+      <tr><td>Qualifier / Bucket / Label</td><td>Cells that identify a risk factor: currency or issuer / group within the risk class / tenor or curve</td></tr>
+      <tr><td>Tenor</td><td>Maturity point (e.g. 5y = 5 years)</td></tr>
+      <tr><td>Add-on / Multiplier</td><td>Additional margin added to / factor applied to the calculated SIMM</td></tr>
+      <tr><td>ISIN</td><td>12-character international securities identification number</td></tr>
+      <tr><td>SHADOW</td><td>Marks a reference calculation, not an official margin figure</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>

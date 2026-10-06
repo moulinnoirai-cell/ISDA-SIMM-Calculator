@@ -1,12 +1,30 @@
 # ISDA SIMM calculator (Python, USD)
 
-A Python implementation of the ISDA Standard Initial Margin Model (ISDA SIMM®) for uncleared OTC derivatives, covering methodology
-versions **2.5 to 2.8+2512**. It reads a CRIF file, validates it strictly, picks the SIMM version from the valuation date and reports
-initial margin in USD by counterparty, netting set, product class, risk class and component (delta, vega, curvature, base correlation).
+## 요약
 
-- **Offline.** No network access and no FX conversion: amounts are the CRIF `AmountUSD` values.
-- **Decimal arithmetic.** Every result keeps a calculation trace back to the CRIF rows.
-- **Netting sets stay separate.** Margins are summed per netting set and never offset across netting sets.
+ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입니다.
+- **사용설명서:** [`docs`](docs) 폴더를 확인하세요. 한국어 [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)와 영어 [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 요약편(2~5쪽)만 보고도 실행할 수 있습니다.
+- **지원 범위:** 방법론 2.5~2.8+2512 버전입니다.
+- **계산 방식:** CRIF 파일을 엄격히 검증한 뒤 평가일에 맞는 버전을 자동 선택해 USD로 계산합니다.
+- **산출 결과:** 거래상대방·Netting Set·상품·위험군·구성요소(Delta, Vega, Curvature, BaseCorr)별 증거금을 냅니다.
+- **오프라인:** 외부 접속과 환율 환산이 없으며, 금액은 CRIF의 `AmountUSD`를 그대로 씁니다.
+- **정밀도와 추적:** Decimal 연산으로 계산하고, 모든 결과에 CRIF 행까지 이어지는 계산 추적을 남깁니다. Netting Set끼리는 상계하지 않고 합산합니다.
+- **CRIF 작성법:** `crif/CRIF_FORMAT.md`를 보시고, 예시는 `examples/`에 있습니다.
+- **이 프로젝트의 라이선스:** 코드·문서·양식은 Apache-2.0입니다. 허락 없이 사용·수정·재배포·상업적 이용이 가능하고, LICENSE와 NOTICE를 유지하고 수정한 파일에 수정 사실을 표시하면 됩니다.
+- **ISDA 권리:** ISDA SIMM은 ISDA의 상표·지적재산이며 미국 특허(10,515,410) 대상입니다. `parameters/`의 Parameter 값은 이 라이선스 적용 대상이 아니고, SIMM 사용에는 ISDA 라이선스가 필요할 수 있습니다. 결과는 별도로 검증한 뒤 사용하십시오.
+
+## Summary
+
+A Python calculation engine for the ISDA Standard Initial Margin Model (ISDA SIMM®) for uncleared OTC derivatives.
+- **User guides:** see the [`docs`](docs) folder. The English [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and the Korean [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF) cover installation, running and troubleshooting. New users only need the quick start (pages 2-5).
+- **Coverage:** methodology versions 2.5 to 2.8+2512.
+- **Method:** validates the CRIF file strictly, selects the SIMM version from the valuation date and calculates in USD.
+- **Output:** initial margin by counterparty, netting set, product class, risk class and component (delta, vega, curvature, base correlation).
+- **Offline:** no network access and no FX conversion; amounts are the CRIF `AmountUSD` values.
+- **Precision and traceability:** decimal arithmetic, with a calculation trace from every result back to the CRIF rows. Netting sets are summed, never offset.
+- **CRIF format:** see `crif/CRIF_FORMAT.md`; examples are in `examples/`.
+- **Licence of this project:** code, documents and templates are Apache-2.0. You may use, modify, redistribute and use them commercially without asking permission, provided you keep LICENSE and NOTICE and mark files you change.
+- **ISDA rights:** ISDA SIMM is a trademark and intellectual property of ISDA and is subject to U.S. Patent No. 10,515,410. The parameter values in `parameters/` are not covered by this licence, and using SIMM may require a licence from ISDA. Validate results independently before relying on them.
 
 > **ISDA notice.**
 > - ISDA SIMM® is a registered trademark and intellectual property of the International Swaps and Derivatives Association, Inc.
@@ -19,8 +37,7 @@ initial margin in USD by counterparty, netting set, product class, risk class an
 
 ## Quick start
 
-A step-by-step user guide in Korean is available as a PDF:
-[docs/ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF).
+Step-by-step user guides (PDF) are in the [`docs`](docs) folder: [English](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and [Korean](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF).
 
 Requires Python 3.11+. Reading `.xlsx` CRIF files additionally needs `openpyxl`.
 
@@ -108,18 +125,6 @@ parameters/      one package per SIMM version + version_schedule.json
 crif/            CRIF template and format description
 examples/        synthetic CRIF and context
 config/          context template
-docs/            methodology notes, Korean user guide (PDF and its HTML source)
+docs/            user guides in English and Korean (PDF and HTML source), methodology notes
 tests/           synthetic tests
 ```
-
-## 한국어 요약
-
-ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입니다.
-- **사용설명서:** [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 요약편(2~5쪽)만 보고도 실행할 수 있습니다.
-- **지원 범위:** 방법론 2.5~2.8+2512 버전입니다.
-- **계산 방식:** CRIF 파일을 엄격히 검증한 뒤 평가일에 맞는 버전을 자동 선택해 USD로 계산합니다.
-- **산출 결과:** 거래상대방·Netting Set·상품·위험군·구성요소별 증거금을 냅니다.
-- **오프라인:** 외부 접속과 환율 환산이 없으며, 금액은 CRIF의 `AmountUSD`를 그대로 씁니다.
-- **CRIF 작성법:** `crif/CRIF_FORMAT.md`를 보시고, 예시는 `examples/`에 있습니다.
-- **이 프로젝트의 라이선스:** 코드·문서·양식은 Apache-2.0입니다. 허락 없이 사용·수정·재배포·상업적 이용이 가능하고, LICENSE와 NOTICE를 유지하고 수정한 파일에 수정 사실을 표시하면 됩니다.
-- **ISDA 권리:** ISDA SIMM은 ISDA의 상표·지적재산이며 미국 특허(10,515,410) 대상입니다. `parameters/`의 Parameter 값은 이 라이선스 적용 대상이 아니고, SIMM 사용에는 ISDA 라이선스가 필요할 수 있습니다. 결과는 별도로 검증한 뒤 사용하십시오.
