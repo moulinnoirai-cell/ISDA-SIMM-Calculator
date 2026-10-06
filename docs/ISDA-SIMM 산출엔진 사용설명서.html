@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISDA-SIMM 산출엔진 사용설명서</title>
+<style>
+  :root {
+    --navy: #1f3a5f; --navy-2: #2d5281; --teal: #0f7b74; --ink: #1f2328; --muted: #5b6672;
+    --line: #d0d7de; --soft: #f3f6f9; --soft-2: #eaf1f8;
+    --tip-bg: #e9f6ef; --tip-line: #2e8b57; --warn-bg: #fff4e5; --warn-line: #d9822b; --note-bg: #eaf2fb; --note-line: #2d6cb5;
+  }
+  @page { size: A4; margin: 17mm 15mm 17mm 15mm;
+    @bottom-center { content: counter(page) " / " counter(pages); font-family: "Malgun Gothic", sans-serif; font-size: 8.5pt; color: #8a94a0; }
+    @top-right { content: "ISDA-SIMM 산출엔진 사용설명서"; font-family: "Malgun Gothic", sans-serif; font-size: 8pt; color: #a0a8b2; }
+  }
+  @page :first { @bottom-center { content: none; } @top-right { content: none; } }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html { background: #fff; }
+  body { margin: 0; font-family: "Malgun Gothic", "맑은 고딕", sans-serif; font-size: 9.6pt; line-height: 1.55; color: var(--ink); background: #fff; word-break: keep-all; overflow-wrap: anywhere; }
+  .page { break-before: page; }
+  h1, h2, h3, h4 { color: var(--navy); line-height: 1.3; break-after: avoid; }
+  h2 { font-size: 15pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid var(--navy); }
+  h3 { font-size: 11.5pt; margin: 4.5mm 0 1.5mm; }
+  h4 { font-size: 10.2pt; margin: 3.5mm 0 1.2mm; color: var(--navy-2); }
+  p { margin: 1.2mm 0 2mm; }
+  ul, ol { margin: 0.8mm 0 2.2mm; padding-left: 6mm; }
+  li { margin: 0.4mm 0; }
+  a { color: var(--navy-2); text-decoration: none; }
+  code { font-family: Consolas, "Malgun Gothic", monospace; font-size: 9pt; background: var(--soft); border: 1px solid #e1e6eb; border-radius: 3px; padding: 0 1.2mm; }
+  pre { font-family: Consolas, "Malgun Gothic", monospace; font-size: 8.3pt; line-height: 1.45; margin: 1.5mm 0 2.2mm; padding: 2.2mm 3.5mm; border-radius: 2mm; white-space: pre-wrap; break-inside: avoid; }
+  pre.cmd { background: #1d2733; color: #e6edf3; }
+  pre.cmd .c { color: #8b98a5; }
+  pre.out { background: var(--soft); color: #24292f; border-left: 3px solid #9aa7b4; }
+  pre.out .hl { color: var(--teal); font-weight: bold; }
+  pre .m { color: #fff; background: var(--teal); border-radius: 50%; padding: 0 1mm; font-family: "Malgun Gothic", sans-serif; font-size: 7.5pt; font-weight: bold; }
+  pre.out .m { color: #fff; }
+  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; font-size: 8.6pt; line-height: 1.4; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: bold; padding: 1.3mm 1.8mm; border: 1px solid var(--navy); }
+  td { padding: 1.1mm 1.8mm; border: 1px solid var(--line); vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f8fafc; }
+  td code, th code { font-size: 8.3pt; padding: 0 0.8mm; }
+  .nowrap { white-space: nowrap; }
+  .callout { border-left: 4px solid; border-radius: 1.5mm; padding: 2mm 3.5mm; margin: 2.2mm 0; break-inside: avoid; }
+  .callout b.t { display: block; margin-bottom: 0.8mm; }
+  .callout ul { margin-bottom: 0; }
+  .tip { background: var(--tip-bg); border-color: var(--tip-line); }
+  .tip b.t { color: #1f6b43; }
+  .warn { background: var(--warn-bg); border-color: var(--warn-line); }
+  .warn b.t { color: #9a5212; }
+  .note { background: var(--note-bg); border-color: var(--note-line); }
+  .note b.t { color: #1d4f8a; }
+
+  /* cover */
+  .cover { height: 258mm; display: flex; flex-direction: column; }
+  .cover .band { background: var(--navy); color: #fff; border-radius: 3mm; padding: 16mm 12mm 14mm; margin-top: 22mm; }
+  .cover .kicker { font-size: 10pt; letter-spacing: 0.5mm; opacity: 0.8; }
+  .cover h1 { color: #fff; font-size: 27pt; margin: 3mm 0 4mm; }
+  .cover .sub { font-size: 12pt; opacity: 0.92; }
+  .cover .howto { margin-top: 12mm; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  .cover .howto div { border: 1px solid var(--line); border-radius: 2.5mm; padding: 4mm; background: var(--soft); }
+  .cover .howto b { display: block; color: var(--navy); font-size: 11pt; margin-bottom: 1mm; }
+  .cover .howto .pg { font-size: 9pt; color: var(--teal); font-weight: bold; }
+  .cover .howto p { font-size: 9pt; margin: 1mm 0 0; color: var(--muted); }
+  .cover .meta { margin-top: auto; font-size: 9pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 3mm; }
+  .cover .meta td { border: none; padding: 0.5mm 2mm 0.5mm 0; background: none !important; }
+
+  /* part banners and summary label */
+  .part { background: var(--soft-2); border-radius: 2mm; padding: 2.5mm 5mm; margin-bottom: 4mm; display: flex; align-items: baseline; gap: 4mm; }
+  .part .tag { background: var(--navy); color: #fff; font-weight: bold; font-size: 9pt; border-radius: 1.5mm; padding: 0.8mm 2.5mm; }
+  .part .tag.sum { background: var(--teal); }
+  .part .ttl { font-size: 10pt; color: var(--navy); font-weight: bold; }
+  .part .desc { font-size: 9pt; color: var(--muted); margin-left: auto; }
+
+  /* flow diagram */
+  .flow { display: flex; align-items: stretch; gap: 2mm; margin: 2mm 0 3mm; }
+  .flow .box { flex: 1; border: 1.5px solid var(--navy-2); border-radius: 2mm; padding: 2.5mm 2mm; text-align: center; background: #fff; font-weight: bold; color: var(--navy); font-size: 9.5pt; }
+  .flow .box small { display: block; font-weight: normal; color: var(--muted); font-size: 8pt; margin-top: 0.8mm; line-height: 1.35; }
+  .flow .box.in { background: var(--soft); }
+  .flow .box.out { background: var(--navy); color: #fff; }
+  .flow .box.out small { color: #d6e2ef; }
+  .flow .arr { align-self: center; color: var(--teal); font-weight: bold; font-size: 13pt; }
+
+  /* numbered steps */
+  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; margin: 1.8mm 0 2.2mm; }
+  .step .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--teal); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 10.5pt; margin-top: 0.3mm; }
+  .step .n.l { font-size: 9.5pt; }
+  .step .b > b.t { display: block; font-size: 10.6pt; color: var(--navy); margin-bottom: 0.5mm; }
+  .step .b p { margin: 0.5mm 0 1.5mm; }
+  .step .b pre { margin: 1.5mm 0 1.5mm; }
+  .ok { color: var(--teal); font-weight: bold; }
+
+  /* two columns */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .cols > div { min-width: 0; }
+  .rule { display: grid; grid-template-columns: 6mm 1fr; gap: 1.5mm; margin: 1.2mm 0; break-inside: avoid; }
+  .rule .k { color: #fff; background: var(--navy-2); border-radius: 1mm; text-align: center; font-weight: bold; font-size: 8.5pt; height: 5mm; line-height: 5mm; margin-top: 0.4mm; }
+
+  /* tree */
+  .tree { border: 1px solid var(--line); border-radius: 2mm; padding: 3mm 4mm; background: #fff; font-size: 9.2pt; break-inside: avoid; margin: 2mm 0 4mm; }
+  .tree .lv { display: grid; grid-template-columns: 40mm 1fr; gap: 3mm; padding: 1.2mm 0; border-bottom: 1px dashed #e1e6eb; }
+  .tree .lv:last-child { border-bottom: none; }
+  .tree .lv > b { color: var(--navy); }
+  .tree .i1 > b { padding-left: 4mm; } .tree .i2 > b { padding-left: 8mm; } .tree .i3 > b { padding-left: 12mm; } .tree .i4 > b { padding-left: 16mm; }
+
+  .toc { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; font-size: 9.3pt; margin-top: 5mm; }
+  .toc > div > div { margin: 0.6mm 0; }
+  
+  .toc .p { font-weight: bold; color: var(--navy); border-bottom: 1px solid var(--line); padding-bottom: 1mm; margin-bottom: 1mm; }
+  .flowsec { margin-top: 7mm; }
+  .keep { break-inside: avoid; }
+  table.tight { font-size: 8pt; table-layout: fixed; }
+  table.tight th { white-space: nowrap; padding: 1.2mm 1.2mm; font-size: 7.6pt; }
+  table.tight td { padding: 1mm 1.2mm; overflow-wrap: anywhere; }
+  table.rt td:first-child code { white-space: nowrap; }
+  .small { font-size: 8.8pt; color: var(--muted); }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<section class="cover">
+  <div class="band">
+    <div class="kicker">ISDA-SIMM-Calculator · 사용설명서</div>
+    <h1>ISDA-SIMM 산출엔진<br>사용설명서</h1>
+    <div class="sub">CRIF 파일로 비청산 장외파생상품의 개시증거금(IM)을<br>USD로 계산하는 Python 프로그램</div>
+  </div>
+
+  <div class="howto">
+    <div><span class="pg">2 ~ 5쪽</span><b>요약편</b><p>처음 쓰는 분은 여기만 보셔도 됩니다. 설치, 예시 실행, 내 데이터 계산, 오류 해결까지 담았습니다.</p></div>
+    <div><span class="pg">6쪽 ~</span><b>상세편</b><p>CRIF 작성 규칙, 설정 파일, 실행 옵션, 결과 해석, 버전 선택을 자세히 설명합니다.</p></div>
+    <div><span class="pg">부록</span><b>오류 코드 · 용어</b><p>화면에 나온 오류 코드의 뜻과 해결 방법, 처음 보는 용어를 찾아보세요.</p></div>
+  </div>
+
+  <div class="toc">
+    <div><div class="p">요약편</div>
+      <div>요약 1. 한눈에 보기</div><div>요약 2. 처음 실행해 보기</div><div>요약 3. 내 데이터로 계산하기</div><div>요약 4. 작성 규칙과 막혔을 때</div></div>
+    <div><div class="p">상세편</div>
+      <div>1. 설치와 실행 환경</div><div>2. CRIF 파일 작성</div><div>3. 설정 파일(Context) 작성</div><div>4. 실행 명령과 옵션</div><div>5. 결과 읽는 법</div>
+      <div>6. SIMM 버전 선택</div><div>7. Python 코드에서 직접 쓰기</div><div>8. 새 SIMM 버전 추가하기</div><div>9. 주의사항과 한계</div><div>10. 자주 묻는 질문</div></div>
+    <div><div class="p">부록</div>
+      <div>A. 오류 코드 전체 목록</div><div>B. 용어 설명</div></div>
+  </div>
+
+  <div class="meta">
+    <table>
+      <tr><td><b>지원 SIMM 버전</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512</td></tr>
+      <tr><td><b>저장소</b></td><td>https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</td></tr>
+      <tr><td><b>문서 기준일</b></td><td>2026-10-06</td></tr>
+      <tr><td><b>라이선스</b></td><td>코드·문서 Apache-2.0 / ISDA SIMM Parameter 값은 라이선스 대상 아님(ISDA 권리)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================== SUMMARY 1 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">요약 1</span><span class="ttl">한눈에 보기</span><span class="desc">요약편 2~5쪽만 보고도 실행할 수 있습니다</span></div>
+
+  <h3 style="margin-top:0">무엇을 하는 프로그램인가요?</h3>
+  <ul>
+    <li>파생상품 거래의 <b>민감도 파일(CRIF)</b>을 넣으면, ISDA SIMM 방법으로 <b>개시증거금(IM)</b>을 계산해 <b>USD</b>로 보여줍니다.</li>
+    <li>계산 전에 입력 파일이 규칙에 맞는지 꼼꼼히 검사합니다. 문제가 있으면 계산하지 않고 <b>무엇이, 몇 번째 줄에서</b> 틀렸는지 알려줍니다.</li>
+    <li>평가일에 맞는 <b>SIMM 버전</b>(2.5 ~ 2.8+2512)을 자동으로 골라 씁니다.</li>
+  </ul>
+
+  <h3>계산 흐름</h3>
+  <div class="flow">
+    <div class="box in">CRIF 파일<small>민감도 데이터<br>(CSV)</small></div>
+    <div class="arr">+</div>
+    <div class="box in">설정 파일<small>방향·규제·통화<br>(JSON)</small></div>
+    <div class="arr">→</div>
+    <div class="box">① 검증<small>틀리면 멈추고<br>알려줌</small></div>
+    <div class="arr">→</div>
+    <div class="box">② 버전<small>평가일에 맞는<br>SIMM 버전</small></div>
+    <div class="arr">→</div>
+    <div class="box">③ 계산<small>Delta·Vega·<br>Curvature 등</small></div>
+    <div class="arr">→</div>
+    <div class="box out">결과<small>화면<br>JSON · CSV</small></div>
+  </div>
+
+  <h3>준비물</h3>
+  <table>
+    <thead><tr><th style="width:24%">준비물</th><th style="width:44%">설명</th><th>구하는 곳</th></tr></thead>
+    <tbody>
+      <tr><td><b>Python 3.11 이상</b></td><td>산출엔진을 실행하는 프로그램입니다. 추가 패키지는 필요 없습니다.</td><td>python.org</td></tr>
+      <tr><td><b>산출엔진 파일</b></td><td>이 프로그램입니다.</td><td>GitHub에서 ZIP으로 내려받기 (요약 2)</td></tr>
+      <tr><td><b>CRIF 파일</b></td><td>계산할 민감도 데이터(CSV)입니다.</td><td>리스크 시스템에서 산출하거나, 양식에 직접 작성</td></tr>
+      <tr><td><b>설정 파일</b></td><td>방향(받을/줄 증거금), 규제, 통화 목록 등 실행 정보(JSON)입니다.</td><td>들어 있는 양식을 복사해 작성 (요약 3)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>결과는 이렇게 나옵니다</h3>
+<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW                 <span class="m">1</span>
+Portfolio total: 33,496,812.42 USD                                  <span class="m">2</span>
+
+[CP_A] total 14,300,634.89 USD                                      <span class="m">3</span>
+  netting set NS_A1 / CSA CSA_1: 14,300,634.89 (add-on 50,000.00)   <span class="m">4</span>
+    RatesFX: 7,290,168.27                                           <span class="m">5</span>
+      InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)  <span class="m">6</span></pre>
+  <div class="small">① 적용된 SIMM 버전, 평가일, 통화, 참고용 표시 &nbsp;② 전체 합계 &nbsp;③ 거래상대방 합계 &nbsp;④ Netting Set(CSA) 합계와 그중 Add-on
+  &nbsp;⑤ Product Class(상품군) &nbsp;⑥ Risk Class(위험군)와 구성요소. 모든 금액은 USD입니다.</div>
+
+  <div class="callout warn"><b class="t">꼭 알아둘 것</b>
+    <ul>
+      <li><b>결과는 USD로만</b> 나옵니다. 환율 환산은 하지 않고 CRIF의 <code>AmountUSD</code> 값을 그대로 씁니다.</li>
+      <li><b>인터넷 연결 없이</b> 동작합니다. 계산 중 데이터가 밖으로 나가지 않습니다.</li>
+      <li>결과는 <b>참고용(SHADOW)</b>입니다. 업무에 쓰기 전에 별도로 검증하세요. ISDA SIMM을 증거금 계산에 쓰려면 ISDA 라이선스가 필요할 수 있습니다(상세편 9장).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================== SUMMARY 2 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">요약 2</span><span class="ttl">처음 실행해 보기</span><span class="desc">예시 데이터로 10분이면 됩니다 · Windows 기준</span></div>
+
+  <div class="step"><div class="n">1</div><div class="b">
+    <b class="t">Python이 설치되어 있는지 확인</b>
+    <p>시작 메뉴에서 <b>터미널</b>(또는 PowerShell)을 열고 입력합니다.</p>
+<pre class="cmd">python --version</pre>
+    <p><span class="ok">Python 3.11.x</span> 이상이 나오면 다음 단계로 갑니다.</p>
+    <div class="callout tip"><b class="t">오류가 나거나 Microsoft Store가 열리면</b>Python이 없는 것입니다. python.org에서 내려받아 설치하세요. 설치 화면에 <b>"Add python.exe to PATH"</b> 항목이 있으면 꼭 체크하고, 설치 후 터미널을 새로 여세요.</div>
+  </div></div>
+
+  <div class="step"><div class="n">2</div><div class="b">
+    <b class="t">산출엔진 내려받기</b>
+    <ol>
+      <li>브라우저에서 <b>github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</b> 에 들어갑니다.</li>
+      <li>초록색 <b>[Code]</b> 버튼 → <b>[Download ZIP]</b>을 누릅니다.</li>
+      <li>원하는 곳(예: <code>C:\SIMM</code>)에 압축을 풉니다. <code>ISDA-SIMM-Calculator-main</code> 폴더가 생깁니다.</li>
+    </ol>
+  </div></div>
+
+  <div class="step"><div class="n">3</div><div class="b">
+    <b class="t">산출엔진 폴더에서 터미널 열기</b>
+    <p><code>ISDA-SIMM-Calculator-main</code> 폴더를 열고, 빈 곳에서 <b>마우스 오른쪽 클릭 → [터미널에서 열기]</b>를 누릅니다.
+    <code>src</code>, <code>examples</code>, <code>crif</code> 폴더가 보이는 위치여야 합니다.</p>
+  </div></div>
+
+  <div class="step"><div class="n">4</div><div class="b">
+    <b class="t">준비 명령 입력</b> <span class="small">(터미널을 새로 열 때마다 첫 줄을 한 번 입력)</span>
+<pre class="cmd">$env:PYTHONPATH = "src"
+python -m simm versions</pre>
+    <p>아래처럼 버전 목록이 나오면 <span class="ok">준비 완료</span>입니다.</p>
+<pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
+...
+2.8+2512  use from COB 2026-07-10  https://www.isda.org/...</pre>
+  </div></div>
+
+  <div class="step"><div class="n">5</div><div class="b">
+    <b class="t">예시 계산 실행</b>
+<pre class="cmd">python -m simm run `
+  --crif examples\crif_example.csv `
+  --valuation-date 2026-06-30 `
+  --context examples\context.json</pre>
+    <p>화면에 아래 줄이 보이면 <span class="ok">성공</span>입니다.</p>
+<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW
+<span class="hl">Portfolio total: 33,496,812.42 USD</span></pre>
+    <div class="callout note"><b class="t">명령 입력 요령</b>줄 끝의 <code>`</code>(백틱)은 "다음 줄에 이어짐"이라는 뜻입니다. 여러 줄을 한꺼번에 복사해 붙여넣거나, 백틱 없이 한 줄로 이어 써도 됩니다.</div>
+    <p class="small">평가일이 2026-06-30인데 2.8+2506이 선택된 것은 2.8+2512가 2026-07-10부터 적용되기 때문입니다(상세편 6장).</p>
+  </div></div>
+</section>
+
+<!-- ============================== SUMMARY 3 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">요약 3</span><span class="ttl">내 데이터로 계산하기</span><span class="desc">파일 2개를 준비해 명령 1번 실행</span></div>
+
+  <div class="step"><div class="n l">A</div><div class="b">
+    <b class="t">CRIF 파일 만들기</b>
+    <ol>
+      <li><code>crif\crif_template.csv</code>를 산출엔진 폴더에 복사하고 이름을 <code>my_crif.csv</code>로 바꿉니다.</li>
+      <li>엑셀로 열어 <b>첫 줄(열 이름)은 그대로 두고</b> 둘째 줄부터 데이터를 채웁니다. 작성 규칙은 <b>요약 4</b>에 있습니다.</li>
+      <li><b>[다른 이름으로 저장] → "CSV UTF-8(쉼표로 분리)"</b> 형식으로 저장합니다.</li>
+    </ol>
+    <div class="callout tip"><b class="t">작성 예시가 필요하면</b><code>examples\crif_example.csv</code>를 여세요. 금리, FX, 신용, 주식, 상품, Add-on까지 모든 종류의 작성 예가 들어 있습니다.</div>
+  </div></div>
+
+  <div class="step"><div class="n l">B</div><div class="b">
+    <b class="t">설정 파일 만들기</b>
+    <p><code>config\context.template.json</code>을 산출엔진 폴더에 복사해 <code>my_context.json</code>으로 바꾸고, 메모장으로 열어 아래 항목을 채웁니다.</p>
+    <table>
+      <thead><tr><th style="width:22%">항목</th><th style="width:48%">넣을 값</th><th>예</th></tr></thead>
+      <tbody>
+        <tr><td><code>direction</code></td><td><code>collect</code>(받을 증거금) 또는 <code>post</code>(줄 증거금) 중 하나</td><td><code>"collect"</code></td></tr>
+        <tr><td><code>regulation</code></td><td>규제 이름. 비워 두면 안 됩니다.</td><td><code>"REG_A"</code></td></tr>
+        <tr><td><code>legal_entity</code></td><td>우리 쪽 법인 이름</td><td><code>"MY_ENTITY"</code></td></tr>
+        <tr><td><code>csa</code></td><td>CSA(담보계약) 이름</td><td><code>"CSA_1"</code></td></tr>
+        <tr><td><code>currency_codes</code></td><td>CRIF에 나오는 모든 통화. 기본 목록에 없는 통화만 추가</td><td><code>"USD", "EUR", ...</code></td></tr>
+        <tr><td><code>source</code><br><span class="small">(unit_declarations 안)</span></td><td>CRIF에 쓴 Risk Type마다 "이 단위로 산출했다"는 근거. 쓰지 않는 Risk Type은 비워 둬도 됩니다.</td><td><code>"리스크 시스템 산출 사양서 4.1절"</code></td></tr>
+      </tbody>
+    </table>
+<pre class="out">"direction": "collect",
+"regulation": "REG_A",
+"Risk_IRCurve": { "unit": "PV01_PER_1BP", "source": "리스크 시스템 산출 사양서 4.1절" },</pre>
+    <div class="callout warn"><b class="t">주의</b><code>unit</code> 값은 바꾸지 마세요. 사용하는 Risk Type의 <code>source</code>가 비어 있으면 계산이 차단됩니다. 단위가 틀리면 결과가 크게 틀어지기 때문에 일부러 이렇게 만들었습니다.</div>
+  </div></div>
+
+  <div class="step"><div class="n l">C</div><div class="b">
+    <b class="t">실행</b> <span class="small">(터미널을 새로 열었다면 <code>$env:PYTHONPATH = "src"</code> 먼저)</span>
+<pre class="cmd">python -m simm run `
+  --crif my_crif.csv `
+  --valuation-date 2026-06-30 `
+  --context my_context.json `
+  --output result.json `
+  --summary-csv summary.csv</pre>
+    <p>화면에 요약이 나오고, 산출엔진 폴더에 <b><code>result.json</code></b>(전체 결과)과 <b><code>summary.csv</code></b>(엑셀로 볼 수 있는 표)가 만들어집니다.
+    평가일(<code>2026-06-30</code>)은 내 CRIF의 <code>ValuationDate</code>와 같게 바꿔 입력하세요.</p>
+  </div></div>
+</section>
+
+<!-- ============================== SUMMARY 4 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag sum">요약 4</span><span class="ttl">작성 규칙과 막혔을 때</span><span class="desc">자주 틀리는 것만 모았습니다</span></div>
+
+  <h4 style="margin-top:0">CRIF 작성 6가지 규칙</h4>
+  <div class="cols">
+    <div>
+      <div class="rule"><span class="k">1</span><div>날짜는 <code>2026-06-30</code> 형식. 실행할 때 입력한 평가일과 같아야 합니다.</div></div>
+      <div class="rule"><span class="k">2</span><div>숫자에 쉼표를 쓰지 않습니다. <code>1000</code> (O), <code>1,000</code> (X)</div></div>
+      <div class="rule"><span class="k">3</span><div>셀 앞뒤에 공백이 있으면 안 됩니다.</div></div>
+    </div>
+    <div>
+      <div class="rule"><span class="k">4</span><div>계산에는 <code>AmountUSD</code>만 쓰입니다. USD 행은 <code>Amount</code>와 <code>AmountUSD</code>가 같아야 합니다.</div></div>
+      <div class="rule"><span class="k">5</span><div>테너는 소문자 표준값만: <code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code> (신용은 <code>1y 2y 3y 5y 10y</code>)</div></div>
+      <div class="rule"><span class="k">6</span><div>Risk Type마다 비워야 하는 칸이 있습니다. 아래 예와 상세편 2장을 보세요.</div></div>
+    </div>
+  </div>
+
+  <h4>자주 쓰는 Risk Type 작성 예</h4>
+  <table class="tight">
+    <colgroup><col style="width:11%"><col style="width:15%"><col style="width:20%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:9%"><col style="width:13%"><col style="width:11%"></colgroup>
+    <thead><tr><th>ProductClass</th><th>RiskType</th><th>Qualifier</th><th>Bucket</th><th>Label1</th><th>Label2</th><th>Amount</th><th>AmountCurrency</th><th>AmountUSD</th></tr></thead>
+    <tbody>
+      <tr><td>RatesFX</td><td><code>Risk_IRCurve</code></td><td>USD</td><td>1</td><td>5y</td><td>OIS</td><td>25000</td><td>USD</td><td>25000</td></tr>
+      <tr><td>RatesFX</td><td><code>Risk_FX</code></td><td>EUR</td><td></td><td></td><td></td><td>900000</td><td>USD</td><td>900000</td></tr>
+      <tr><td>RatesFX</td><td><code>Risk_FXVol</code></td><td>EURUSD</td><td></td><td>1y</td><td></td><td>30000</td><td>USD</td><td>30000</td></tr>
+      <tr><td>Equity</td><td><code>Risk_Equity</code></td><td>ISIN:KR0000000036</td><td>1</td><td></td><td></td><td>200000</td><td>USD</td><td>200000</td></tr>
+      <tr><td>Credit</td><td><code>Risk_CreditQ</code> *</td><td>ISIN:XS0000000016</td><td>3</td><td>5y</td><td></td><td>15000</td><td>USD</td><td>15000</td></tr>
+    </tbody>
+  </table>
+  <div class="small" style="margin-top:-1.5mm">빈칸은 비워 둡니다. 앞쪽 5개 열(ValuationDate ~ IMModel)은 생략했습니다. * 신용 행은 <code>PaymentCurrency</code>(지급통화)도 넣습니다.</div>
+
+  <h4>막혔을 때</h4>
+  <table>
+    <thead><tr><th style="width:34%">화면에 나온 말</th><th>해결 방법</th></tr></thead>
+    <tbody>
+      <tr><td><code>No module named simm</code></td><td>산출엔진 폴더에서 터미널을 열었는지 확인하고 <code>$env:PYTHONPATH = "src"</code>를 다시 입력하세요.</td></tr>
+      <tr><td><code>DATE_MISMATCH</code></td><td>CRIF의 날짜와 <code>--valuation-date</code>를 같게 맞추세요.</td></tr>
+      <tr><td><code>UNIT_EVIDENCE_REQUIRED</code></td><td>설정 파일에서 해당 Risk Type의 <code>source</code>를 채우세요.</td></tr>
+      <tr><td><code>SCOPE_REQUIRED</code></td><td>설정 파일의 <code>legal_entity</code>, <code>csa</code>를 채우세요.</td></tr>
+      <tr><td><code>DIRECTION_REQUIRED</code></td><td><code>direction</code>을 <code>"collect"</code> 또는 <code>"post"</code>로 바꾸세요.</td></tr>
+      <tr><td><code>INVALID_AMOUNT</code></td><td>금액 칸의 쉼표나 빈칸을 고치세요.</td></tr>
+      <tr><td><code>WHITESPACE</code></td><td>해당 줄의 셀 앞뒤 공백을 지우세요.</td></tr>
+      <tr><td><code>INVALID_TENOR</code></td><td>Label1을 표준 테너(규칙 5)로 바꾸세요.</td></tr>
+      <tr><td><code>INVALID_CURRENCY</code></td><td>설정 파일 <code>currency_codes</code>에 그 통화를 추가하세요.</td></tr>
+      <tr><td><code>Inconsistent CSV field count</code></td><td>줄마다 칸 수가 다릅니다. 값 안에 쉼표가 있으면 큰따옴표로 감싸세요.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout note"><b class="t">오류 메시지 읽는 법</b><code>CRITICAL DATE_MISMATCH row:5</code>는 "CSV 파일 5번째 줄(엑셀 5행)의 날짜가 다르다"는 뜻입니다. 화면에는 처음 20건만 나오니, 전부 보려면 명령 끝에 <code>--output issues.json</code>을 붙이세요. 다른 오류 코드는 <b>부록 A</b>에 있습니다.</div>
+</section>
+
+<!-- ============================== DETAIL 1 ============================== -->
+<section class="page">
+  <div class="part"><span class="tag">상세편</span><span class="ttl">요약편에서 다루지 않은 내용을 자세히 설명합니다</span></div>
+  <h2>1. 설치와 실행 환경</h2>
+
+  <h3 style="margin-top:2mm">1.1 필요한 것</h3>
+  <table>
+    <thead><tr><th style="width:22%">항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>Python</td><td>3.11 이상. 여러 버전이 설치된 경우 <code>py -3.11</code>처럼 버전을 지정해 실행할 수 있습니다.</td></tr>
+      <tr><td>추가 패키지</td><td>없음. CRIF를 엑셀(XLSX) 파일로 직접 넣을 때만 <code>pip install openpyxl</code>이 필요합니다.</td></tr>
+      <tr><td>운영체제</td><td>Windows, macOS, Linux 모두 됩니다.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.2 산출엔진 폴더 구성</h3>
+  <table>
+    <thead><tr><th style="width:24%">폴더 / 파일</th><th>들어 있는 것</th></tr></thead>
+    <tbody>
+      <tr><td><code>crif\</code></td><td><b>CRIF 양식</b>(<code>crif_template.csv</code>)과 작성 규칙 원문(<code>CRIF_FORMAT.md</code>)</td></tr>
+      <tr><td><code>config\</code></td><td><b>설정 파일 양식</b>(<code>context.template.json</code>)</td></tr>
+      <tr><td><code>examples\</code></td><td>바로 돌려볼 수 있는 <b>가상 예시</b> CRIF와 설정 파일 (실제 거래 아님)</td></tr>
+      <tr><td><code>parameters\</code></td><td>SIMM 버전별 위험가중치·상관계수 등 (ISDA 공개 문서에서 옮긴 값)</td></tr>
+      <tr><td><code>src\</code>, <code>tests\</code></td><td>프로그램 코드와 자체 테스트</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 git으로 내려받기 (선택)</h3>
+  <p>git을 쓴다면 ZIP 대신 아래 명령으로 내려받을 수 있습니다. 이때 폴더 이름은 <code>ISDA-SIMM-Calculator</code>입니다.</p>
+<pre class="cmd">git clone https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator.git</pre>
+
+  <h3>1.4 터미널 종류별 준비 명령</h3>
+  <p>산출엔진은 <code>src</code> 폴더의 코드를 씁니다. 터미널을 열 때마다 Python에 그 위치를 알려 줘야 합니다.</p>
+  <table>
+    <thead><tr><th style="width:26%">터미널</th><th style="width:36%">준비 명령</th><th>여러 줄 명령의 줄 잇기 문자</th></tr></thead>
+    <tbody>
+      <tr><td>Windows PowerShell / 터미널</td><td><code>$env:PYTHONPATH = "src"</code></td><td>줄 끝에 <code>`</code> (백틱)</td></tr>
+      <tr><td>Windows 명령 프롬프트(cmd)</td><td><code>set PYTHONPATH=src</code></td><td>줄 끝에 <code>^</code></td></tr>
+      <tr><td>macOS / Linux</td><td><code>export PYTHONPATH=src</code></td><td>줄 끝에 <code>\</code></td></tr>
+    </tbody>
+  </table>
+  <p>macOS·Linux에서는 경로 구분자를 <code>/</code>로 씁니다(예: <code>examples/crif_example.csv</code>). 일부 환경에서는 <code>python</code> 대신 <code>python3</code>을 씁니다.</p>
+
+  <h3>1.5 설치해서 쓰기 (선택)</h3>
+  <p>산출엔진 폴더에서 <code>pip install -e .</code>을 실행하면 준비 명령 없이 어디서나 <code>simm</code> 명령을 쓸 수 있습니다.</p>
+  <ul>
+    <li><b><code>-e</code>를 꼭 붙이세요.</b> 산출엔진은 내려받은 폴더의 <code>parameters</code>를 직접 읽기 때문에, 일반 설치(<code>pip install .</code>)로는 동작하지 않습니다.</li>
+    <li>설치 중에 인터넷에서 빌드 도구를 받습니다. 사내망 등에서 실패하면 1.4의 설치 없는 방법을 쓰세요.</li>
+  </ul>
+
+  <div class="keep"><h3>1.6 제대로 동작하는지 점검</h3>
+  <p>내장 테스트를 돌립니다. 마지막에 <span class="ok">Ran 60 tests ... OK</span>가 나오면 정상입니다.</p>
+<pre class="cmd">python -m unittest discover -s tests -t .</pre></div>
+
+  <h2 style="margin-top:8mm">2. CRIF 파일 작성</h2>
+  <p>CRIF(Common Risk Interchange Format)는 SIMM 계산용 민감도를 주고받는 표준 형식입니다. 한 줄이 위험요인 하나의 민감도입니다.
+  산출엔진은 CSV, TSV, 시트가 하나인 XLSX 파일을 읽습니다.</p>
+
+  <h3>2.1 열 설명</h3>
+  <table>
+    <thead><tr><th style="width:17%">열</th><th style="width:12%">필수</th><th>설명</th><th style="width:15%">예</th></tr></thead>
+    <tbody>
+      <tr><td><code>ValuationDate</code></td><td>권장</td><td>평가일(<code>YYYY-MM-DD</code>). 실행할 때 준 평가일과 같아야 합니다.</td><td>2026-06-30</td></tr>
+      <tr><td><code>Counterparty</code></td><td>예 *</td><td>거래상대방 식별자</td><td>CP_A</td></tr>
+      <tr><td><code>NettingSet</code></td><td>예 *</td><td>Netting Set(CSA 포트폴리오). Netting Set끼리는 <b>상계하지 않고 단순 합산</b>합니다.</td><td>NS_A1</td></tr>
+      <tr><td><code>TradeID</code></td><td>선택</td><td>거래 번호. 다른 거래의 같은 내용 행을 구분해 줍니다.</td><td>T001</td></tr>
+      <tr><td><code>IMModel</code></td><td>선택</td><td><code>SIMM</code>만 허용합니다. <code>Schedule</code> 등은 실행이 차단됩니다.</td><td>SIMM</td></tr>
+      <tr><td><code>ProductClass</code></td><td>예</td><td><code>RatesFX</code>, <code>Credit</code>, <code>Equity</code>, <code>Commodity</code> 중 하나</td><td>RatesFX</td></tr>
+      <tr><td><code>RiskType</code></td><td>예</td><td>2.2의 표 참고</td><td>Risk_IRCurve</td></tr>
+      <tr><td><code>Qualifier</code></td><td>예</td><td>통화, 발행자, 지수 등</td><td>USD</td></tr>
+      <tr><td><code>Bucket</code></td><td>예(빈칸 가능)</td><td>Risk Type별 버킷</td><td>1</td></tr>
+      <tr><td><code>Label1</code></td><td>예(빈칸 가능)</td><td>테너 또는 옵션 만기</td><td>5y</td></tr>
+      <tr><td><code>Label2</code></td><td>예(빈칸 가능)</td><td>금리 커브 종류 등</td><td>OIS</td></tr>
+      <tr><td><code>Amount</code></td><td>예</td><td><code>AmountCurrency</code> 기준 민감도</td><td>25000</td></tr>
+      <tr><td><code>AmountCurrency</code></td><td>예</td><td><code>Amount</code>의 통화(ISO 코드)</td><td>USD</td></tr>
+      <tr><td><code>AmountUSD</code></td><td>예</td><td>USD 기준 민감도. <b>계산에는 이 값만 씁니다.</b></td><td>25000</td></tr>
+      <tr><td><code>PaymentCurrency</code></td><td>신용만</td><td>신용 Delta·Vega 행의 지급통화. 같은 발행자라도 지급통화가 다르면 다른 위험요인입니다.</td><td>USD</td></tr>
+      <tr><td><code>GroupName</code></td><td>비적격 신용만</td><td>비적격(Non-Qualifying) 신용의 그룹명. 같은 그룹인지에 따라 상관계수가 달라집니다.</td><td>CMBX</td></tr>
+    </tbody>
+  </table>
+  <p class="small">* <code>Counterparty</code>, <code>NettingSet</code>은 열을 빼고 설정 파일의 기본값으로 대신할 수 있습니다. 우리 쪽 법인(<code>LegalEntity</code>)과 <code>CSA</code>도 열로 넣거나 설정 파일 기본값을 씁니다. 양식에는 <code>LegalEntity</code>, <code>CSA</code> 열이 없으므로 설정 파일에 기본값을 넣어야 합니다.</p>
+
+  <h4>양식에 없지만 추가할 수 있는 열</h4>
+  <table>
+    <thead><tr><th style="width:32%">열</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><code>LegalEntity</code>, <code>CSA</code></td><td>행마다 법인이나 CSA가 다를 때 씁니다.</td></tr>
+      <tr><td><code>SIMMVersion</code></td><td>넣으면 자동 선택된 버전과 같아야 합니다.</td></tr>
+      <tr><td><code>CollectRegulations</code>, <code>PostRegulations</code></td><td>넣으면 설정 파일의 <code>regulation</code>이 목록에 없는 행은 계산에서 빠집니다. 빠진 행 수는 결과에 기록됩니다.</td></tr>
+      <tr><td><code>Unit</code>, <code>SensitivityUnit</code></td><td>넣으면 설정 파일에 선언한 단위와 같아야 합니다.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== DETAIL 2: risk types ============================== -->
+<section class="flowsec">
+  <h3 style="margin-top:0">2.2 Risk Type별 작성 규칙</h3>
+  <p>테너(<code>Label1</code>)는 소문자 표준값만 씁니다: <code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code>. 신용 테너는 <code>1y 2y 3y 5y 10y</code>뿐입니다.
+  목록에 없는 테너(예: <code>7y</code>)는 자동으로 나누어 넣지 않고 오류로 처리합니다. "빈칸"이라고 적힌 칸은 반드시 비워 둡니다.</p>
+  <table class="tight rt">
+    <colgroup><col style="width:22%"><col style="width:20%"><col style="width:14%"><col style="width:10%"><col style="width:16%"><col style="width:18%"></colgroup>
+    <thead><tr><th>RiskType</th><th>Qualifier</th><th>Bucket</th><th>Label1</th><th>Label2</th><th>Amount 단위</th></tr></thead>
+    <tbody>
+      <tr><td><code>Risk_IRCurve</code></td><td>통화</td><td><code>1</code> 일반, <code>2</code> 저변동(JPY), <code>3</code> 고변동</td><td>테너</td><td><code>OIS</code>, <code>Libor1m</code>, <code>Libor3m</code>, <code>Libor6m</code>, <code>Libor12m</code> (USD는 <code>Prime</code>, <code>Municipal</code>도)</td><td>1bp당 PV01</td></tr>
+      <tr><td><code>Risk_Inflation</code></td><td>통화</td><td>빈칸</td><td>빈칸</td><td>빈칸</td><td>1bp당 PV01</td></tr>
+      <tr><td><code>Risk_XCcyBasis</code></td><td>통화</td><td>빈칸</td><td>빈칸</td><td>빈칸</td><td>1bp당 PV01</td></tr>
+      <tr><td><code>Risk_IRVol</code></td><td>통화</td><td>빈칸</td><td>옵션 만기</td><td>빈칸</td><td>변동성 가중 Vega (σ×∂V/∂σ)</td></tr>
+      <tr><td><code>Risk_InflationVol</code></td><td>통화</td><td>빈칸</td><td>옵션 만기</td><td>빈칸</td><td>변동성 가중 Vega</td></tr>
+      <tr><td><code>Risk_CreditQ</code></td><td><code>ISIN:</code>+ISIN 12자리</td><td><code>1</code>~<code>12</code>, <code>Residual</code></td><td>신용 테너</td><td>빈칸 또는 <code>Sec</code></td><td>1bp당 CS01</td></tr>
+      <tr><td><code>Risk_CreditVol</code></td><td>발행자</td><td><code>1</code>~<code>12</code>, <code>Residual</code></td><td>신용 테너</td><td>빈칸</td><td>변동성 가중 Vega</td></tr>
+      <tr><td><code>Risk_BaseCorr</code></td><td>지수 계열 (예: <code>CDX IG</code>)</td><td>빈칸</td><td>빈칸</td><td>빈칸</td><td>상관계수 1%p당 BC01</td></tr>
+      <tr><td><code>Risk_CreditNonQ</code></td><td>트랜치</td><td><code>1</code>, <code>2</code>, <code>Residual</code></td><td>신용 테너</td><td>빈칸</td><td>1bp당 CS01</td></tr>
+      <tr><td><code>Risk_CreditVolNonQ</code></td><td>트랜치</td><td><code>1</code>, <code>2</code>, <code>Residual</code></td><td>신용 테너</td><td>빈칸</td><td>변동성 가중 Vega</td></tr>
+      <tr><td><code>Risk_Equity</code></td><td>버킷 1~10·Residual: <code>ISIN:</code>+ISIN<br>버킷 11~12: 자유 이름</td><td><code>1</code>~<code>12</code>, <code>Residual</code></td><td>빈칸</td><td>빈칸</td><td>1% 상대변동당 Delta</td></tr>
+      <tr><td><code>Risk_EquityVol</code></td><td><code>Risk_Equity</code>와 같음</td><td><code>1</code>~<code>12</code>, <code>Residual</code></td><td>옵션 만기</td><td>빈칸</td><td>변동성 1%p당 Vega (σ는 산출엔진이 적용)</td></tr>
+      <tr><td><code>Risk_Commodity</code></td><td>상품명</td><td><code>1</code>~<code>17</code></td><td>빈칸</td><td>빈칸</td><td>1% 상대변동당 Delta</td></tr>
+      <tr><td><code>Risk_CommodityVol</code></td><td>상품명</td><td><code>1</code>~<code>17</code></td><td>옵션 만기</td><td>빈칸</td><td>변동성 1%p당 Vega</td></tr>
+      <tr><td><code>Risk_FX</code></td><td>통화 (USD 행은 넣어도 계산에서 제외)</td><td>빈칸</td><td>빈칸</td><td>빈칸</td><td>1% 상대변동당 Delta</td></tr>
+      <tr><td><code>Risk_FXVol</code></td><td>통화쌍 6자리 (<code>EURUSD</code> = <code>USDEUR</code>)</td><td>빈칸</td><td>옵션 만기</td><td>빈칸</td><td>변동성 1%p당 Vega</td></tr>
+    </tbody>
+  </table>
+
+  <div class="keep"><h3>2.3 Add-on과 Multiplier 행</h3>
+  <p>SIMM 방법론 L절의 추가 증거금입니다. 해당 행의 Netting Set에 적용됩니다. <code>Bucket</code>, <code>Label1</code>, <code>Label2</code>는 비워 둡니다.</p>
+  <table>
+    <thead><tr><th style="width:30%">RiskType</th><th style="width:20%">ProductClass</th><th style="width:17%">Qualifier</th><th>AmountUSD</th></tr></thead>
+    <tbody>
+      <tr><td><code>Param_ProductClassMultiplier</code></td><td>Qualifier와 같은 값</td><td>Product Class</td><td>1 이상의 배수 (예: 1.2)</td></tr>
+      <tr><td><code>Param_AddOnNotionalFactor</code></td><td>빈칸</td><td>상품 이름</td><td>Add-on 비율(%) (예: 5 = 5%)</td></tr>
+      <tr><td><code>Notional</code></td><td>빈칸</td><td>상품 이름</td><td>거래 명목금액 (절댓값으로 합산)</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Add-on 금액 = 명목금액 절댓값 합계 × 비율 ÷ 100. <code>Param_AddOnNotionalFactor</code>와 <code>Notional</code>은 같은 상품 이름으로 짝을 맞춰야 합니다.</li>
+    <li>이 행들은 <code>Amount</code>와 <code>AmountUSD</code>가 같아야 합니다.</li>
+    <li>고정 금액 Add-on은 CRIF 행이 아니라 Python 설정으로 넣습니다(7장).</li>
+  </ul>
+<pre class="out">2026-06-30,CP_A,NS_A1,,SIMM,RatesFX,Param_ProductClassMultiplier,RatesFX,,,,1.2,USD,1.2,,
+2026-06-30,CP_A,NS_A1,,SIMM,,Param_AddOnNotionalFactor,ProductX,,,,5,USD,5,,
+2026-06-30,CP_A,NS_A1,T018,SIMM,,Notional,ProductX,,,,1000000,USD,1000000,,</pre>
+
+  <h3>2.4 엑셀로 작성할 때</h3>
+  <ul>
+    <li><b>저장 형식:</b> "CSV UTF-8(쉼표로 분리)"로 저장합니다. 다른 CSV 형식은 한글이 깨지거나 읽히지 않을 수 있습니다.</li>
+    <li><b>날짜:</b> 엑셀이 <code>2026-06-30</code>을 <code>2026/6/30</code> 등으로 바꿔 저장하지 않았는지 메모장으로 열어 확인하세요. <code>46203</code> 같은 숫자로 저장됐다면 실행할 때 <code>--excel-serial-dates</code>를 붙입니다.</li>
+    <li><b>숫자:</b> <code>1000</code>이나 <code>1E+5</code> 형식은 됩니다. 천 단위 쉼표는 안 됩니다.</li>
+    <li><b>XLSX를 바로 넣을 때:</b> 시트가 하나여야 하고 수식이 있으면 안 됩니다(값으로 붙여넣기). <code>openpyxl</code>이 필요합니다.</li>
+  </ul>
+
+  <h3>2.5 통화가 USD가 아닌 행</h3>
+  <ul>
+    <li><code>AmountCurrency</code>가 EUR 등이어도 됩니다. 이때 <code>AmountUSD</code>에는 <b>CRIF를 만든 쪽에서 미리 환산한 USD 값</b>을 넣어야 합니다. 산출엔진은 환율을 검사하지 않고 <code>FX_RATE_UNVERIFIED</code> 경고만 남깁니다.</li>
+    <li><code>Amount</code>와 <code>AmountUSD</code>의 부호가 다르거나 한쪽만 0이면 오류입니다.</li>
+  </ul>
+</section>
+
+<!-- ============================== DETAIL 3: context & run ============================== -->
+<section class="flowsec">
+  <h2>3. 설정 파일(Context) 작성</h2>
+  <p>양식은 <code>config\context.template.json</code>, 작성 예는 <code>examples\context.json</code>에 있습니다.</p>
+  <table>
+    <thead><tr><th style="width:20%">항목</th><th>설명</th><th style="width:20%">예</th></tr></thead>
+    <tbody>
+      <tr><td><code>direction</code></td><td><code>collect</code>(받을 증거금) 또는 <code>post</code>(줄 증거금). 계산 금액은 바뀌지 않고, 결과 표시와 규제 열 선택에 쓰입니다.</td><td>"collect"</td></tr>
+      <tr><td><code>regulation</code></td><td>규제 이름. 비워 두면 안 됩니다. CRIF에 <code>CollectRegulations</code>·<code>PostRegulations</code> 열이 있으면 이 이름으로 행을 거릅니다.</td><td>"REG_A"</td></tr>
+      <tr><td><code>crif_profile</code></td><td>그대로 둡니다(<code>public_rds_1_36_methodology_2_8</code>).</td><td></td></tr>
+      <tr><td><code>currency_codes</code></td><td>허용할 통화 목록. CRIF에 나오는 모든 통화(<code>AmountCurrency</code>, 금리·FX의 <code>Qualifier</code>, <code>PaymentCurrency</code>)가 있어야 합니다.</td><td>["USD","EUR","KRW"]</td></tr>
+      <tr><td><code>counterparty</code></td><td>(선택) CRIF에 <code>Counterparty</code> 열이 없을 때의 기본값. 양식에는 없으니 필요하면 추가합니다.</td><td>"CP_A"</td></tr>
+      <tr><td><code>legal_entity</code></td><td>CRIF에 <code>LegalEntity</code> 열이 없을 때의 기본값</td><td>"MY_ENTITY"</td></tr>
+      <tr><td><code>csa</code></td><td>CRIF에 <code>CSA</code> 열이 없을 때의 기본값</td><td>"CSA_1"</td></tr>
+      <tr><td><code>netting_set</code></td><td>CRIF의 <code>NettingSet</code>이 비었을 때의 기본값</td><td>"DEFAULT"</td></tr>
+      <tr><td><code>unit_declarations</code></td><td>Risk Type마다 CRIF가 쓰는 단위(<code>unit</code>)와 그 근거(<code>source</code>)</td><td>아래 참고</td></tr>
+    </tbody>
+  </table>
+  <h4>unit_declarations 작성법</h4>
+  <p>민감도 단위가 틀리면(예: 1bp가 아니라 1%당 값) 결과가 100배씩 틀어질 수 있습니다. 그래서 Risk Type마다 "우리 CRIF가 이 단위로 만들어졌다"는 근거를 적게 했습니다.</p>
+<pre class="out">"Risk_IRCurve": { "unit": "PV01_PER_1BP", "source": "리스크 시스템 CRIF 산출 사양서 v3.2, 4.1절" }</pre>
+  <ul>
+    <li><b><code>unit</code>:</b> 양식 값을 그대로 둡니다. 바꾸면 <code>UNIT_MISMATCH</code> 오류가 납니다.</li>
+    <li><b><code>source</code>:</b> 근거 문서 이름이나 확인 내용을 적습니다. CRIF에 쓴 Risk Type의 <code>source</code>가 비면 실행이 차단됩니다. 쓰지 않는 Risk Type은 비워 둬도 됩니다.</li>
+  </ul>
+  <div class="callout note"><b class="t">비밀번호 방지 장치</b>설정 파일에 <code>password</code>, <code>token</code>, <code>secret</code>, <code>api_key</code>, <code>cookie</code>, <code>credential</code>이 들어간 항목 이름이 있으면 실행을 거부합니다.</div>
+
+  <h2 style="margin-top:8mm">4. 실행 명령과 옵션</h2>
+<pre class="cmd">python -m simm run --crif &lt;CRIF 파일&gt; --valuation-date &lt;YYYY-MM-DD&gt; --context &lt;설정 파일&gt; [옵션]</pre>
+  <table>
+    <thead><tr><th style="width:34%">옵션</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><code>--crif</code> 파일</td><td>(필수) CRIF 파일 경로</td></tr>
+      <tr><td><code>--valuation-date</code> 날짜</td><td>(필수) 평가일. CRIF의 <code>ValuationDate</code>와 같아야 합니다.</td></tr>
+      <tr><td><code>--context</code> 파일</td><td>(필수) 설정 파일 경로</td></tr>
+      <tr><td><code>--output</code> result.json</td><td>결과를 JSON으로 저장합니다. 차단된 경우에는 전체 오류 목록이 저장됩니다.</td></tr>
+      <tr><td><code>--include-trace</code></td><td><code>--output</code>에 계산 과정 전체(trace)를 넣습니다. 파일이 커집니다.</td></tr>
+      <tr><td><code>--summary-csv</code> summary.csv</td><td>거래상대방·Netting Set·Product Class·Risk Class별 표를 CSV로 저장합니다.</td></tr>
+      <tr><td><code>--version</code> 2.7</td><td>SIMM 버전을 직접 지정합니다. 자동 선택과 다르면 경고가 나옵니다.</td></tr>
+      <tr><td><code>--netting-set-column</code> 열이름</td><td>CRIF의 다른 열(예: <code>PortfolioId</code>)을 Netting Set으로 씁니다. CRIF에 이미 <code>NettingSet</code> 열이 있으면 쓸 수 없습니다.</td></tr>
+      <tr><td><code>--excel-serial-dates</code></td><td>엑셀 날짜 숫자(예: 46203)를 <code>2026-06-30</code> 형식으로 바꿉니다.</td></tr>
+      <tr><td><code>--quiet</code></td><td>화면 요약을 출력하지 않습니다. 파일 저장만 할 때 씁니다.</td></tr>
+    </tbody>
+  </table>
+  <p><code>--netting-set-column</code>, <code>--excel-serial-dates</code>처럼 입력을 바꾸는 옵션은 결과 JSON의 <code>input_transformations</code>에 기록됩니다.</p>
+
+  <h4>종료 코드</h4>
+  <table>
+    <thead><tr><th style="width:12%">코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td class="center">0</td><td>계산 성공</td></tr>
+      <tr><td class="center">1</td><td>실행 오류(파일 없음, 형식 오류, 지원하지 않는 날짜 등)</td></tr>
+      <tr><td class="center">2</td><td>검증에서 차단됨. 문제 목록이 화면에 나옵니다.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>여러 날짜를 한 번에 돌리기 (PowerShell)</h4>
+<pre class="cmd">foreach ($d in "2026-03-31", "2026-06-30") {
+  python -m simm run --crif "data\crif_$d.csv" --valuation-date $d `
+    --context my_context.json --output "out\result_$d.json" --quiet
+  if ($LASTEXITCODE -ne 0) { Write-Host "$d 실패 (코드 $LASTEXITCODE)" }
+}</pre>
+  <p class="small"><code>data</code>, <code>out</code> 폴더는 미리 만들어 두어야 합니다.</p>
+</section>
+
+<!-- ============================== DETAIL 4: results ============================== -->
+<section class="flowsec">
+  <h2>5. 결과 읽는 법</h2>
+  <h3 style="margin-top:2mm">5.1 합산 구조</h3>
+  <div class="tree">
+    <div class="lv"><b>Portfolio total</b><span>거래상대방 합계를 단순히 더한 값</span></div>
+    <div class="lv i1"><b>└ 거래상대방</b><span>그 거래상대방의 Netting Set 합계를 단순히 더한 값</span></div>
+    <div class="lv i2"><b>└ Netting Set</b><span>Product Class IM을 단순히 더하고 Add-on을 더한 값. <strong>Netting Set끼리는 상계하지 않습니다.</strong></span></div>
+    <div class="lv i3"><b>└ Product Class</b><span>Risk Class IM을 상관계수로 묶어(제곱합의 제곱근) 계산한 값 × Multiplier</span></div>
+    <div class="lv i4"><b>└ Risk Class</b><span>Delta + Vega + Curvature (+ 적격 신용은 BaseCorr)</span></div>
+  </div>
+
+  <h3>5.2 화면 결과 (예시 전체)</h3>
+<pre class="out" style="font-size:7.5pt">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW
+Portfolio total: 33,496,812.42 USD
+
+[CP_A] total 14,300,634.89 USD
+  netting set NS_A1 / CSA CSA_1: 14,300,634.89 (add-on 50,000.00)
+    RatesFX: 7,290,168.27
+      InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)
+      FX: 5,697,557.53  (Delta 5,545,277.27, Vega 94,228.44, Curvature 58,051.83)
+    Credit: 6,960,466.62
+      InterestRate: 91,500.00  (Delta 91,500.00)
+      CreditQualifying: 1,268,337.75  (Delta 1,228,592.85, Vega 8,400.00, Curvature 2,544.89, BaseCorr 28,800.00)
+      CreditNonQualifying: 6,111,433.76  (Delta 6,108,150.29, Vega 2,520.00, Curvature 763.47)
+
+[CP_B] total 19,196,177.54 USD
+  netting set NS_B1 / CSA CSA_1: 18,708,177.54 (add-on 0.00)
+    Equity: 12,135,837.73
+      InterestRate: 198,000.00  (Delta 198,000.00)
+      Equity: 11,559,433.25  (Delta 10,440,818.93, Vega 470,673.89, Curvature 647,940.42)
+      FX: 1,775,000.00  (Delta 1,775,000.00)
+    Commodity: 6,572,339.80
+      Commodity: 6,572,339.80  (Delta 6,046,261.65, Vega 379,453.70, Curvature 146,624.45)
+  netting set NS_B2 / CSA CSA_1: 488,000.00 (add-on 0.00)
+    RatesFX: 488,000.00
+      InterestRate: 488,000.00  (Delta 488,000.00)</pre>
+  <p>Product Class IM(예: RatesFX 7,290,168.27)은 그 아래 Risk Class IM의 단순 합(1,614,228.80 + 5,697,557.53)보다 작습니다. Risk Class 사이의 분산효과가 반영되기 때문입니다. 여기에 Multiplier 1.2가 곱해져 있습니다.</p>
+
+  <h3>5.3 CSV 결과 (<code>--summary-csv</code>)</h3>
+  <p>한 줄이 "거래상대방 × Netting Set × Product Class × Risk Class"입니다. UTF-8(BOM 포함)으로 저장되어 엑셀에서 한글이 깨지지 않습니다.</p>
+  <table>
+    <thead><tr><th style="width:42%">열</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td><code>counterparty</code>, <code>netting_set</code>, <code>csa</code>, <code>direction</code></td><td>범위</td></tr>
+      <tr><td><code>product_class</code>, <code>risk_class</code></td><td>분류</td></tr>
+      <tr><td><code>delta</code>, <code>vega</code>, <code>curvature</code>, <code>basecorr</code></td><td>구성요소별 IM</td></tr>
+      <tr><td><code>risk_class_margin</code></td><td>Risk Class 단독 IM</td></tr>
+      <tr><td><code>product_margin</code>, <code>netting_set_total</code>, <code>counterparty_total</code></td><td>상위 합계. 여러 줄에 반복해서 표시되므로, 엑셀에서 합계를 낼 때 중복으로 더하지 마세요.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><b class="t">숫자가 너무 길게 보이면</b>계산은 50자리 정밀도로 하고 반올림하지 않은 값을 그대로 저장합니다. 엑셀에서 표시 형식을 "숫자, 소수 2자리"로 바꾸세요.</div>
+
+  <h3>5.4 JSON 결과 (<code>--output</code>)</h3>
+  <table>
+    <thead><tr><th style="width:30%">위치</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td><code>metadata</code></td><td>입력 파일과 해시(<code>crif_sha256</code>), 평가일, 선택된 버전과 경고, 사용한 Parameter 해시, 입력 변환 옵션, 검증 상태, 경고 건수, 읽은·사용한·제외한 행 수</td></tr>
+      <tr><td><code>result.counterparties[]</code></td><td>거래상대방 → <code>netting_sets[]</code> → <code>products[]</code> → <code>risk_classes[]</code> 순서의 결과. 각 단계에 금액이 있습니다.</td></tr>
+      <tr><td><code>risk_classes[].contribution</code></td><td>Product Class IM을 Risk Class별로 나눈 기여분. 같은 Product Class 안에서 모두 더하면 Product Class IM이 됩니다.</td></tr>
+      <tr><td><code>result.trace</code></td><td><code>--include-trace</code>를 준 경우에만 들어갑니다. CRIF 행부터 최종 합계까지 모든 중간값과 SIMM 방법론 조항이 들어 있어, 특정 값이 어떻게 나왔는지 따라갈 수 있습니다.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================== DETAIL 5: versions, python ============================== -->
+<section class="flowsec">
+  <h2>6. SIMM 버전 선택</h2>
+  <p>ISDA는 버전마다 "이 날짜의 장 마감(COB)부터 사용"하라고 공지합니다. 산출엔진은 평가일이 그 날짜 이상인 버전 중 가장 최신 버전을 고릅니다.</p>
+  <table>
+    <thead><tr><th style="width:18%">버전</th><th style="width:22%">적용 시작 (COB)</th><th>이 산출엔진이 적용하는 평가일</th></tr></thead>
+    <tbody>
+      <tr><td>2.5</td><td>2022-12-02</td><td>2022-12-02 ~ 2023-07-13</td></tr>
+      <tr><td>2.5A</td><td>2023-07-14</td><td>2023-07-14 ~ 2023-11-30</td></tr>
+      <tr><td>2.6</td><td>2023-12-01</td><td>2023-12-01 ~ 2024-12-05</td></tr>
+      <tr><td>2.7</td><td>2024-12-06</td><td>2024-12-06 ~ 2025-07-10</td></tr>
+      <tr><td>2.7+2412</td><td>2025-07-11</td><td>2025-07-11 ~ 2025-12-04</td></tr>
+      <tr><td>2.8+2506</td><td>2025-12-05</td><td>2025-12-05 ~ 2026-07-09</td></tr>
+      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 ~</td></tr>
+    </tbody>
+  </table>
+  <p>특정 날짜에 어떤 버전이 쓰이는지 확인하려면:</p>
+<pre class="cmd">python -m simm versions --date 2025-03-31</pre>
+<pre class="out">{ "version": "2.7", "use_from_cob": "2024-12-06", "valuation_date": "2025-03-31",
+  "beyond_verified_schedule": false, "schedule_verified_through": "2026-10-06", "warning": null }</pre>
+  <ul>
+    <li><b>2022-12-02 이전 날짜:</b> 지원하지 않습니다(<code>No SIMM package scheduled</code> 오류).</li>
+    <li><b>2026-10-06 이후 날짜:</b> 최신 버전으로 계산하되 경고를 표시합니다. 그 사이 ISDA가 새 버전을 냈을 수 있으니 ISDA 홈페이지를 확인하세요. 새 버전이 나왔다면 8장을 따라 추가합니다.</li>
+    <li><b>버전 직접 지정:</b> 상대방과 합의한 버전이 다르면 <code>--version</code>으로 지정합니다. 화면과 JSON에 경고가 남습니다.</li>
+  </ul>
+<pre class="out">SIMM 2.7 | valuation 2026-06-30 | USD | SHADOW
+WARNING: Version override 2.7 differs from scheduled 2.8+2506</pre>
+
+  <h2 style="margin-top:8mm">7. Python 코드에서 직접 쓰기</h2>
+  <p>명령 대신 Python 코드에서 부를 수도 있습니다. <b>고정 금액 Add-on</b>은 이 방법으로만 넣을 수 있습니다.</p>
+<pre class="cmd">import json
+from simm.crif import read_crif, validate
+from simm.engine import Engine
+from simm.parameters import ParameterPackage
+from simm.versioning import select_version
+
+valuation_date = '2026-06-30'
+context = json.load(open('examples/context.json', encoding='utf-8'))
+context['valuation_date'] = valuation_date
+
+selection = select_version(valuation_date)            <span class="c"># 버전 자동 선택</span>
+package = ParameterPackage(selection['version'])      <span class="c"># Parameter 읽기(해시 검사 포함)</span>
+headers, rows = read_crif('examples/crif_example.csv')
+validation = validate(headers, rows, package, context)
+
+if validation.blocked:
+    for issue in validation.issues:
+        print(issue.severity, issue.code, issue.row_id, issue.message)
+else:
+    config = {'fixed_addons': [{
+        'scope': {'counterparty': 'CP_B', 'legal_entity': 'ENTITY_1', 'netting_set': 'NS_B2',
+                  'csa': 'CSA_1', 'direction': 'collect', 'regulation': 'EXAMPLE_REGULATION'},
+        'amount_usd': '10000',
+        'source': 'CSA 부속합의서 2026-01-15'}]}
+    result = Engine(package).calculate(validation, config)
+    print(result['simm_version'], result['total_simm'])</pre>
+  <ul>
+    <li><b><code>scope</code>:</b> 결과 JSON의 <code>scope</code>와 6개 항목이 모두 같아야 합니다. 맞는 Netting Set이 없으면 오류가 납니다.</li>
+    <li><b><code>amount_usd</code>:</b> 0 이상의 USD 금액. 문자열로 넣으면 정밀도가 유지됩니다. <b><code>source</code></b>(근거)는 비우면 오류가 납니다.</li>
+    <li>위 예시를 실행하면 NS_B2가 488,000 → 498,000이 되고, 전체 합계는 33,506,812.42가 됩니다.</li>
+  </ul>
+</section>
+
+<!-- ============================== DETAIL 6: new version, limits, FAQ ============================== -->
+<section class="flowsec">
+  <h2>8. 새 SIMM 버전 추가하기</h2>
+  <p>ISDA가 새 버전을 발표했을 때, 수식(방법론 B~C절)이 그대로라면 Parameter만 추가하면 됩니다.</p>
+  <div class="step"><div class="n">1</div><div class="b"><b class="t">폴더 만들기</b><p><code>parameters\simm_&lt;버전&gt;</code> 폴더를 만듭니다. 버전의 <code>.</code>과 <code>+</code>는 <code>_</code>로 바꿉니다(예: 2.8+2512 → <code>simm_2_8_2512</code>).</p></div></div>
+  <div class="step"><div class="n">2</div><div class="b"><b class="t">parameters.json 작성</b><p>기존 버전 파일을 복사한 뒤, 새 ISDA 방법론 문서를 보고 값을 바꿉니다. <code>version</code>과 <code>sources</code>도 새 버전으로 바꿉니다.</p></div></div>
+  <div class="step"><div class="n">3</div><div class="b"><b class="t">해시 계산</b><p>파일의 SHA-256을 계산해 <code>manifest.json</code>의 <code>sha256</code>에 <b>소문자로</b> 넣습니다.</p>
+<pre class="cmd">(Get-FileHash parameters\simm_X_Y\parameters.json).Hash.ToLower()    <span class="c"># Windows PowerShell</span>
+shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="c"># macOS / Linux</span></pre></div></div>
+  <div class="step"><div class="n">4</div><div class="b"><b class="t">일정표 추가</b><p><code>parameters\version_schedule.json</code>의 <code>versions</code> 끝에 <code>version</code>, <code>use_from_cob</code>, <code>announcement</code>, <code>methodology_pdf</code>를 추가하고, <code>verified_through</code>를 ISDA 공지를 확인한 날짜로 바꿉니다.</p></div></div>
+  <div class="step"><div class="n">5</div><div class="b"><b class="t">확인</b><p>테스트를 돌리고 <code>python -m simm versions</code>로 새 버전이 보이는지 확인합니다.</p></div></div>
+  <div class="callout warn"><b class="t">Parameter만으로 안 되는 경우</b>새 버전에서 수식 자체가 바뀌었거나 새 <code>methodology_id</code>가 생겼다면 엔진 코드(<code>src\simm\parameters.py</code>의 <code>SUPPORTED_METHODOLOGIES</code> 등)도 고쳐야 합니다. Parameter 파일은 읽을 때 해시, 상관계수 행렬의 대칭·범위, 집중도 기준값을 자동으로 검사합니다.</div>
+
+  <h2 style="margin-top:7mm">9. 주의사항과 한계</h2>
+  <ul>
+    <li><b>ISDA 권리:</b> ISDA SIMM®은 ISDA의 등록상표이자 지적재산이며 미국 특허(10,515,410) 대상입니다. <code>parameters</code>의 값은 ISDA 공개 문서를 옮겨 적은 것으로, 이 프로젝트의 Apache-2.0 라이선스 대상이 아닙니다.</li>
+    <li><b>ISDA 라이선스:</b> 증거금 계산에 SIMM을 쓰려면 ISDA 라이선스가 필요할 수 있습니다. ISDA SIMM 라이선스 FAQ(isda.org)를 참고하세요.</li>
+    <li><b>검증 수준:</b> Parameter는 독립적으로 옮겨 적은 값과 대조했고, 수식은 별도로 구현한 계산 코드와 가상 포트폴리오로 대조했습니다. ISDA 공식 단위 테스트(유료 자료)는 실행하지 않았습니다. 자세한 내용은 <code>docs\METHODOLOGY_NOTES.md</code>에 있습니다.</li>
+    <li><b>CRIF 기준:</b> 공개된 Risk Data Standards 1.36 기준입니다. <code>PaymentCurrency</code>·<code>GroupName</code> 열과 고정 Add-on 설정은 이 산출엔진의 확장이므로, 쓰는 CRIF 생산 시스템과 맞는지 확인하세요.</li>
+    <li><b>다루지 않는 것:</b> 환율 환산, Threshold·최소이전금액(MTA)·담보 평가, 규제 적용 범위 판단.</li>
+    <li><b>라이선스:</b> 코드·문서·양식은 Apache-2.0입니다. 허락 없이 사용·수정·재배포·상업적 이용이 가능하며, LICENSE와 NOTICE를 유지하고 수정한 파일에 수정 사실을 표시하면 됩니다.</li>
+  </ul>
+
+  <h2 style="margin-top:7mm">10. 자주 묻는 질문</h2>
+  <h4>Q. KRW 등 다른 통화 결과가 필요합니다.</h4>
+  <p>산출엔진은 USD 결과만 냅니다. 결과에 원하는 기준 환율을 곱해 환산하세요. 어떤 환율(기준일, 고시 기관)을 쓸지는 상대방과의 합의를 따르세요.</p>
+  <h4>Q. 같은 거래상대방의 CSA 두 개를 합쳐 계산할 수 있나요?</h4>
+  <p>각 CSA(Netting Set)를 따로 계산해 단순 합산합니다. 서로 상계하려면 두 CSA 행의 <code>NettingSet</code>을 같은 값으로 넣어야 하는데, 실제 계약 구조가 그럴 때만 하세요.</p>
+  <h4>Q. CRIF에 Schedule IM 대상 거래가 섞여 있습니다.</h4>
+  <p><code>IMModel</code>이 <code>SIMM</code>이 아닌 행이 있으면 실행이 차단됩니다. Schedule 행은 별도 파일로 분리하세요.</p>
+  <h4>Q. 경고(WARNING)만 있는데 괜찮나요?</h4>
+  <p>계산은 정상 진행됩니다. <code>LATEST_RDS_UNVERIFIED</code>는 항상 나오는 안내입니다. <code>NETTED_ROWS</code>는 같은 위험요인의 여러 행을 합쳤다는 뜻이니 의도한 것인지 확인하세요.</p>
+  <h4>Q. 상대방이나 외부 시스템 결과와 조금 다릅니다.</h4>
+  <p>① 같은 SIMM 버전인지 ② 같은 CRIF(<code>crif_sha256</code>)인지 ③ Netting Set 구분이 같은지 ④ 비USD 행의 환산 환율이 같은지 ⑤ 반올림 방식이 같은지 순서로 확인하세요. <code>--include-trace</code>로 중간값을 비교하면 차이가 생긴 곳을 찾기 쉽습니다.</p>
+</section>
+
+<!-- ============================== APPENDIX A ============================== -->
+<section class="page">
+  <div class="part"><span class="tag">부록 A</span><span class="ttl">오류 코드 전체 목록</span><span class="desc">CRITICAL·REVIEW_REQUIRED는 계산 차단, WARNING은 진행</span></div>
+
+  <h4 style="margin-top:0">파일과 설정</h4>
+  <table>
+    <thead><tr><th style="width:30%">코드</th><th style="width:33%">원인</th><th>해결</th></tr></thead>
+    <tbody>
+      <tr><td><code>MISSING_COLUMNS</code></td><td>필수 열이 없음</td><td>양식의 열 이름을 그대로 쓰세요(대소문자 구분).</td></tr>
+      <tr><td><code>DIRECTION_REQUIRED</code></td><td><code>direction</code>이 collect/post가 아님</td><td>양식의 <code>"collect | post"</code>를 둘 중 하나로 바꾸세요.</td></tr>
+      <tr><td><code>REGULATION_REQUIRED</code></td><td><code>regulation</code>이 비어 있음</td><td>규제 이름을 넣으세요.</td></tr>
+      <tr><td><code>PROFILE_REQUIRED</code></td><td><code>crif_profile</code> 값이 다름</td><td>양식 값 그대로 두세요.</td></tr>
+      <tr><td><code>CURRENCY_REGISTRY_REQUIRED</code></td><td><code>currency_codes</code>가 비어 있음</td><td>통화 목록을 넣으세요.</td></tr>
+      <tr><td><code>UNIT_EVIDENCE_REQUIRED</code></td><td>쓰는 Risk Type의 <code>unit</code>/<code>source</code>가 비어 있음</td><td>근거를 적으세요(3장).</td></tr>
+      <tr><td><code>UNIT_MISMATCH</code></td><td>선언한 단위가 기준과 다름</td><td><code>unit</code>을 양식 값으로 되돌리고 CRIF 단위를 확인하세요.</td></tr>
+      <tr><td><code>SCOPE_REQUIRED</code></td><td>거래상대방·법인·Netting Set·CSA 중 빈 값</td><td>열을 채우거나 설정 파일 기본값을 넣으세요.</td></tr>
+      <tr><td><code>EMPTY_PORTFOLIO</code></td><td>CRIF에 데이터 행이 없음</td><td>파일 내용을 확인하세요.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>행 내용</h4>
+  <table>
+    <thead><tr><th style="width:30%">코드</th><th style="width:33%">원인</th><th>해결</th></tr></thead>
+    <tbody>
+      <tr><td><code>DATE_MISMATCH</code></td><td>CRIF 날짜 ≠ <code>--valuation-date</code></td><td>날짜를 맞추세요.</td></tr>
+      <tr><td><code>INVALID_DATE</code></td><td>날짜 형식이 <code>YYYY-MM-DD</code>가 아님</td><td>형식을 고치거나 <code>--excel-serial-dates</code>를 쓰세요.</td></tr>
+      <tr><td><code>WHITESPACE</code></td><td>셀 앞뒤 공백</td><td>원본에서 공백을 지우세요.</td></tr>
+      <tr><td><code>EXACT_DUPLICATE</code></td><td>완전히 같은 행이 두 번</td><td>이중 집계 위험. 다른 거래라면 <code>TradeID</code>로 구분하세요.</td></tr>
+      <tr><td><code>UNSUPPORTED_MODEL</code></td><td><code>IMModel</code>이 SIMM이 아님</td><td>Schedule 행을 분리하세요.</td></tr>
+      <tr><td><code>VERSION_MISMATCH</code></td><td><code>SIMMVersion</code> 열 ≠ 선택된 버전</td><td>열 값이나 <code>--version</code>을 확인하세요.</td></tr>
+      <tr><td><code>UNKNOWN_RISK_TYPE</code></td><td>지원하지 않는 RiskType</td><td>철자를 확인하세요.</td></tr>
+      <tr><td><code>INVALID_PRODUCT_CLASS</code></td><td>Product Class 오류</td><td>RatesFX, Credit, Equity, Commodity 중 하나로.</td></tr>
+      <tr><td><code>MISSING_QUALIFIER</code></td><td>Qualifier가 빔</td><td>값을 넣으세요.</td></tr>
+      <tr><td><code>INVALID_AMOUNT</code></td><td>숫자가 아님(빈칸, 쉼표 등)</td><td><code>1000</code> 형식으로.</td></tr>
+      <tr><td><code>INVALID_CURRENCY</code></td><td><code>AmountCurrency</code>가 통화 목록에 없음</td><td><code>currency_codes</code>에 추가하세요.</td></tr>
+      <tr><td><code>USD_AMOUNT_MISMATCH</code></td><td>USD 행인데 Amount ≠ AmountUSD</td><td>두 값을 같게.</td></tr>
+      <tr><td><code>FX_SIGN_OR_ZERO</code></td><td>비USD 행의 부호가 다르거나 한쪽만 0</td><td>환산값을 확인하세요.</td></tr>
+      <tr><td><code>INVALID_QUALIFIER_CURRENCY</code></td><td>금리·FX Qualifier가 통화 목록에 없음</td><td>통화 코드를 확인하세요.</td></tr>
+      <tr><td><code>INVALID_FX_PAIR</code></td><td>FX Vol 통화쌍 오류</td><td><code>EURUSD</code> 형식으로.</td></tr>
+      <tr><td><code>IR_BUCKET_MISMATCH</code></td><td>통화와 금리 Bucket 불일치</td><td>메시지에 나온 값(1/2/3)으로.</td></tr>
+      <tr><td><code>CURVE_MAPPING</code></td><td>금리 Label2가 허용 목록에 없음</td><td>OIS, Libor3m 등으로 매핑하세요.</td></tr>
+      <tr><td><code>INVALID_BUCKET</code></td><td>신용·주식·상품 Bucket 범위 밖</td><td>2.2의 범위를 확인하세요.</td></tr>
+      <tr><td><code>UNUSED_BUCKET</code> / <code>UNUSED_LABEL1</code></td><td>비워야 할 칸에 값</td><td>칸을 비우세요.</td></tr>
+      <tr><td><code>INVALID_TENOR</code></td><td>허용하지 않는 테너</td><td>표준 테너로 다시 산출하세요.</td></tr>
+      <tr><td><code>UNCONFIRMED_LABEL2</code></td><td>금리 외 Risk Type에 Label2 값</td><td>비우세요(CreditQ의 <code>Sec</code>만 예외).</td></tr>
+      <tr><td><code>PAYMENT_CURRENCY_REQUIRED</code></td><td>신용 행에 지급통화 없음</td><td><code>PaymentCurrency</code>를 넣으세요.</td></tr>
+      <tr><td><code>NQ_GROUP_REQUIRED</code></td><td>비적격 신용 행에 그룹명 없음</td><td><code>GroupName</code>을 넣으세요.</td></tr>
+      <tr><td><code>QUALIFIER_MAPPING</code></td><td>CreditQ·주식(버킷 1~10, Residual) Qualifier가 ISIN 형식 아님</td><td><code>ISIN:US0378331005</code> 형식으로.</td></tr>
+      <tr><td><code>INCONSISTENT_BUCKET</code></td><td>같은 Qualifier에 다른 Bucket</td><td>하나로 맞추세요.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Add-on 행</h4>
+  <table>
+    <thead><tr><th style="width:30%">코드</th><th style="width:33%">원인</th><th>해결</th></tr></thead>
+    <tbody>
+      <tr><td><code>ADDON_LABELS</code></td><td>Add-on 행의 Bucket/Label에 값</td><td>비우세요.</td></tr>
+      <tr><td><code>INVALID_MULTIPLIER</code></td><td>Multiplier가 1 미만이거나 Product Class 오류</td><td>1 이상, 올바른 Product Class로.</td></tr>
+      <tr><td><code>MULTIPLIER_CLASS_MISMATCH</code></td><td>ProductClass ≠ Qualifier</td><td>같게.</td></tr>
+      <tr><td><code>NEGATIVE_ADDON</code></td><td>Add-on 비율이 음수</td><td>0 이상으로.</td></tr>
+      <tr><td><code>PARAM_AMOUNT_MISMATCH</code></td><td>Add-on 행의 Amount ≠ AmountUSD</td><td>같게.</td></tr>
+      <tr><td><code>FIXED_ADDON_ENCODING</code></td><td>고정 Add-on을 CRIF 행으로 넣음</td><td>Python 설정 <code>fixed_addons</code>를 쓰세요(7장).</td></tr>
+    </tbody>
+  </table>
+
+  <h4>경고 (계산은 진행)</h4>
+  <table>
+    <thead><tr><th style="width:30%">코드</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td><code>LATEST_RDS_UNVERIFIED</code></td><td>항상 나옵니다. 최신 유료 Risk Data Standards와 ISDA 공식 테스트로 검증하지 않았다는 안내입니다.</td></tr>
+      <tr><td><code>FX_RATE_UNVERIFIED</code></td><td>비USD 행의 <code>AmountUSD</code>를 검사 없이 그대로 썼다는 안내입니다.</td></tr>
+      <tr><td><code>NETTED_ROWS</code></td><td>같은 위험요인의 여러 행을 합산했다는 안내입니다.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>실행 오류 (종료 코드 1)</h4>
+  <table>
+    <thead><tr><th style="width:40%">메시지</th><th>원인과 해결</th></tr></thead>
+    <tbody>
+      <tr><td><code>Inconsistent CSV field count</code></td><td>줄마다 칸 수가 다릅니다. 쉼표가 든 값은 큰따옴표로 감싸세요.</td></tr>
+      <tr><td><code>Duplicate column names</code></td><td>같은 열 이름이 두 번 있습니다.</td></tr>
+      <tr><td><code>Column whitespace ...</code></td><td>열 이름 앞뒤에 공백이 있습니다.</td></tr>
+      <tr><td><code>Select one CRIF worksheet ...</code></td><td>XLSX에 시트가 여러 개입니다. 하나만 남기세요.</td></tr>
+      <tr><td><code>Excel formula cells are not accepted ...</code></td><td>XLSX에 수식이 있습니다. 값으로 붙여넣으세요.</td></tr>
+      <tr><td><code>Supported inputs: ...</code></td><td>지원하지 않는 형식(예: .xls)입니다. CSV나 XLSX로 바꾸세요.</td></tr>
+      <tr><td><code>No SIMM package scheduled for ...</code></td><td>2022-12-02 이전 날짜입니다.</td></tr>
+      <tr><td><code>Parameter package hash mismatch</code></td><td><code>parameters</code> 파일이 바뀌었습니다. 다시 내려받으세요.</td></tr>
+      <tr><td><code>Credentials are prohibited ...</code></td><td>설정 파일에 비밀번호류 항목 이름이 있습니다. 지우세요.</td></tr>
+      <tr><td><code>CRIF already has NettingSet ...</code></td><td><code>--netting-set-column</code>을 썼는데 <code>NettingSet</code> 열이 이미 있습니다. 둘 중 하나만 쓰세요.</td></tr>
+      <tr><td><code>Notional/factor product coverage differs ...</code></td><td>Add-on 비율 행과 <code>Notional</code> 행의 상품 이름 짝이 맞지 않습니다.</td></tr>
+      <tr><td><code>Conflicting product class multipliers</code></td><td>같은 Netting Set·Product Class에 서로 다른 Multiplier가 있습니다.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="part" style="margin-top:8mm"><span class="tag">부록 B</span><span class="ttl">용어 설명</span></div>
+  <table>
+    <thead><tr><th style="width:24%">용어</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td>SIMM</td><td>ISDA가 만든 비청산 장외파생상품 개시증거금 표준 계산 방법(Standard Initial Margin Model)</td></tr>
+      <tr><td>IM (개시증거금)</td><td>거래상대방이 부도났을 때의 손실에 대비해 미리 주고받는 담보</td></tr>
+      <tr><td>CRIF</td><td>SIMM 계산용 민감도를 주고받는 표준 파일 형식(Common Risk Interchange Format)</td></tr>
+      <tr><td>민감도</td><td>금리·환율 같은 시장 변수가 조금 움직일 때 거래 가치가 변하는 크기</td></tr>
+      <tr><td>Delta / Vega / Curvature</td><td>가격 변화에 대한 1차 민감도 / 변동성 변화에 대한 민감도 / 큰 가격 변화에서의 비선형 효과</td></tr>
+      <tr><td>BaseCorr</td><td>신용지수 트랜치의 기초 상관계수(Base Correlation) 민감도</td></tr>
+      <tr><td>bp, PV01, CS01</td><td>bp = 0.01%. PV01·CS01 = 금리·신용스프레드가 1bp 움직일 때 가치 변화</td></tr>
+      <tr><td>Netting Set</td><td>서로 상계할 수 있는 거래 묶음. 보통 CSA 하나에 해당</td></tr>
+      <tr><td>CSA</td><td>담보 계약(Credit Support Annex)</td></tr>
+      <tr><td>COB</td><td>장 마감(Close of Business). 평가 기준 시점</td></tr>
+      <tr><td>Product Class</td><td>RatesFX, Credit, Equity, Commodity의 4가지 상품군</td></tr>
+      <tr><td>Risk Class</td><td>InterestRate, CreditQualifying, CreditNonQualifying, Equity, Commodity, FX의 6가지 위험군</td></tr>
+      <tr><td>Qualifier / Bucket / Label</td><td>위험요인을 구분하는 칸. 통화·발행자 / 위험군 내 그룹 / 테너·커브 종류</td></tr>
+      <tr><td>테너</td><td>만기 구간(예: 5y = 5년)</td></tr>
+      <tr><td>Add-on / Multiplier</td><td>계산된 SIMM에 더하는 추가 증거금 / 곱하는 배수</td></tr>
+      <tr><td>ISIN</td><td>증권마다 붙는 12자리 국제 고유번호</td></tr>
+      <tr><td>SHADOW</td><td>공식 증거금이 아닌 참고용 계산이라는 표시</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>

@@ -19,6 +19,9 @@ initial margin in USD by counterparty, netting set, product class, risk class an
 
 ## Quick start
 
+A step-by-step user guide in Korean is available as a PDF:
+[docs/ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF).
+
 Requires Python 3.11+. Reading `.xlsx` CRIF files additionally needs `openpyxl`.
 
 ```bash
@@ -105,13 +108,14 @@ parameters/      one package per SIMM version + version_schedule.json
 crif/            CRIF template and format description
 examples/        synthetic CRIF and context
 config/          context template
-docs/            methodology notes
+docs/            methodology notes, Korean user guide (PDF and its HTML source)
 tests/           synthetic tests
 ```
 
 ## 한국어 요약
 
-ISDA SIMM(비청산 장외파생상품 개시증거금) Python 계산기입니다.
+ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입니다.
+- **사용설명서:** [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 요약편(2~5쪽)만 보고도 실행할 수 있습니다.
 - **지원 범위:** 방법론 2.5~2.8+2512 버전입니다.
 - **계산 방식:** CRIF 파일을 엄격히 검증한 뒤 평가일에 맞는 버전을 자동 선택해 USD로 계산합니다.
 - **산출 결과:** 거래상대방·Netting Set·상품·위험군·구성요소별 증거금을 냅니다.
