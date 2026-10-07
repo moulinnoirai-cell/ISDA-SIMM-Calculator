@@ -116,6 +116,7 @@
   table.tight td { padding: 1mm 1.2mm; overflow-wrap: anywhere; }
   table.rt td:first-child code { white-space: nowrap; }
   .small { font-size: 8.8pt; color: var(--muted); }
+  img.shot { display: block; width: 86%; border: 1px solid var(--line); border-radius: 2mm; margin: 1.5mm auto 3mm; break-inside: avoid; }
   .center { text-align: center; }
 </style>
 </head>
@@ -178,7 +179,7 @@
     <div class="arr">→</div>
     <div class="box">③ 계산<small>Delta·Vega·<br>Curvature 등</small></div>
     <div class="arr">→</div>
-    <div class="box out">결과<small>화면<br>JSON · CSV</small></div>
+    <div class="box out">결과<small>화면 · 보고서<br>엑셀</small></div>
   </div>
 
   <h3>준비물</h3>
@@ -202,6 +203,7 @@ Portfolio total: 33,496,812.42 USD                                  <span class=
       InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)  <span class="m">6</span></pre>
   <div class="small">① 적용된 SIMM 버전, 평가일, 통화, 참고용 표시 &nbsp;② 전체 합계 &nbsp;③ 거래상대방 합계 &nbsp;④ Netting Set(CSA) 합계와 그중 Add-on
   &nbsp;⑤ Product Class(상품군) &nbsp;⑥ Risk Class(위험군)와 구성요소. 모든 금액은 USD입니다.</div>
+  <p style="margin-top:2mm">실행할 때 <code>--report</code>를 붙이면 결과를 브라우저로 보는 <b>HTML 보고서</b>도 만들어집니다. 거래상대방별 SIMM 요약표와 상세 내역을 보고 <b>엑셀로 내려받을 수</b> 있습니다(요약 3, 상세편 5.5).</p>
 
   <div class="callout warn"><b class="t">꼭 알아둘 것</b>
     <ul>
@@ -274,7 +276,7 @@ python -m simm versions</pre>
       <li>엑셀로 열어 <b>첫 줄(열 이름)은 그대로 두고</b> 둘째 줄부터 데이터를 채웁니다. 작성 규칙은 <b>요약 4</b>에 있습니다.</li>
       <li><b>[다른 이름으로 저장] → "CSV UTF-8(쉼표로 분리)"</b> 형식으로 저장합니다.</li>
     </ol>
-    <div class="callout tip"><b class="t">작성 예시가 필요하면</b><code>examples\crif_example.csv</code>를 여세요. 금리, FX, 신용, 주식, 상품, Add-on까지 모든 종류의 작성 예가 들어 있습니다.</div>
+    <div class="callout tip"><b class="t">작성 예시가 필요하면</b><code>examples\crif_example.csv</code>에 금리·FX·신용·주식·상품·Add-on 등 모든 종류의 작성 예가 있습니다.</div>
   </div></div>
 
   <div class="step"><div class="n l">B</div><div class="b">
@@ -304,8 +306,9 @@ python -m simm versions</pre>
   --valuation-date 2026-06-30 `
   --context my_context.json `
   --output result.json `
-  --summary-csv summary.csv</pre>
-    <p>화면에 요약이 나오고, 산출엔진 폴더에 <b><code>result.json</code></b>(전체 결과)과 <b><code>summary.csv</code></b>(엑셀로 볼 수 있는 표)가 만들어집니다.
+  --report report.html</pre>
+    <p>화면에 요약이 나오고, 산출엔진 폴더에 <b><code>result.json</code></b>(전체 결과)과 <b><code>report.html</code></b>(보고서)이 만들어집니다.
+    <b><code>report.html</code>을 더블클릭</b>하면 브라우저에 거래상대방별 SIMM 요약 화면이 열리고, <b>[엑셀 다운로드]</b> 버튼으로 엑셀 파일을 받을 수 있습니다.
     평가일(<code>2026-06-30</code>)은 내 CRIF의 <code>ValuationDate</code>와 같게 바꿔 입력하세요.</p>
   </div></div>
 </section>
@@ -555,6 +558,7 @@ python -m simm versions</pre>
       <tr><td><code>--output</code> result.json</td><td>결과를 JSON으로 저장합니다. 차단된 경우에는 전체 오류 목록이 저장됩니다.</td></tr>
       <tr><td><code>--include-trace</code></td><td><code>--output</code>에 계산 과정 전체(trace)를 넣습니다. 파일이 커집니다.</td></tr>
       <tr><td><code>--summary-csv</code> summary.csv</td><td>거래상대방·Netting Set·Product Class·Risk Class별 표를 CSV로 저장합니다.</td></tr>
+      <tr><td><code>--report</code> report.html</td><td>거래상대방별 SIMM 요약 화면(HTML 보고서)을 만듭니다. 상세 내역 펼치기와 엑셀 다운로드 기능이 들어 있습니다(5.5). 검증에서 차단되면 만들지 않습니다.</td></tr>
       <tr><td><code>--version</code> 2.7</td><td>SIMM 버전을 직접 지정합니다. 자동 선택과 다르면 경고가 나옵니다.</td></tr>
       <tr><td><code>--netting-set-column</code> 열이름</td><td>CRIF의 다른 열(예: <code>PortfolioId</code>)을 Netting Set으로 씁니다. CRIF에 이미 <code>NettingSet</code> 열이 있으면 쓸 수 없습니다.</td></tr>
       <tr><td><code>--excel-serial-dates</code></td><td>엑셀 날짜 숫자(예: 46203)를 <code>2026-06-30</code> 형식으로 바꿉니다.</td></tr>
@@ -645,6 +649,21 @@ Portfolio total: 33,496,812.42 USD
       <tr><td><code>result.trace</code></td><td><code>--include-trace</code>를 준 경우에만 들어갑니다. CRIF 행부터 최종 합계까지 모든 중간값과 SIMM 방법론 조항이 들어 있어, 특정 값이 어떻게 나왔는지 따라갈 수 있습니다.</td></tr>
     </tbody>
   </table>
+
+  <div class="keep">
+  <h3>5.5 HTML 보고서 (<code>--report</code>)</h3>
+  <p>거래상대방별 SIMM을 한눈에 보는 화면입니다. 실행 명령에 <code>--report report.html</code>을 붙이면 만들어지고, 파일을 더블클릭하면 브라우저(Edge, Chrome 등)로 열립니다.</p>
+  <img class="shot" src="images/report-summary-ko.png" alt="HTML 보고서의 거래상대방 요약 화면">
+  <ul>
+    <li><b>요약표:</b> 거래상대방별 SIMM, 전체 대비 비중(막대), Netting Set 수, Add-on을 금액이 큰 순서로 보여줍니다. 열 이름을 누르면 정렬되고, 검색 칸으로 거래상대방을 찾을 수 있습니다. 위쪽에는 평가일, 적용 버전, 전체 SIMM, 최대 거래상대방이 나옵니다.</li>
+    <li><b>상세 내역:</b> 거래상대방을 누르면 Netting Set → 상품군 → 위험군 순서로 Delta, Vega, Curvature, BaseCorr와 기여분이 펼쳐집니다(아래 그림). [모두 펼치기]와 [모두 접기]도 있습니다.</li>
+    <li><b>엑셀 다운로드:</b> 오른쪽 위 [엑셀 다운로드]를 누르면 .xlsx 파일이 브라우저의 다운로드 폴더에 저장됩니다. 시트는 거래상대방, Netting Set, 위험군 상세, 실행 정보 4개이고, 금액이 숫자로 들어 있어 바로 합계를 내거나 필터를 걸 수 있습니다.</li>
+    <li><b>언어:</b> 오른쪽 위에서 한국어와 English를 바꿀 수 있고, 엑셀 파일도 선택한 언어로 받습니다.</li>
+    <li><b>오프라인:</b> 화면, 데이터, 엑셀 파일이 보고서 파일 하나에 모두 들어 있어 인터넷 없이 열립니다. 파일 하나만 전달하면 받는 사람도 같은 화면을 볼 수 있습니다.</li>
+  </ul>
+  <img class="shot" src="images/report-detail-ko.png" alt="거래상대방을 펼친 상세 내역 화면">
+  <div class="callout warn"><b class="t">보안 주의</b>보고서와 엑셀 파일에는 거래상대방 이름과 증거금 금액이 들어 있습니다. CRIF와 같은 수준으로 관리하세요.</div>
+  </div>
 </section>
 
 <!-- ============================== DETAIL 5: versions, python ============================== -->
@@ -736,6 +755,8 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
   <h2 style="margin-top:7mm">10. 자주 묻는 질문</h2>
   <h4>Q. KRW 등 다른 통화 결과가 필요합니다.</h4>
   <p>산출엔진은 USD 결과만 냅니다. 결과에 원하는 기준 환율을 곱해 환산하세요. 어떤 환율(기준일, 고시 기관)을 쓸지는 상대방과의 합의를 따르세요.</p>
+  <h4>Q. 거래상대방별 SIMM만 한눈에 보고 싶습니다.</h4>
+  <p>실행할 때 <code>--report report.html</code>을 붙이세요. 브라우저에서 거래상대방별 요약표를 보고, 필요한 부분만 펼쳐 보거나 엑셀로 받을 수 있습니다(5.5절).</p>
   <h4>Q. 같은 거래상대방의 CSA 두 개를 합쳐 계산할 수 있나요?</h4>
   <p>각 CSA(Netting Set)를 따로 계산해 단순 합산합니다. 서로 상계하려면 두 CSA 행의 <code>NettingSet</code>을 같은 값으로 넣어야 하는데, 실제 계약 구조가 그럴 때만 하세요.</p>
   <h4>Q. CRIF에 Schedule IM 대상 거래가 섞여 있습니다.</h4>

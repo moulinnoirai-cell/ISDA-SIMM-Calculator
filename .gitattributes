@@ -3,3 +3,4 @@
 * text=auto eol=lf
 *.pdf binary
 *.PDF binary
+*.png binary

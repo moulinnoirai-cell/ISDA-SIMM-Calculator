@@ -7,3 +7,11 @@ dist/
 # keep real CRIF files and results out of the repository
 outputs/
 *.local.*
+# files the user guides create in the engine folder (they may contain confidential trade data)
+my_*.csv
+my_*.json
+result*.json
+summary*.csv
+issues*.json
+report*.html
+*.xlsx

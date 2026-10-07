@@ -114,6 +114,7 @@
   table.tight td { padding: 1mm 1.2mm; overflow-wrap: anywhere; }
   table.rt td:first-child code { white-space: nowrap; }
   .small { font-size: 8.8pt; color: var(--muted); }
+  img.shot { display: block; width: 80%; border: 1px solid var(--line); border-radius: 2mm; margin: 1.5mm auto 3mm; break-inside: avoid; }
   .center { text-align: center; }
 </style>
 </head>
@@ -176,7 +177,7 @@
     <div class="arr">→</div>
     <div class="box">③ Calculate<small>delta, vega,<br>curvature, ...</small></div>
     <div class="arr">→</div>
-    <div class="box out">Results<small>screen<br>JSON · CSV</small></div>
+    <div class="box out">Results<small>screen, report<br>Excel</small></div>
   </div>
 
   <h3>What you need</h3>
@@ -200,6 +201,7 @@ Portfolio total: 33,496,812.42 USD                                  <span class=
       InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)  <span class="m">6</span></pre>
   <div class="small">① SIMM version, valuation date, currency and the reference-only flag &nbsp;② total of all counterparties &nbsp;③ counterparty total
   &nbsp;④ netting set (CSA) total and its add-on &nbsp;⑤ product class &nbsp;⑥ risk class and its components. All amounts are in USD.</div>
+  <p style="margin-top:2mm">Add <code>--report</code> to the run to also get an <b>HTML report</b> to open in a browser: a counterparty SIMM summary with drill-down that you can <b>download as Excel</b> (Quick start 3, Reference 5.5).</p>
 
   <div class="callout warn"><b class="t">Keep in mind</b>
     <ul>
@@ -272,7 +274,7 @@ python -m simm versions</pre>
       <li>Open it in Excel. <b>Keep the first line (column names)</b> and fill in your data from the second line. The rules are in <b>Quick start 4</b>.</li>
       <li>Use <b>[Save As] → "CSV UTF-8 (Comma delimited)"</b>.</li>
     </ol>
-    <div class="callout tip"><b class="t">Need an example?</b>Open <code>examples\crif_example.csv</code>. It has an example of every kind of row: rates, FX, credit, equity, commodity and add-ons.</div>
+    <div class="callout tip"><b class="t">Need an example?</b><code>examples\crif_example.csv</code> has an example of every kind of row, add-ons included.</div>
   </div></div>
 
   <div class="step"><div class="n l">B</div><div class="b">
@@ -302,8 +304,9 @@ python -m simm versions</pre>
   --valuation-date 2026-06-30 `
   --context my_context.json `
   --output result.json `
-  --summary-csv summary.csv</pre>
-    <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>summary.csv</code></b> (a table for Excel) are written to the engine folder.
+  --report report.html</pre>
+    <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>report.html</code></b> (the report) are written to the engine folder.
+    <b>Double-click <code>report.html</code></b> to see the SIMM of every counterparty in your browser; the <b>[Download Excel]</b> button saves it as an Excel file.
     Replace <code>2026-06-30</code> with the <code>ValuationDate</code> of your CRIF.</p>
   </div></div>
 </section>
@@ -554,6 +557,7 @@ python -m simm versions</pre>
       <tr><td><code>--output</code> result.json</td><td>Writes the result as JSON. If the run is blocked, it writes the full list of issues instead.</td></tr>
       <tr><td><code>--include-trace</code></td><td>Adds the full calculation trace to <code>--output</code>. The file gets large.</td></tr>
       <tr><td><code>--summary-csv</code> summary.csv</td><td>Writes the counterparty / netting set / product class / risk class table as CSV.</td></tr>
+      <tr><td><code>--report</code> report.html</td><td>Writes the counterparty SIMM summary screen (HTML report), with drill-down and an Excel download (5.5). Not written when validation blocks the run.</td></tr>
       <tr><td><code>--version</code> 2.7</td><td>Sets the SIMM version explicitly. A warning is shown if it differs from the scheduled one.</td></tr>
       <tr><td><code>--netting-set-column</code> name</td><td>Uses another CRIF column (e.g. <code>PortfolioId</code>) as the netting set. Not allowed if the CRIF already has a <code>NettingSet</code> column.</td></tr>
       <tr><td><code>--excel-serial-dates</code></td><td>Converts Excel date numbers (e.g. 46203) to <code>2026-06-30</code> format.</td></tr>
@@ -644,6 +648,21 @@ Portfolio total: 33,496,812.42 USD
       <tr><td><code>result.trace</code></td><td>Only with <code>--include-trace</code>. Every intermediate value from the CRIF rows to the totals, with the SIMM methodology paragraph, so you can follow how any number was produced.</td></tr>
     </tbody>
   </table>
+
+  <div class="keep">
+  <h3>5.5 HTML report (<code>--report</code>)</h3>
+  <p>A screen that shows the SIMM of every counterparty at a glance. Add <code>--report report.html</code> to the run command, then double-click the file to open it in a browser (Edge, Chrome, ...).</p>
+  <img class="shot" src="images/report-summary-en.png" alt="Counterparty summary of the HTML report">
+  <ul>
+    <li><b>Summary table:</b> SIMM, share of the total (with a bar), number of netting sets and add-on for every counterparty, largest first. Click a column name to sort, or use the search box.</li>
+    <li><b>Drill-down:</b> click a counterparty to open its netting sets, product classes and risk classes with delta, vega, curvature, base correlation and contributions (picture below). [Expand all] and [Collapse all] are available.</li>
+    <li><b>Excel download:</b> [Download Excel] at the top right saves an .xlsx file to your download folder: four sheets (counterparties, netting sets, risk classes, run info) with amounts as numbers.</li>
+    <li><b>Language:</b> switch between 한국어 and English at the top right; the Excel file follows the selected language.</li>
+    <li><b>Offline:</b> the page, its data and the Excel file are all in the one report file, which opens without internet access.</li>
+  </ul>
+  <img class="shot" src="images/report-detail-en.png" alt="Drill-down of one counterparty">
+  <div class="callout warn"><b class="t">Confidentiality</b>The report and the Excel file contain counterparty names and margin amounts. Handle them with the same care as the CRIF.</div>
+  </div>
 </section>
 
 <!-- ============================== DETAIL 5: versions, python ============================== -->
@@ -735,6 +754,8 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
   <h2 style="margin-top:7mm">10. FAQ</h2>
   <h4>Q. I need results in another currency, such as KRW.</h4>
   <p>The engine reports USD only. Multiply the result by the FX rate you need. Which rate (date, source) to use should follow your agreement with the counterparty.</p>
+  <h4>Q. I just want to see the SIMM per counterparty.</h4>
+  <p>Add <code>--report report.html</code> to the run. The browser shows the counterparty summary table; open only the counterparties you need, or download everything as Excel (section 5.5).</p>
   <h4>Q. Can two CSAs with the same counterparty be calculated together?</h4>
   <p>Each CSA (netting set) is calculated separately and the results are added. To offset them, give rows of both CSAs the same <code>NettingSet</code> value, but only if the legal agreements actually allow it.</p>
   <h4>Q. My CRIF contains trades under Schedule IM.</h4>

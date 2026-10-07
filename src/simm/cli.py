@@ -5,6 +5,7 @@
 
 Every input transformation (column mapping, Excel serial dates, version override) is explicit on the command
 line and recorded in the output. Amounts are CRIF AmountUSD; no FX conversion and no network access.
+--report writes a self-contained HTML page with the counterparty summary and an Excel download.
 """
 from collections import Counter
 from datetime import date, timedelta
@@ -16,6 +17,7 @@ from .crif import read_crif, validate
 from .engine import Engine
 from .models import plain
 from .parameters import ParameterPackage
+from .report import fmt, write_report
 from .versioning import load_schedule, select_version
 
 COMPONENTS = ('Delta', 'Vega', 'Curvature', 'BaseCorr')
@@ -81,10 +83,6 @@ def summary_rows(result):
     return out
 
 
-def fmt(x):
-    return f'{Decimal(str(x)):,.2f}'
-
-
 def print_summary(result, meta, stream):
     w = stream.write
     w(f"SIMM {result['simm_version']} | valuation {meta['valuation_date']} | USD | SHADOW\n")
@@ -144,6 +142,10 @@ def cmd_run(args):
         writer.writeheader()
         writer.writerows(rows_out)
         Path(args.summary_csv).write_text(buf.getvalue(), encoding='utf-8-sig')
+    if args.report:
+        write_report(args.report, result, meta)
+        if not args.quiet:
+            sys.stdout.write(f'\nReport written to {args.report}\n')
     return 0
 
 
@@ -171,6 +173,7 @@ def build_parser():
     run.add_argument('--output', help='write metadata and result JSON here')
     run.add_argument('--include-trace', action='store_true', help='include the full calculation trace in --output')
     run.add_argument('--summary-csv', help='write the counterparty/netting set/product/risk class breakdown here')
+    run.add_argument('--report', help='write an HTML report here: counterparty summary, drill-down and Excel download (offline)')
     run.add_argument('--quiet', action='store_true', help='do not print the summary')
     run.set_defaults(func=cmd_run)
     ver = sub.add_parser('versions', help='show the version schedule or the version for a date')
