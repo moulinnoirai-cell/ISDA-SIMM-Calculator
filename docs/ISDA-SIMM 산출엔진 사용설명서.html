@@ -165,7 +165,7 @@
     <li>파생상품 거래의 <b>민감도 파일(CRIF)</b>을 넣으면, ISDA SIMM 방법으로 <b>개시증거금(IM)</b>을 계산해 <b>USD</b>로 보여줍니다.</li>
     <li>계산 전에 입력 파일이 규칙에 맞는지 꼼꼼히 검사합니다. 문제가 있으면 계산하지 않고 <b>무엇이, 몇 번째 줄에서</b> 틀렸는지 알려줍니다.</li>
     <li>평가일에 맞는 <b>SIMM 버전</b>(2.5 ~ 2.9+2606)을 자동으로 골라 씁니다.</li>
-    <li><b>웹 화면</b>에서 CRIF 파일을 올리고 버전을 고른 뒤 <b>[산출]</b> 버튼만 누르면 결과가 바로 나옵니다(<code>python -m simm serve</code>, 요약 3, 상세편 4.1).</li>
+    <li><b>웹 화면</b>에서 CRIF 파일을 올리고 버전을 고른 뒤 <b>[산출]</b> 버튼만 누르면 결과가 바로 나옵니다(<code>python -m simm serve</code>, 상세편 4.1).</li>
   </ul>
 
   <h3>계산 흐름</h3>
@@ -249,7 +249,6 @@ python -m simm versions</pre>
     <p>아래처럼 버전 목록이 나오면 <span class="ok">준비 완료</span>입니다.</p>
 <pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
 ...
-2.8+2512  use from COB 2026-07-10  https://www.isda.org/...
 2.9+2606  use from COB 2026-12-04  https://www.isda.org/...</pre>
   </div></div>
 
@@ -312,12 +311,6 @@ python -m simm versions</pre>
     <p>화면에 요약이 나오고, 산출엔진 폴더에 <b><code>result.json</code></b>(전체 결과)과 <b><code>report.html</code></b>(보고서)이 만들어집니다.
     <b><code>report.html</code>을 더블클릭</b>하면 브라우저에 거래상대방별 SIMM 요약 화면이 열리고, <b>[엑셀 다운로드]</b> 버튼으로 엑셀 파일을 받을 수 있습니다.
     평가일(<code>2026-06-30</code>)은 내 CRIF의 <code>ValuationDate</code>와 같게 바꿔 입력하세요.</p>
-  </div></div>
-
-  <div class="step"><div class="n l">D</div><div class="b">
-    <b class="t">또는 웹 화면으로 실행</b> <span class="small">(명령 옵션 없이 브라우저에서)</span>
-<pre class="cmd">python -m simm serve</pre>
-    <p>브라우저에서 <code>http://127.0.0.1:8765/</code>를 열고 ① CRIF 파일을 올리고 ② SIMM 버전을 고르고(기본은 평가일에 맞춰 자동) ③ 방향·규제·단위 근거를 입력한 뒤 <b>[산출]</b>을 누르면 결과가 아래에 바로 나옵니다. 자세한 설명은 상세편 4.1.</p>
   </div></div>
 </section>
 
