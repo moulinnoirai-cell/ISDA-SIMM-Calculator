@@ -244,6 +244,10 @@ class Handler(BaseHTTPRequestHandler):
         query = self.path.split('?', 1)[1] if '?' in self.path else ''
         if path == '/':
             self._send(HTTPStatus.OK, PAGE, 'text/html; charset=utf-8', {'X-Frame-Options': 'DENY'})
+        elif path == '/favicon.ico':
+            self.send_response(HTTPStatus.NO_CONTENT)
+            self.send_header('Content-Length', '0')
+            self.end_headers()
         elif path == '/api/versions':
             self._json(HTTPStatus.OK, versions_payload())
         elif path == '/api/example':
@@ -629,11 +633,6 @@ PAGE = r'''<!doctype html>
   function renderOk(r) {
     var box = document.createElement('div');
     box.appendChild(banner('ok', t('ok_title'), t('ok_line', { v: r.version, d: r.valuation_date, t: r.total_simm, c: r.counterparties, used: r.rows.used, read: r.rows.read })));
-    var notes = [];
-    if (r.warnings.indexOf('warn_override') >= 0) notes.push(t('w_override'));
-    if (r.warnings.indexOf('warn_beyond') >= 0) notes.push(t('w_beyond'));
-    if (r.warnings.indexOf('warn_excluded') >= 0) notes.push(t('w_excluded'));
-    notes.forEach(function (n) { box.appendChild(banner('warn', n)); });
     var links = el('div', undefined, 'links');
     var a = el('a', t('open_new')); a.href = r.report_url; a.target = '_blank'; a.rel = 'noopener'; links.appendChild(a);
     var s = el('a', t('save_html')); s.href = r.report_url + '?download=1'; links.appendChild(s);

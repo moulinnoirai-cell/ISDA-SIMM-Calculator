@@ -78,6 +78,10 @@ python -m simm serve        # then open http://127.0.0.1:8765/
 3. **Enter** direction, regulation and the source of the sensitivity units (an uploaded `context.json` can replace these inputs), then press **Calculate**.
 4. The **result** (the HTML report with counterparty summary, drill-down and Excel download) appears below. If validation blocks the run, the issues are listed instead and nothing is calculated.
 
+![Web page: upload, version and settings](docs/images/web-input-en.png)
+
+![Web page: result after Calculate](docs/images/web-result-en.png)
+
 The server listens on `127.0.0.1` only and refuses requests from other origins; uploaded files exist only as temporary files during the request, and the latest 8 reports are kept in memory until you stop the server (`Ctrl+C`). Options: `--port 8765`, `--open`; `--host` with `--allow-remote` is possible but not recommended, because anyone who can reach the port can upload CRIF files and read results. The page uses the same calculation as `python -m simm run`; [`src/simm/webapp.py`](src/simm/webapp.py) and [`src/simm/service.py`](src/simm/service.py) hold the code.
 
 ### HTML report
@@ -131,7 +135,7 @@ version means adding a `parameters/simm_<version>/` package and a schedule entry
 ## Validation status
 
 The validation evidence and its limits are summarised in [`docs/METHODOLOGY_NOTES.md`](docs/METHODOLOGY_NOTES.md).
-- **Parameters:** 2.5 to 2.8+2512 are cross-checked by independent transcriptions. 2.9+2606 was transcribed by [`tools/transcribe_simm_2_9.py`](tools/transcribe_simm_2_9.py) from the ISDA PDF, with a round-trip check against the PDF text; it has not yet been transcribed a second time independently.
+- **Parameters:** 2.5 to 2.8+2512 are cross-checked by independent transcriptions. 2.9+2606 was transcribed by [`tools/transcribe_simm_2_9.py`](tools/transcribe_simm_2_9.py) from the ISDA PDF, with a round-trip check against the PDF text and a second parse of the PDF with a different text extractor (all 1,093 values identical). It has not been compared with a third-party transcription.
 - **Formulas:** cross-checked against an independent re-implementation on synthetic portfolios.
 - **Not verified:** ISDA's official unit tests were not run, and vega, curvature, credit, equity and commodity have synthetic checks only.
 
