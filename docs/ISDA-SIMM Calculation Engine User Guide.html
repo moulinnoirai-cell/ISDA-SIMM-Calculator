@@ -146,9 +146,9 @@
 
   <div class="meta">
     <table>
-      <tr><td><b>SIMM versions</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512</td></tr>
+      <tr><td><b>SIMM versions</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512, 2.9+2606</td></tr>
       <tr><td><b>Repository</b></td><td>https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</td></tr>
-      <tr><td><b>Document date</b></td><td>2026-10-06</td></tr>
+      <tr><td><b>Document date</b></td><td>2026-11-14</td></tr>
       <tr><td><b>Licence</b></td><td>Code and documents: Apache-2.0 / ISDA SIMM parameter values are not covered (rights remain with ISDA)</td></tr>
     </table>
   </div>
@@ -162,7 +162,8 @@
   <ul>
     <li>Give it a <b>sensitivity file (CRIF)</b> for your derivatives and it calculates <b>initial margin (IM)</b> with the ISDA SIMM method, in <b>USD</b>.</li>
     <li>It checks the input file strictly before calculating. If something is wrong, it does not calculate and tells you <b>what is wrong and on which line</b>.</li>
-    <li>It selects the <b>SIMM version</b> (2.5 to 2.8+2512) that applies to the valuation date.</li>
+    <li>It selects the <b>SIMM version</b> (2.5 to 2.9+2606) that applies to the valuation date.</li>
+    <li>A <b>web page</b> lets you upload the CRIF, choose the version and press <b>[Calculate]</b> to see the result (<code>python -m simm serve</code>, Quick start 3, Reference 4.1).</li>
   </ul>
 
   <h3>How it works</h3>
@@ -246,7 +247,8 @@ python -m simm versions</pre>
     <p>If you see the list of versions, you are <span class="ok">ready</span>.</p>
 <pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
 ...
-2.8+2512  use from COB 2026-07-10  https://www.isda.org/...</pre>
+2.8+2512  use from COB 2026-07-10  https://www.isda.org/...
+2.9+2606  use from COB 2026-12-04  https://www.isda.org/...</pre>
   </div></div>
 
   <div class="step"><div class="n">5</div><div class="b">
@@ -308,6 +310,12 @@ python -m simm versions</pre>
     <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>report.html</code></b> (the report) are written to the engine folder.
     <b>Double-click <code>report.html</code></b> to see the SIMM of every counterparty in your browser; the <b>[Download Excel]</b> button saves it as an Excel file.
     Replace <code>2026-06-30</code> with the <code>ValuationDate</code> of your CRIF.</p>
+  </div></div>
+
+  <div class="step"><div class="n l">D</div><div class="b">
+    <b class="t">Or use the web page</b> <span class="small">(in the browser, without command options)</span>
+<pre class="cmd">python -m simm serve</pre>
+    <p>Open <code>http://127.0.0.1:8765/</code> in a browser, (1) upload the CRIF, (2) choose the SIMM version (automatic by valuation date by default), (3) enter direction, regulation and the unit source, and press <b>[Calculate]</b>. The result appears right below. Details in Reference 4.1.</p>
   </div></div>
 </section>
 
@@ -385,7 +393,8 @@ python -m simm versions</pre>
       <tr><td><code>config\</code></td><td><b>Context file template</b> (<code>context.template.json</code>)</td></tr>
       <tr><td><code>examples\</code></td><td><b>Synthetic example</b> CRIF and context file, ready to run (not real trades)</td></tr>
       <tr><td><code>parameters\</code></td><td>Risk weights, correlations and other values per SIMM version (transcribed from ISDA's public documents)</td></tr>
-      <tr><td><code>src\</code>, <code>tests\</code></td><td>Program code and tests</td></tr>
+      <tr><td><code>src\</code>, <code>tests\</code></td><td>Program code (calculation engine and the web page <code>webapp.py</code>) and tests</td></tr>
+      <tr><td><code>tools\</code></td><td>Tool that transcribes the tables of an ISDA methodology PDF into a parameter package (development, section 8)</td></tr>
       <tr><td><code>docs\</code></td><td>This guide (English and Korean) and the methodology notes</td></tr>
     </tbody>
   </table>
@@ -546,7 +555,40 @@ python -m simm versions</pre>
   </ul>
   <div class="callout note"><b class="t">Credential guard</b>The run is refused if the context file has a field name containing <code>password</code>, <code>token</code>, <code>secret</code>, <code>api_key</code>, <code>cookie</code> or <code>credential</code>.</div>
 
-  <h2 style="margin-top:8mm">4. Run command and options</h2>
+  <h2 style="margin-top:8mm">4. Running: web page and command line</h2>
+  <h3>4.1 Running from the web page (<code>serve</code>)</h3>
+  <p>You can upload the CRIF in a browser instead of remembering command options. Enter the command below in the terminal, then open <code>http://127.0.0.1:8765/</code> in a browser (Edge, Chrome, ...). Press <code>Ctrl+C</code> in the terminal to stop.</p>
+<pre class="cmd">$env:PYTHONPATH = "src"
+python -m simm serve</pre>
+  <ul>
+    <li><b>1. Upload the CRIF:</b> click the box to choose a file, or drop it there. CSV, TSV, CRIF and XLSX (single sheet) are accepted. After the upload the page reads the row count and fills in the <b>valuation date</b> and suggests the <b>regulation</b>. [Try the example CRIF] loads the synthetic data in <code>examples\</code>.</li>
+    <li><b>2. Choose the SIMM version:</b> the default <b>Automatic (by valuation date)</b> follows the schedule in section 6 and shows which version applies, for example "→ 2.9+2606 applies to this valuation date". Choosing another version from the list calculates with it, and a warning appears in the result when it differs from the schedule.</li>
+    <li><b>3. Enter the settings:</b> direction (collect / post), regulation and the source of the sensitivity units. The values are remembered in this browser. Default legal entity, CSA and netting set are optional under [Default scope].</li>
+    <li><b>4. Press [Calculate]:</b> when it finishes, the HTML report of 5.5 appears below as is (counterparty summary, drill-down, Excel download), with links to open it in a new tab or save it as an HTML file.</li>
+    <li><b>If validation blocks the run:</b> instead of a report you get a red notice and a table of issues (severity, code, row, field, message). Look the code up in Appendix A, fix the CRIF or the settings and press [Calculate] again.</li>
+  </ul>
+  <table>
+    <thead><tr><th style="width:34%">Page input</th><th>Corresponding item of the context file (chapter 3)</th></tr></thead>
+    <tbody>
+      <tr><td>Direction</td><td><code>direction</code></td></tr>
+      <tr><td>Regulation</td><td><code>regulation</code> (must match the CRIF <code>CollectRegulations</code>/<code>PostRegulations</code> values)</td></tr>
+      <tr><td>Source of the sensitivity units</td><td>The same sentence is written to the <code>source</code> of every risk type. <code>unit</code> stays fixed to the template value.</td></tr>
+      <tr><td>Legal entity, CSA, netting set</td><td><code>legal_entity</code>, <code>csa</code>, <code>netting_set</code></td></tr>
+      <tr><td>[Advanced options] context.json</td><td>If you upload your own context file, it replaces the inputs above.</td></tr>
+      <tr><td>[Advanced options] netting set column, Excel serial dates</td><td>Same as <code>--netting-set-column</code> and <code>--excel-serial-dates</code>.</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th style="width:34%"><code>serve</code> option</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>--port</code> 8765</td><td>Port number. If it is taken, choose another and open the matching address.</td></tr>
+      <tr><td><code>--open</code></td><td>Also try to open a browser when starting.</td></tr>
+      <tr><td><code>--host</code>, <code>--allow-remote</code></td><td>By default the page is reachable from this computer (127.0.0.1) only. Reaching it from another computer needs both options, which is not recommended: anyone who can reach the port can upload CRIF files and read results.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn"><b class="t">Your data stays on this computer</b>An uploaded CRIF exists as a temporary file only while it is calculated and is deleted right away. Calculated reports stay in the server's memory (the latest 8) and disappear when you stop it with <code>Ctrl+C</code>. Nothing is sent to or loaded from the internet.</div>
+
+  <h3>4.2 Running from the command line (<code>run</code>)</h3>
 <pre class="cmd">python -m simm run --crif &lt;CRIF file&gt; --valuation-date &lt;YYYY-MM-DD&gt; --context &lt;context file&gt; [options]</pre>
   <table>
     <thead><tr><th style="width:34%">Option</th><th>Description</th></tr></thead>
@@ -651,7 +693,7 @@ Portfolio total: 33,496,812.42 USD
 
   <div class="keep">
   <h3>5.5 HTML report (<code>--report</code>)</h3>
-  <p>A screen that shows the SIMM of every counterparty at a glance. Add <code>--report report.html</code> to the run command, then double-click the file to open it in a browser (Edge, Chrome, ...).</p>
+  <p>A screen that shows the SIMM of every counterparty at a glance. Add <code>--report report.html</code> to the run command, then double-click the file to open it in a browser (Edge, Chrome, ...). When you press [Calculate] on the web page (4.1), the same report appears right below it.</p>
   <img class="shot" src="images/report-summary-en.png" alt="Counterparty summary of the HTML report">
   <ul>
     <li><b>Summary table:</b> SIMM, share of the total (with a bar), number of netting sets and add-on for every counterparty, largest first. Click a column name to sort, or use the search box.</li>
@@ -678,17 +720,19 @@ Portfolio total: 33,496,812.42 USD
       <tr><td>2.7</td><td>2024-12-06</td><td>2024-12-06 to 2025-07-10</td></tr>
       <tr><td>2.7+2412</td><td>2025-07-11</td><td>2025-07-11 to 2025-12-04</td></tr>
       <tr><td>2.8+2506</td><td>2025-12-05</td><td>2025-12-05 to 2026-07-09</td></tr>
-      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 onwards</td></tr>
+      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 to 2026-12-03</td></tr>
+      <tr><td>2.9+2606</td><td>2026-12-04</td><td>2026-12-04 onwards</td></tr>
     </tbody>
   </table>
+  <p><b>2.9+2606</b> is the version ISDA announced on 2026-10-30 (the 2026 primary recalibration, using data up to 2026-06-30). ISDA's effective date is 2026-12-05; it is used from the close of business (COB) on <b>2026-12-04</b>. The formulas (methodology sections B-C) equal those of 2.8+2512; the risk weights, correlations, concentration thresholds, HVRs and VRWs changed. The currency lists changed too (for example CNY joins the regular-volatility interest-rate currencies, and the longer FX high-volatility list puts KRW in the high-volatility group).</p>
   <p>To see which version applies to a date:</p>
 <pre class="cmd">python -m simm versions --date 2025-03-31</pre>
 <pre class="out">{ "version": "2.7", "use_from_cob": "2024-12-06", "valuation_date": "2025-03-31",
-  "beyond_verified_schedule": false, "schedule_verified_through": "2026-10-06", "warning": null }</pre>
+  "beyond_verified_schedule": false, "schedule_verified_through": "2026-11-14", "warning": null }</pre>
   <ul>
     <li><b>Before 2022-12-02:</b> not supported (<code>No SIMM package scheduled</code> error).</li>
-    <li><b>After 2026-10-06:</b> calculated with the latest version and flagged with a warning, because ISDA may have published a newer version since. Check the ISDA website; if there is a new version, add it as described in section 8.</li>
-    <li><b>Setting the version yourself:</b> if you agreed a different version with your counterparty, use <code>--version</code>. A warning is recorded on screen and in the JSON.</li>
+    <li><b>After 2026-11-14:</b> calculated with the latest version and flagged with a warning, because ISDA may have published a newer version since. Check the ISDA website; if there is a new version, add it as described in section 8.</li>
+    <li><b>Setting the version yourself:</b> if you agreed a different version with your counterparty, use <code>--version</code>. A warning is recorded on screen and in the JSON. On the web page, choose it from the [SIMM version] list; a version that is not in the list is rejected.</li>
   </ul>
 <pre class="out">SIMM 2.7 | valuation 2026-06-30 | USD | SHADOW
 WARNING: Version override 2.7 differs from scheduled 2.8+2506</pre>
@@ -739,6 +783,7 @@ else:
 shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="c"># macOS / Linux</span></pre></div></div>
   <div class="step"><div class="n">4</div><div class="b"><b class="t">Add it to the schedule</b><p>Append <code>version</code>, <code>use_from_cob</code>, <code>announcement</code> and <code>methodology_pdf</code> to <code>versions</code> in <code>parameters\version_schedule.json</code>, and set <code>verified_through</code> to the date you checked ISDA's announcements.</p></div></div>
   <div class="step"><div class="n">5</div><div class="b"><b class="t">Check</b><p>Run the tests and check that <code>python -m simm versions</code> lists the new version.</p></div></div>
+  <div class="callout note"><b class="t">Transcribing from the PDF</b>2.9+2606 was produced by <code>tools\transcribe_simm_2_9.py</code>, which reads the tables of the ISDA methodology PDF (needs <code>pip install pypdf</code>; the PDF is not in the repository). It writes the files only after every table, rendered back as the PDF prints it, is found in the PDF text. That the formulas are unchanged was checked by comparing sections B-C of both PDFs, ignoring whitespace, so the only engine change was adding <code>simm_2_9</code> to <code>SUPPORTED_METHODOLOGIES</code>.</div>
   <div class="callout warn"><b class="t">When parameters are not enough</b>If the formulas change or a new <code>methodology_id</code> appears, the engine code must change too (for example <code>SUPPORTED_METHODOLOGIES</code> in <code>src\simm\parameters.py</code>). Parameter files are checked when loaded: hash, symmetry and range of correlation matrices, and concentration thresholds.</div>
 
   <h2 style="margin-top:7mm">9. Notices and limitations</h2>
@@ -747,6 +792,7 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
     <li><b>ISDA licence:</b> using SIMM for margin calculations may require a licence from ISDA. See the ISDA SIMM licensing FAQ (isda.org).</li>
     <li><b>Validation:</b> the parameters were checked against independent transcriptions and the formulas against an independent re-implementation on synthetic portfolios. ISDA's official unit tests (licensed material) were not run. Details are in <code>docs\METHODOLOGY_NOTES.md</code>.</li>
     <li><b>CRIF standard:</b> based on the public Risk Data Standards 1.36. The <code>PaymentCurrency</code> and <code>GroupName</code> columns and the fixed add-on configuration are extensions of this engine; check that they match your CRIF producer.</li>
+    <li><b>Web page:</b> <code>python -m simm serve</code> listens on this computer (127.0.0.1) only and refuses requests that come from other sites or addresses. The page and the reports still show counterparties and amounts, so handle them like the CRIF.</li>
     <li><b>Not covered:</b> FX conversion, thresholds, minimum transfer amounts, collateral valuation and regulatory scope decisions.</li>
     <li><b>Licence:</b> code, documents and templates are Apache-2.0. You may use, modify, redistribute and use them commercially without permission, provided you keep LICENSE and NOTICE and mark the files you change.</li>
   </ul>
@@ -756,6 +802,12 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
   <p>The engine reports USD only. Multiply the result by the FX rate you need. Which rate (date, source) to use should follow your agreement with the counterparty.</p>
   <h4>Q. I just want to see the SIMM per counterparty.</h4>
   <p>Add <code>--report report.html</code> to the run. The browser shows the counterparty summary table; open only the counterparties you need, or download everything as Excel (section 5.5).</p>
+  <h4>Q. The [Calculate] button cannot be pressed on the web page.</h4>
+  <p>Upload a CRIF file first. If a red notice appears after the upload, fix what it says (for example an unsupported file type or a column separator problem). XLSX files need <code>pip install openpyxl</code>.</p>
+  <h4>Q. What do I enter as the source of the sensitivity units?</h4>
+  <p>The name of a document or system that shows how the PV01, CS01, vega and other units of this CRIF are defined (for example "Risk system specification, section 4.1"). Wrong units change the result a lot, so nothing is calculated while it is empty.</p>
+  <h4>Q. The page does not open, or the port is in use.</h4>
+  <p>Start it on another port, for example <code>python -m simm serve --port 8766</code>, and open <code>http://127.0.0.1:8766/</code>. Keep <code>127.0.0.1</code> in the address.</p>
   <h4>Q. Can two CSAs with the same counterparty be calculated together?</h4>
   <p>Each CSA (netting set) is calculated separately and the results are added. To offset them, give rows of both CSAs the same <code>NettingSet</code> value, but only if the legal agreements actually allow it.</p>
   <h4>Q. My CRIF contains trades under Schedule IM.</h4>

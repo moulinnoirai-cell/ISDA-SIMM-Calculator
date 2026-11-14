@@ -8,6 +8,8 @@ One folder per ISDA SIMM methodology version (`simm_<version>/`):
 
 [`version_schedule.json`](version_schedule.json) maps valuation dates to versions by ISDA's "use from COB" dates.
 
+For 2.9+2606 the first two steps are done by [`../tools/transcribe_simm_2_9.py`](../tools/transcribe_simm_2_9.py) (`python tools/transcribe_simm_2_9.py <ISDA PDF>`, needs `pypdf`); it also checks the result against the PDF text before writing.
+
 **Rights.** These values are transcribed from documents published by ISDA. Rights remain with ISDA. They are **not** licensed under this
 project's Apache License (see [`../NOTICE`](../NOTICE)). Use of ISDA SIMM may require a licence from ISDA.
 
