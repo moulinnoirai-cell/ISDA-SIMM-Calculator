@@ -148,9 +148,9 @@
 
   <div class="meta">
     <table>
-      <tr><td><b>지원 SIMM 버전</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512</td></tr>
+      <tr><td><b>지원 SIMM 버전</b></td><td>2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512, 2.9+2606</td></tr>
       <tr><td><b>저장소</b></td><td>https://github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</td></tr>
-      <tr><td><b>문서 기준일</b></td><td>2026-10-06</td></tr>
+      <tr><td><b>문서 기준일</b></td><td>2026-11-14</td></tr>
       <tr><td><b>라이선스</b></td><td>코드·문서 Apache-2.0 / ISDA SIMM Parameter 값은 라이선스 대상 아님(ISDA 권리)</td></tr>
     </table>
   </div>
@@ -164,7 +164,8 @@
   <ul>
     <li>파생상품 거래의 <b>민감도 파일(CRIF)</b>을 넣으면, ISDA SIMM 방법으로 <b>개시증거금(IM)</b>을 계산해 <b>USD</b>로 보여줍니다.</li>
     <li>계산 전에 입력 파일이 규칙에 맞는지 꼼꼼히 검사합니다. 문제가 있으면 계산하지 않고 <b>무엇이, 몇 번째 줄에서</b> 틀렸는지 알려줍니다.</li>
-    <li>평가일에 맞는 <b>SIMM 버전</b>(2.5 ~ 2.8+2512)을 자동으로 골라 씁니다.</li>
+    <li>평가일에 맞는 <b>SIMM 버전</b>(2.5 ~ 2.9+2606)을 자동으로 골라 씁니다.</li>
+    <li><b>웹 화면</b>에서 CRIF 파일을 올리고 버전을 고른 뒤 <b>[산출]</b> 버튼만 누르면 결과가 바로 나옵니다(<code>python -m simm serve</code>, 요약 3, 상세편 4.1).</li>
   </ul>
 
   <h3>계산 흐름</h3>
@@ -248,7 +249,8 @@ python -m simm versions</pre>
     <p>아래처럼 버전 목록이 나오면 <span class="ok">준비 완료</span>입니다.</p>
 <pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
 ...
-2.8+2512  use from COB 2026-07-10  https://www.isda.org/...</pre>
+2.8+2512  use from COB 2026-07-10  https://www.isda.org/...
+2.9+2606  use from COB 2026-12-04  https://www.isda.org/...</pre>
   </div></div>
 
   <div class="step"><div class="n">5</div><div class="b">
@@ -310,6 +312,12 @@ python -m simm versions</pre>
     <p>화면에 요약이 나오고, 산출엔진 폴더에 <b><code>result.json</code></b>(전체 결과)과 <b><code>report.html</code></b>(보고서)이 만들어집니다.
     <b><code>report.html</code>을 더블클릭</b>하면 브라우저에 거래상대방별 SIMM 요약 화면이 열리고, <b>[엑셀 다운로드]</b> 버튼으로 엑셀 파일을 받을 수 있습니다.
     평가일(<code>2026-06-30</code>)은 내 CRIF의 <code>ValuationDate</code>와 같게 바꿔 입력하세요.</p>
+  </div></div>
+
+  <div class="step"><div class="n l">D</div><div class="b">
+    <b class="t">또는 웹 화면으로 실행</b> <span class="small">(명령 옵션 없이 브라우저에서)</span>
+<pre class="cmd">python -m simm serve</pre>
+    <p>브라우저에서 <code>http://127.0.0.1:8765/</code>를 열고 ① CRIF 파일을 올리고 ② SIMM 버전을 고르고(기본은 평가일에 맞춰 자동) ③ 방향·규제·단위 근거를 입력한 뒤 <b>[산출]</b>을 누르면 결과가 아래에 바로 나옵니다. 자세한 설명은 상세편 4.1.</p>
   </div></div>
 </section>
 
@@ -387,7 +395,8 @@ python -m simm versions</pre>
       <tr><td><code>config\</code></td><td><b>설정 파일 양식</b>(<code>context.template.json</code>)</td></tr>
       <tr><td><code>examples\</code></td><td>바로 돌려볼 수 있는 <b>가상 예시</b> CRIF와 설정 파일 (실제 거래 아님)</td></tr>
       <tr><td><code>parameters\</code></td><td>SIMM 버전별 위험가중치·상관계수 등 (ISDA 공개 문서에서 옮긴 값)</td></tr>
-      <tr><td><code>src\</code>, <code>tests\</code></td><td>프로그램 코드와 자체 테스트</td></tr>
+      <tr><td><code>src\</code>, <code>tests\</code></td><td>프로그램 코드(계산 엔진, 웹 화면 <code>webapp.py</code> 포함)와 자체 테스트</td></tr>
+      <tr><td><code>tools\</code></td><td>ISDA 방법론 PDF의 표를 Parameter 파일로 옮기는 도구 (개발용, 8장)</td></tr>
     </tbody>
   </table>
 
@@ -547,7 +556,40 @@ python -m simm versions</pre>
   </ul>
   <div class="callout note"><b class="t">비밀번호 방지 장치</b>설정 파일에 <code>password</code>, <code>token</code>, <code>secret</code>, <code>api_key</code>, <code>cookie</code>, <code>credential</code>이 들어간 항목 이름이 있으면 실행을 거부합니다.</div>
 
-  <h2 style="margin-top:8mm">4. 실행 명령과 옵션</h2>
+  <h2 style="margin-top:8mm">4. 실행 방법: 웹 화면과 명령줄</h2>
+  <h3>4.1 웹 화면으로 실행하기 (<code>serve</code>)</h3>
+  <p>명령 옵션을 외우지 않고 브라우저에서 CRIF 파일을 올려 계산할 수 있습니다. 터미널에서 아래 명령을 입력하고, 브라우저(Edge, Chrome 등)에서 <code>http://127.0.0.1:8765/</code>를 엽니다. 멈출 때는 터미널에서 <code>Ctrl+C</code>를 누릅니다.</p>
+<pre class="cmd">$env:PYTHONPATH = "src"
+python -m simm serve</pre>
+  <ul>
+    <li><b>① CRIF 파일 올리기:</b> 칸을 눌러 파일을 고르거나 끌어다 놓습니다. CSV, TSV, CRIF, XLSX(시트 1개)를 받습니다. 올리면 행 수와 평가일을 읽어 <b>평가일</b> 칸과 <b>규제</b> 후보를 채워 줍니다. [예제 CRIF로 시험해 보기]를 누르면 <code>examples\</code>의 가상 데이터로 먼저 써 볼 수 있습니다.</li>
+    <li><b>② SIMM 버전 고르기:</b> 기본값 <b>자동(평가일 기준)</b>은 6장의 일정표대로 고르고, 칸 아래에 "→ 이 평가일에는 2.9+2606 적용"처럼 어느 버전이 쓰이는지 보여 줍니다. 목록에서 다른 버전을 고르면 그 버전으로 계산하고, 일정표와 다르면 결과 화면에 경고가 나옵니다.</li>
+    <li><b>③ 조건 입력:</b> 방향(수취 collect / 교부 post), 규제, 민감도 단위의 근거를 입력합니다. 입력한 값은 이 브라우저에 기억되어 다음에 다시 채워집니다. 법인·CSA·Netting Set 기본값은 [거래 범위 기본값]에서 선택적으로 넣습니다.</li>
+    <li><b>④ [산출] 누르기:</b> 계산이 끝나면 화면 아래에 5.5의 HTML 보고서가 그대로 나옵니다(거래상대방 요약, 상세 펼치기, 엑셀 다운로드). [새 탭에서 열기]와 [HTML 파일로 저장] 링크도 있습니다.</li>
+    <li><b>검증에서 막힌 경우:</b> 보고서 대신 빨간 안내와 함께 오류 표(구분, 코드, 행, 열, 내용)가 나옵니다. 코드의 뜻은 부록 A를 보고, CRIF나 조건을 고친 뒤 다시 [산출]을 누릅니다.</li>
+  </ul>
+  <table>
+    <thead><tr><th style="width:34%">화면 입력</th><th>설정 파일(3장)에서 대응하는 항목</th></tr></thead>
+    <tbody>
+      <tr><td>방향</td><td><code>direction</code></td></tr>
+      <tr><td>규제</td><td><code>regulation</code> (CRIF의 <code>CollectRegulations</code>/<code>PostRegulations</code> 값과 같아야 함)</td></tr>
+      <tr><td>민감도 단위의 근거</td><td>모든 Risk Type의 <code>source</code>에 같은 문장이 들어갑니다. <code>unit</code>은 양식 값으로 고정됩니다.</td></tr>
+      <tr><td>법인, CSA, Netting Set</td><td><code>legal_entity</code>, <code>csa</code>, <code>netting_set</code></td></tr>
+      <tr><td>[고급 옵션] context.json</td><td>직접 만든 설정 파일을 올리면 위 입력값 대신 이 파일을 씁니다.</td></tr>
+      <tr><td>[고급 옵션] Netting Set 열, 엑셀 일련번호</td><td><code>--netting-set-column</code>, <code>--excel-serial-dates</code>와 같습니다.</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th style="width:34%"><code>serve</code> 옵션</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><code>--port</code> 8765</td><td>포트 번호. 이미 쓰는 번호면 다른 번호를 지정하고 주소도 바꿔 엽니다.</td></tr>
+      <tr><td><code>--open</code></td><td>실행하면서 브라우저를 열어 봅니다.</td></tr>
+      <tr><td><code>--host</code>, <code>--allow-remote</code></td><td>기본은 이 컴퓨터(127.0.0.1)에서만 열립니다. 다른 컴퓨터에서 접속하게 하려면 둘 다 필요하지만, 접속 가능한 누구나 CRIF를 올리고 결과를 볼 수 있으므로 권하지 않습니다.</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn"><b class="t">데이터는 이 컴퓨터를 떠나지 않습니다</b>올린 CRIF는 계산하는 동안만 임시 파일로 존재하고 바로 지워집니다. 결과 보고서는 서버 메모리에 최근 8건만 남고, <code>Ctrl+C</code>로 멈추면 모두 사라집니다. 인터넷으로 보내거나 불러오는 것은 없습니다.</div>
+
+  <h3>4.2 명령줄로 실행하기 (<code>run</code>)</h3>
 <pre class="cmd">python -m simm run --crif &lt;CRIF 파일&gt; --valuation-date &lt;YYYY-MM-DD&gt; --context &lt;설정 파일&gt; [옵션]</pre>
   <table>
     <thead><tr><th style="width:34%">옵션</th><th>설명</th></tr></thead>
@@ -652,7 +694,7 @@ Portfolio total: 33,496,812.42 USD
 
   <div class="keep">
   <h3>5.5 HTML 보고서 (<code>--report</code>)</h3>
-  <p>거래상대방별 SIMM을 한눈에 보는 화면입니다. 실행 명령에 <code>--report report.html</code>을 붙이면 만들어지고, 파일을 더블클릭하면 브라우저(Edge, Chrome 등)로 열립니다.</p>
+  <p>거래상대방별 SIMM을 한눈에 보는 화면입니다. 실행 명령에 <code>--report report.html</code>을 붙이면 만들어지고, 파일을 더블클릭하면 브라우저(Edge, Chrome 등)로 열립니다. 웹 화면(4.1)에서 [산출]을 누르면 같은 보고서가 화면 아래에 바로 나옵니다.</p>
   <img class="shot" src="images/report-summary-ko.png" alt="HTML 보고서의 거래상대방 요약 화면">
   <ul>
     <li><b>요약표:</b> 거래상대방별 SIMM, 전체 대비 비중(막대), Netting Set 수, Add-on을 금액이 큰 순서로 보여줍니다. 열 이름을 누르면 정렬되고, 검색 칸으로 거래상대방을 찾을 수 있습니다. 위쪽에는 평가일, 적용 버전, 전체 SIMM, 최대 거래상대방이 나옵니다.</li>
@@ -679,17 +721,19 @@ Portfolio total: 33,496,812.42 USD
       <tr><td>2.7</td><td>2024-12-06</td><td>2024-12-06 ~ 2025-07-10</td></tr>
       <tr><td>2.7+2412</td><td>2025-07-11</td><td>2025-07-11 ~ 2025-12-04</td></tr>
       <tr><td>2.8+2506</td><td>2025-12-05</td><td>2025-12-05 ~ 2026-07-09</td></tr>
-      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 ~</td></tr>
+      <tr><td>2.8+2512</td><td>2026-07-10</td><td>2026-07-10 ~ 2026-12-03</td></tr>
+      <tr><td>2.9+2606</td><td>2026-12-04</td><td>2026-12-04 ~</td></tr>
     </tbody>
   </table>
+  <p><b>2.9+2606</b>은 ISDA가 2026-10-30에 공지한 버전입니다(2026년 정기 재캘리브레이션, 2026-06-30까지의 데이터 사용). ISDA 시행일은 2026-12-05이고, 장 마감 기준 <b>2026-12-04 COB부터</b> 씁니다. 수식(방법론 B~C절)은 2.8+2512와 같고, 위험가중치·상관계수·집중도 기준값·HVR·VRW 등이 바뀌었습니다. 통화 목록도 바뀌었습니다(예: 금리의 일반 변동성 통화에 CNY 추가, FX 고변동성 통화 목록 확대로 KRW가 고변동성 그룹에 포함).</p>
   <p>특정 날짜에 어떤 버전이 쓰이는지 확인하려면:</p>
 <pre class="cmd">python -m simm versions --date 2025-03-31</pre>
 <pre class="out">{ "version": "2.7", "use_from_cob": "2024-12-06", "valuation_date": "2025-03-31",
-  "beyond_verified_schedule": false, "schedule_verified_through": "2026-10-06", "warning": null }</pre>
+  "beyond_verified_schedule": false, "schedule_verified_through": "2026-11-14", "warning": null }</pre>
   <ul>
     <li><b>2022-12-02 이전 날짜:</b> 지원하지 않습니다(<code>No SIMM package scheduled</code> 오류).</li>
-    <li><b>2026-10-06 이후 날짜:</b> 최신 버전으로 계산하되 경고를 표시합니다. 그 사이 ISDA가 새 버전을 냈을 수 있으니 ISDA 홈페이지를 확인하세요. 새 버전이 나왔다면 8장을 따라 추가합니다.</li>
-    <li><b>버전 직접 지정:</b> 상대방과 합의한 버전이 다르면 <code>--version</code>으로 지정합니다. 화면과 JSON에 경고가 남습니다.</li>
+    <li><b>2026-11-14 이후 날짜:</b> 최신 버전으로 계산하되 경고를 표시합니다. 그 사이 ISDA가 새 버전을 냈을 수 있으니 ISDA 홈페이지를 확인하세요. 새 버전이 나왔다면 8장을 따라 추가합니다.</li>
+    <li><b>버전 직접 지정:</b> 상대방과 합의한 버전이 다르면 <code>--version</code>으로 지정합니다. 화면과 JSON에 경고가 남습니다. 웹 화면에서는 [SIMM 버전] 목록에서 고릅니다. 목록에 없는 버전은 오류로 거부됩니다.</li>
   </ul>
 <pre class="out">SIMM 2.7 | valuation 2026-06-30 | USD | SHADOW
 WARNING: Version override 2.7 differs from scheduled 2.8+2506</pre>
@@ -740,6 +784,7 @@ else:
 shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="c"># macOS / Linux</span></pre></div></div>
   <div class="step"><div class="n">4</div><div class="b"><b class="t">일정표 추가</b><p><code>parameters\version_schedule.json</code>의 <code>versions</code> 끝에 <code>version</code>, <code>use_from_cob</code>, <code>announcement</code>, <code>methodology_pdf</code>를 추가하고, <code>verified_through</code>를 ISDA 공지를 확인한 날짜로 바꿉니다.</p></div></div>
   <div class="step"><div class="n">5</div><div class="b"><b class="t">확인</b><p>테스트를 돌리고 <code>python -m simm versions</code>로 새 버전이 보이는지 확인합니다.</p></div></div>
+  <div class="callout note"><b class="t">PDF에서 옮기는 도구</b>2.9+2606은 <code>tools\transcribe_simm_2_9.py</code>가 ISDA 방법론 PDF의 표를 읽어 만들었습니다(<code>pip install pypdf</code> 필요, PDF는 저장소에 없음). 표를 다시 PDF 문구로 되돌려 PDF 안에서 찾는 대조까지 통과해야 파일을 씁니다. 수식이 같다는 것은 두 PDF의 B~C절 본문을 공백을 무시하고 비교해 확인했고, 그래서 엔진 코드에는 <code>SUPPORTED_METHODOLOGIES</code>에 <code>simm_2_9</code>만 추가했습니다.</div>
   <div class="callout warn"><b class="t">Parameter만으로 안 되는 경우</b>새 버전에서 수식 자체가 바뀌었거나 새 <code>methodology_id</code>가 생겼다면 엔진 코드(<code>src\simm\parameters.py</code>의 <code>SUPPORTED_METHODOLOGIES</code> 등)도 고쳐야 합니다. Parameter 파일은 읽을 때 해시, 상관계수 행렬의 대칭·범위, 집중도 기준값을 자동으로 검사합니다.</div>
 
   <h2 style="margin-top:7mm">9. 주의사항과 한계</h2>
@@ -748,6 +793,7 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
     <li><b>ISDA 라이선스:</b> 증거금 계산에 SIMM을 쓰려면 ISDA 라이선스가 필요할 수 있습니다. ISDA SIMM 라이선스 FAQ(isda.org)를 참고하세요.</li>
     <li><b>검증 수준:</b> Parameter는 독립적으로 옮겨 적은 값과 대조했고, 수식은 별도로 구현한 계산 코드와 가상 포트폴리오로 대조했습니다. ISDA 공식 단위 테스트(유료 자료)는 실행하지 않았습니다. 자세한 내용은 <code>docs\METHODOLOGY_NOTES.md</code>에 있습니다.</li>
     <li><b>CRIF 기준:</b> 공개된 Risk Data Standards 1.36 기준입니다. <code>PaymentCurrency</code>·<code>GroupName</code> 열과 고정 Add-on 설정은 이 산출엔진의 확장이므로, 쓰는 CRIF 생산 시스템과 맞는지 확인하세요.</li>
+    <li><b>웹 화면:</b> <code>python -m simm serve</code>는 이 컴퓨터(127.0.0.1)에서만 열리도록 만들었고, 다른 사이트나 다른 주소에서 온 요청은 거부합니다. 그래도 화면과 보고서에는 거래상대방과 금액이 보이므로 CRIF와 같은 수준으로 관리하세요.</li>
     <li><b>다루지 않는 것:</b> 환율 환산, Threshold·최소이전금액(MTA)·담보 평가, 규제 적용 범위 판단.</li>
     <li><b>라이선스:</b> 코드·문서·양식은 Apache-2.0입니다. 허락 없이 사용·수정·재배포·상업적 이용이 가능하며, LICENSE와 NOTICE를 유지하고 수정한 파일에 수정 사실을 표시하면 됩니다.</li>
   </ul>
@@ -757,6 +803,12 @@ shasum -a 256 parameters/simm_X_Y/parameters.json                  <span class="
   <p>산출엔진은 USD 결과만 냅니다. 결과에 원하는 기준 환율을 곱해 환산하세요. 어떤 환율(기준일, 고시 기관)을 쓸지는 상대방과의 합의를 따르세요.</p>
   <h4>Q. 거래상대방별 SIMM만 한눈에 보고 싶습니다.</h4>
   <p>실행할 때 <code>--report report.html</code>을 붙이세요. 브라우저에서 거래상대방별 요약표를 보고, 필요한 부분만 펼쳐 보거나 엑셀로 받을 수 있습니다(5.5절).</p>
+  <h4>Q. 웹 화면에서 [산출] 버튼이 눌러지지 않습니다.</h4>
+  <p>CRIF 파일을 먼저 올려야 합니다. 파일을 올렸는데도 빨간 안내가 나온다면 그 문구대로 고치세요(예: 지원하지 않는 파일 형식, 열 구분 오류). XLSX는 <code>pip install openpyxl</code>이 필요합니다.</p>
+  <h4>Q. '민감도 단위의 근거'에 무엇을 적나요?</h4>
+  <p>이 CRIF의 PV01, CS01, Vega 등 단위가 어떤 기준으로 만들어졌는지 확인할 수 있는 문서나 시스템 이름을 적습니다(예: "리스크 시스템 산출 사양서 4.1절"). 단위가 틀리면 결과가 크게 틀어지므로, 비워 두면 계산하지 않습니다.</p>
+  <h4>Q. 화면이 열리지 않거나 "포트를 쓰고 있다"고 나옵니다.</h4>
+  <p><code>python -m simm serve --port 8766</code>처럼 다른 포트로 실행하고 주소도 <code>http://127.0.0.1:8766/</code>로 여세요. 주소의 <code>127.0.0.1</code>은 바꾸지 마세요.</p>
   <h4>Q. 같은 거래상대방의 CSA 두 개를 합쳐 계산할 수 있나요?</h4>
   <p>각 CSA(Netting Set)를 따로 계산해 단순 합산합니다. 서로 상계하려면 두 CSA 행의 <code>NettingSet</code>을 같은 값으로 넣어야 하는데, 실제 계약 구조가 그럴 때만 하세요.</p>
   <h4>Q. CRIF에 Schedule IM 대상 거래가 섞여 있습니다.</h4>

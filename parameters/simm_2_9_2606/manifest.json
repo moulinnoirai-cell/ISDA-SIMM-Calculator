@@ -1,0 +1,13 @@
+{
+  "version": "2.9+2606",
+  "status": "REFERENCE_ONLY",
+  "sha256": "430fb6381168e3d26d6594a0e97b6b5fc1441af28b526179de3ef59f6addb995",
+  "source_url": "https://www.isda.org/a/ZYxiE/ISDA-SIMM_v2.92606_PUBLIC.pdf",
+  "notes": [
+    "Transcribed from the ISDA public methodology PDF listed in source_url (tools/transcribe_simm_2_9.py).",
+    "Round-trip checked: the matrices and risk-weight rows were re-rendered and found in the PDF text.",
+    "Sections A-C (formulas) are textually identical to 2.8+2512 (whitespace-insensitive comparison), so the simm_2_8 engine formulas apply."
+  ],
+  "official_isda_unit_tests": "NOT_RUN",
+  "production_approved": false
+}

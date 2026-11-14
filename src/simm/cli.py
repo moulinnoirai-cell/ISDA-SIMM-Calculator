@@ -2,70 +2,22 @@
 
     python -m simm run --crif FILE --valuation-date YYYY-MM-DD --context context.json [options]
     python -m simm versions [--date YYYY-MM-DD]
+    python -m simm serve [--port 8765] [--open]     # local web page: upload CRIF, pick version, press Calculate
 
 Every input transformation (column mapping, Excel serial dates, version override) is explicit on the command
 line and recorded in the output. Amounts are CRIF AmountUSD; no FX conversion and no network access.
 --report writes a self-contained HTML page with the counterparty summary and an Excel download.
 """
-from collections import Counter
-from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
-import argparse, csv, hashlib, io, json, sys
+import argparse, csv, io, json, sys
 
-from .crif import read_crif, validate
-from .engine import Engine
 from .models import plain
-from .parameters import ParameterPackage
 from .report import fmt, write_report
+from .service import ensure_no_secrets, run_crif  # ensure_no_secrets is re-exported for callers of simm.cli
 from .versioning import load_schedule, select_version
 
 COMPONENTS = ('Delta', 'Vega', 'Curvature', 'BaseCorr')
-SECRET_MARKERS = ('password', 'credential', 'secret', 'api_key', 'cookie', 'token')
-
-
-def ensure_no_secrets(configuration):
-    """Reject credential-like keys anywhere in a context/configuration object."""
-    if isinstance(configuration, (list, tuple)):
-        for value in configuration:
-            ensure_no_secrets(value)
-        return
-    if not isinstance(configuration, dict):
-        return
-    for key, value in configuration.items():
-        if any(x in key.lower() for x in SECRET_MARKERS):
-            raise ValueError('Credentials are prohibited in calculation configuration')
-        ensure_no_secrets(value)
-
-
-def excel_serial_to_iso(value):
-    text = str(value).strip()
-    try:
-        serial = float(text)
-    except ValueError:
-        return text  # already a date string; the validator checks the format
-    return (date(1899, 12, 30) + timedelta(days=serial)).isoformat()
-
-
-def prepare_rows(headers, rows, args):
-    applied = []
-    if args.excel_serial_dates:
-        if 'ValuationDate' not in headers:
-            raise ValueError('--excel-serial-dates given but the CRIF has no ValuationDate column')
-        for r in rows:
-            r['ValuationDate'] = excel_serial_to_iso(r['ValuationDate'])
-        applied.append('ValuationDate: Excel serial numbers converted to ISO dates (--excel-serial-dates)')
-    if args.netting_set_column:
-        col = args.netting_set_column
-        if col not in headers:
-            raise ValueError(f'--netting-set-column {col} is not a CRIF column')
-        if 'NettingSet' in headers:
-            raise ValueError('CRIF already has NettingSet; refusing to overwrite it from another column')
-        for r in rows:
-            r['NettingSet'] = r.get(col, '')
-        headers = headers + ['NettingSet']
-        applied.append(f'NettingSet := {col} (--netting-set-column); blank values fall back to context netting_set')
-    return headers, rows, applied
 
 
 def summary_rows(result):
@@ -103,24 +55,9 @@ def print_summary(result, meta, stream):
 def cmd_run(args):
     crif_path = Path(args.crif)
     context = json.loads(Path(args.context).read_text(encoding='utf-8'))
-    ensure_no_secrets(context)
-    context['valuation_date'] = args.valuation_date
-    headers, rows = read_crif(crif_path)
-    headers, rows, applied = prepare_rows(headers, rows, args)
-    if args.version == 'auto':
-        selection = select_version(args.valuation_date)
-    else:
-        selection = {'version': args.version, 'valuation_date': args.valuation_date, 'override': True,
-                     'scheduled_version': select_version(args.valuation_date)['version']}
-        if selection['scheduled_version'] != args.version:
-            selection['warning'] = f"Version override {args.version} differs from scheduled {selection['scheduled_version']}"
-    package = ParameterPackage(selection['version'])
-    validation = validate(headers, rows, package, context)
-    issues = Counter(f'{i.severity}:{i.code}' for i in validation.issues)
-    meta = {'crif_file': str(crif_path), 'crif_sha256': hashlib.sha256(crif_path.read_bytes()).hexdigest(), 'valuation_date': args.valuation_date,
-            'version_selection': selection, 'parameter_hash': package.hash, 'input_transformations': applied,
-            'validation_status': validation.status, 'issue_counts': dict(issues),
-            'rows_read': len(rows), 'rows_used': len(validation.rows), 'rows_excluded': len(validation.excluded)}
+    outcome = run_crif(crif_path, context, args.valuation_date, args.version, args.netting_set_column, args.excel_serial_dates)
+    meta, validation, result = outcome.meta, outcome.validation, outcome.result
+    issues = meta['issue_counts']
     if validation.blocked:
         sys.stderr.write(f'Validation blocked ({validation.status}). Issue counts: {dict(issues)}\n')
         for i in [x for x in validation.issues if x.severity in ('CRITICAL', 'REVIEW_REQUIRED')][:20]:
@@ -128,7 +65,6 @@ def cmd_run(args):
         if args.output:
             Path(args.output).write_text(json.dumps({'metadata': meta, 'issues': plain(validation.issues)}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         return 2
-    result = Engine(package).calculate(validation, {})
     if not args.quiet:
         print_summary(result, meta, sys.stdout)
     if args.output:
@@ -160,6 +96,11 @@ def cmd_versions(args):
     return 0
 
 
+def cmd_serve(args):
+    from .webapp import serve
+    return serve(args.host, args.port, args.open, args.allow_remote)
+
+
 def build_parser():
     ap = argparse.ArgumentParser(prog='python -m simm', description='ISDA SIMM calculator in USD (shadow/reference use)')
     sub = ap.add_subparsers(dest='command', required=True)
@@ -179,6 +120,12 @@ def build_parser():
     ver = sub.add_parser('versions', help='show the version schedule or the version for a date')
     ver.add_argument('--date')
     ver.set_defaults(func=cmd_versions)
+    web = sub.add_parser('serve', help='start the local web page: upload a CRIF, choose the SIMM version, press Calculate')
+    web.add_argument('--host', default='127.0.0.1', help='address to listen on (default 127.0.0.1, this machine only)')
+    web.add_argument('--port', type=int, default=8765, help='port (default 8765; 0 picks a free one)')
+    web.add_argument('--open', action='store_true', help='also try to open the page in a browser')
+    web.add_argument('--allow-remote', action='store_true', help='allow a non-local --host; anyone reaching the port can upload and read results')
+    web.set_defaults(func=cmd_serve)
     return ap
 
 
@@ -186,7 +133,7 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)
-    except (ValueError, FileNotFoundError, KeyError) as exc:
+    except (ValueError, FileNotFoundError, KeyError, OSError) as exc:
         sys.stderr.write(f'error: {exc}\n')
         return 1
 
