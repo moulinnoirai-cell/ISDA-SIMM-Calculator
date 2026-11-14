@@ -162,8 +162,7 @@
   <ul>
     <li>Give it a <b>sensitivity file (CRIF)</b> for your derivatives and it calculates <b>initial margin (IM)</b> with the ISDA SIMM method, in <b>USD</b>.</li>
     <li>It checks the input file strictly before calculating. If something is wrong, it does not calculate and tells you <b>what is wrong and on which line</b>.</li>
-    <li>It selects the <b>SIMM version</b> (2.5 to 2.9+2606) that applies to the valuation date.</li>
-    <li>A <b>web page</b> lets you upload the CRIF, choose the version and press <b>[Calculate]</b> to see the result (<code>python -m simm serve</code>, Quick start 3, Reference 4.1).</li>
+    <li>It selects the <b>SIMM version</b> (2.5 to 2.9+2606) by date. Web page: <code>serve</code> (4.1).</li>
   </ul>
 
   <h3>How it works</h3>
@@ -247,7 +246,6 @@ python -m simm versions</pre>
     <p>If you see the list of versions, you are <span class="ok">ready</span>.</p>
 <pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
 ...
-2.8+2512  use from COB 2026-07-10  https://www.isda.org/...
 2.9+2606  use from COB 2026-12-04  https://www.isda.org/...</pre>
   </div></div>
 
@@ -310,12 +308,6 @@ python -m simm versions</pre>
     <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>report.html</code></b> (the report) are written to the engine folder.
     <b>Double-click <code>report.html</code></b> to see the SIMM of every counterparty in your browser; the <b>[Download Excel]</b> button saves it as an Excel file.
     Replace <code>2026-06-30</code> with the <code>ValuationDate</code> of your CRIF.</p>
-  </div></div>
-
-  <div class="step"><div class="n l">D</div><div class="b">
-    <b class="t">Or use the web page</b> <span class="small">(in the browser, without command options)</span>
-<pre class="cmd">python -m simm serve</pre>
-    <p>Open <code>http://127.0.0.1:8765/</code> in a browser, (1) upload the CRIF, (2) choose the SIMM version (automatic by valuation date by default), (3) enter direction, regulation and the unit source, and press <b>[Calculate]</b>. The result appears right below. Details in Reference 4.1.</p>
   </div></div>
 </section>
 
