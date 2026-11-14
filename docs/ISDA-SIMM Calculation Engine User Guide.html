@@ -560,6 +560,7 @@ python -m simm versions</pre>
   <p>You can upload the CRIF in a browser instead of remembering command options. Enter the command below in the terminal, then open <code>http://127.0.0.1:8765/</code> in a browser (Edge, Chrome, ...). Press <code>Ctrl+C</code> in the terminal to stop.</p>
 <pre class="cmd">$env:PYTHONPATH = "src"
 python -m simm serve</pre>
+  <img class="shot" src="images/web-input-en.png" alt="Web page: CRIF upload and calculation settings">
   <ul>
     <li><b>1. Upload the CRIF:</b> click the box to choose a file, or drop it there. CSV, TSV, CRIF and XLSX (single sheet) are accepted. After the upload the page reads the row count and fills in the <b>valuation date</b> and suggests the <b>regulation</b>. [Try the example CRIF] loads the synthetic data in <code>examples\</code>.</li>
     <li><b>2. Choose the SIMM version:</b> the default <b>Automatic (by valuation date)</b> follows the schedule in section 6 and shows which version applies, for example "→ 2.9+2606 applies to this valuation date". Choosing another version from the list calculates with it, and a warning appears in the result when it differs from the schedule.</li>
@@ -567,6 +568,7 @@ python -m simm serve</pre>
     <li><b>4. Press [Calculate]:</b> when it finishes, the HTML report of 5.5 appears below as is (counterparty summary, drill-down, Excel download), with links to open it in a new tab or save it as an HTML file.</li>
     <li><b>If validation blocks the run:</b> instead of a report you get a red notice and a table of issues (severity, code, row, field, message). Look the code up in Appendix A, fix the CRIF or the settings and press [Calculate] again.</li>
   </ul>
+  <img class="shot" src="images/web-result-en.png" alt="Web page: the report after pressing Calculate">
   <table>
     <thead><tr><th style="width:34%">Page input</th><th>Corresponding item of the context file (chapter 3)</th></tr></thead>
     <tbody>

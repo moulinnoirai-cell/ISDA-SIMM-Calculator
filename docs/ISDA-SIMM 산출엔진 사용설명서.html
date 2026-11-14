@@ -561,6 +561,7 @@ python -m simm versions</pre>
   <p>명령 옵션을 외우지 않고 브라우저에서 CRIF 파일을 올려 계산할 수 있습니다. 터미널에서 아래 명령을 입력하고, 브라우저(Edge, Chrome 등)에서 <code>http://127.0.0.1:8765/</code>를 엽니다. 멈출 때는 터미널에서 <code>Ctrl+C</code>를 누릅니다.</p>
 <pre class="cmd">$env:PYTHONPATH = "src"
 python -m simm serve</pre>
+  <img class="shot" src="images/web-input-ko.png" alt="웹 화면: CRIF 업로드와 산출 조건 입력">
   <ul>
     <li><b>① CRIF 파일 올리기:</b> 칸을 눌러 파일을 고르거나 끌어다 놓습니다. CSV, TSV, CRIF, XLSX(시트 1개)를 받습니다. 올리면 행 수와 평가일을 읽어 <b>평가일</b> 칸과 <b>규제</b> 후보를 채워 줍니다. [예제 CRIF로 시험해 보기]를 누르면 <code>examples\</code>의 가상 데이터로 먼저 써 볼 수 있습니다.</li>
     <li><b>② SIMM 버전 고르기:</b> 기본값 <b>자동(평가일 기준)</b>은 6장의 일정표대로 고르고, 칸 아래에 "→ 이 평가일에는 2.9+2606 적용"처럼 어느 버전이 쓰이는지 보여 줍니다. 목록에서 다른 버전을 고르면 그 버전으로 계산하고, 일정표와 다르면 결과 화면에 경고가 나옵니다.</li>
@@ -568,6 +569,7 @@ python -m simm serve</pre>
     <li><b>④ [산출] 누르기:</b> 계산이 끝나면 화면 아래에 5.5의 HTML 보고서가 그대로 나옵니다(거래상대방 요약, 상세 펼치기, 엑셀 다운로드). [새 탭에서 열기]와 [HTML 파일로 저장] 링크도 있습니다.</li>
     <li><b>검증에서 막힌 경우:</b> 보고서 대신 빨간 안내와 함께 오류 표(구분, 코드, 행, 열, 내용)가 나옵니다. 코드의 뜻은 부록 A를 보고, CRIF나 조건을 고친 뒤 다시 [산출]을 누릅니다.</li>
   </ul>
+  <img class="shot" src="images/web-result-ko.png" alt="웹 화면: [산출] 후 결과 보고서">
   <table>
     <thead><tr><th style="width:34%">화면 입력</th><th>설정 파일(3장)에서 대응하는 항목</th></tr></thead>
     <tbody>

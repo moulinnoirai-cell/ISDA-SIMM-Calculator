@@ -36,10 +36,18 @@ def number(token):
     return str(Decimal(token.replace(',', '')))
 
 
+def _anchor(text, marker, pos=0):
+    """First match of `marker` at or after pos; runs of whitespace in the marker match any whitespace (PDF extractors differ)."""
+    m = re.compile(r'\s+'.join(re.escape(w) for w in marker.split())).search(text, pos)
+    if not m:
+        raise ValueError(f'marker not found: {marker!r}')
+    return m
+
+
 def after(text, start, end=None):
-    i = text.index(start)
-    j = text.index(end, i + len(start)) if end else len(text)
-    return text[i + len(start):j]
+    first = _anchor(text, start)
+    stop = _anchor(text, end, first.end()).start() if end else len(text)
+    return text[first.end():stop]
 
 
 def matrix_rows(block, labels):
@@ -86,7 +94,7 @@ def ranged(block, ranges, scale):
 
 def parse(pages):
     t = '\n'.join(pages)
-    t = t[t.index('D.1  Interest Rate'):]  # skip the table of contents, which repeats the section titles
+    t = t[_anchor(t, 'D.1 Interest Rate').start():]  # skip the table of contents, which repeats the section titles
     P = {}
     # ---- Interest rate (D, J.1, J.6)
     ir = {}
