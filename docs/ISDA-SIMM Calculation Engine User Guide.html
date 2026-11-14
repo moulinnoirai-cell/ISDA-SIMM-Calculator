@@ -20,29 +20,29 @@
   body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9.6pt; line-height: 1.5; color: var(--ink); background: #fff; overflow-wrap: break-word; }
   .page { break-before: page; }
   h1, h2, h3, h4 { color: var(--navy); line-height: 1.3; break-after: avoid; }
-  h2 { font-size: 15pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid var(--navy); }
-  h3 { font-size: 11.5pt; margin: 4.5mm 0 1.5mm; }
-  h4 { font-size: 10.2pt; margin: 3.5mm 0 1.2mm; color: var(--navy-2); }
-  p { margin: 1.2mm 0 2mm; }
+  h2 { font-size: 16pt; margin: 0 0 4mm; padding-bottom: 2mm; border-bottom: 2px solid var(--navy); }
+  h3 { font-size: 12pt; margin: 6mm 0 2mm; }
+  h4 { font-size: 10.6pt; margin: 4.5mm 0 1.5mm; color: var(--navy-2); }
+  p { margin: 1.4mm 0 2.4mm; orphans: 3; widows: 3; }
   ul, ol { margin: 0.8mm 0 2.2mm; padding-left: 6mm; }
-  li { margin: 0.4mm 0; }
+  li { margin: 0.8mm 0; }
   a { color: var(--navy-2); text-decoration: none; }
   code { font-family: Consolas, monospace; font-size: 9pt; background: var(--soft); border: 1px solid #e1e6eb; border-radius: 3px; padding: 0 1.2mm; }
-  pre { font-family: Consolas, monospace; font-size: 8.3pt; line-height: 1.45; margin: 1.5mm 0 2.2mm; padding: 2.2mm 3.5mm; border-radius: 2mm; white-space: pre-wrap; break-inside: avoid; }
+  pre { font-family: Consolas, monospace; font-size: 8.8pt; line-height: 1.5; margin: 2mm 0 3mm; padding: 2.8mm 4mm; border-radius: 2mm; white-space: pre-wrap; break-inside: avoid; }
   pre.cmd { background: #1d2733; color: #e6edf3; }
   pre.cmd .c { color: #8b98a5; }
   pre.out { background: var(--soft); color: #24292f; border-left: 3px solid #9aa7b4; }
   pre.out .hl { color: var(--teal); font-weight: bold; }
   pre .m { color: #fff; background: var(--teal); border-radius: 50%; padding: 0 1mm; font-family: "Segoe UI", Arial, sans-serif; font-size: 7.5pt; font-weight: bold; }
   pre.out .m { color: #fff; }
-  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; font-size: 8.6pt; line-height: 1.4; }
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9pt; line-height: 1.45; }
   thead { display: table-header-group; }
   tr { break-inside: avoid; }
-  th { background: var(--navy); color: #fff; text-align: left; font-weight: bold; padding: 1.3mm 1.8mm; border: 1px solid var(--navy); }
-  td { padding: 1.1mm 1.8mm; border: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--navy); color: #fff; text-align: left; font-weight: bold; padding: 1.8mm 2.4mm; border: 1px solid var(--navy); }
+  td { padding: 1.5mm 2.4mm; border: 1px solid var(--line); vertical-align: top; }
   tbody tr:nth-child(even) td { background: #f8fafc; }
-  td code, th code { font-size: 8.3pt; padding: 0 0.8mm; }
-  .callout { border-left: 4px solid; border-radius: 1.5mm; padding: 2mm 3.5mm; margin: 2.2mm 0; break-inside: avoid; }
+  td code, th code { font-size: 8.7pt; padding: 0 0.8mm; }
+  .callout { border-left: 4px solid; border-radius: 1.5mm; padding: 3mm 4.5mm; margin: 3.5mm 0; break-inside: avoid; }
   .callout b.t { display: block; margin-bottom: 0.8mm; }
   .callout ul { margin-bottom: 0; }
   .tip { background: var(--tip-bg); border-color: var(--tip-line); }
@@ -67,7 +67,7 @@
   .cover .meta td { border: none; padding: 0.5mm 2mm 0.5mm 0; background: none !important; }
 
   /* part banners and summary label */
-  .part { background: var(--soft-2); border-radius: 2mm; padding: 2.5mm 5mm; margin-bottom: 4mm; display: flex; align-items: baseline; gap: 4mm; }
+  .part { background: var(--soft-2); border-radius: 2mm; padding: 3mm 5mm; margin-bottom: 6mm; display: flex; align-items: baseline; gap: 4mm; }
   .part .tag { background: var(--navy); color: #fff; font-weight: bold; font-size: 9pt; border-radius: 1.5mm; padding: 0.8mm 2.5mm; white-space: nowrap; }
   .part .tag.sum { background: var(--teal); }
   .part .ttl { font-size: 10pt; color: var(--navy); font-weight: bold; }
@@ -83,7 +83,7 @@
   .flow .arr { align-self: center; color: var(--teal); font-weight: bold; font-size: 13pt; }
 
   /* numbered steps */
-  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; margin: 1.8mm 0 2.2mm; }
+  .step { display: grid; grid-template-columns: 9mm 1fr; gap: 3.5mm; margin: 3.2mm 0 3.6mm; break-inside: avoid; }
   .step .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--teal); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 10.5pt; margin-top: 0.3mm; }
   .step .n.l { font-size: 9.5pt; }
   .step .b > b.t { display: block; font-size: 10.6pt; color: var(--navy); margin-bottom: 0.5mm; }
@@ -107,7 +107,7 @@
   .toc { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; font-size: 9.3pt; margin-top: 5mm; }
   .toc > div > div { margin: 0.6mm 0; }
   .toc .p { font-weight: bold; color: var(--navy); border-bottom: 1px solid var(--line); padding-bottom: 1mm; margin-bottom: 1mm; }
-  .flowsec { margin-top: 7mm; }
+  .flowsec { margin-top: 9mm; }
   .keep { break-inside: avoid; }
   table.tight { font-size: 8pt; table-layout: fixed; }
   table.tight th { white-space: nowrap; padding: 1.2mm 1.2mm; font-size: 7.6pt; }
@@ -116,6 +116,12 @@
   .small { font-size: 8.8pt; color: var(--muted); }
   img.shot { display: block; width: 80%; border: 1px solid var(--line); border-radius: 2mm; margin: 1.5mm auto 3mm; break-inside: avoid; }
   .center { text-align: center; }
+  .figcap { text-align: center; font-size: 8.8pt; color: var(--muted); margin: -1.5mm 0 4mm; }
+  .lead { font-size: 11pt; color: var(--muted); margin: 0 0 4mm; }
+  .tasks { counter-reset: t; list-style: none; padding: 0; margin: 2mm 0 3mm; }
+  .tasks li { counter-increment: t; display: grid; grid-template-columns: 8mm 1fr; gap: 3mm; margin: 0 0 3mm; break-inside: avoid; }
+  .tasks li::before { content: counter(t); width: 7mm; height: 7mm; border-radius: 50%; background: var(--teal); color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 10pt; margin-top: 0.4mm; }
+  .tasks li b.t { color: var(--navy); }
 </style>
 </head>
 <body>
@@ -129,14 +135,14 @@
   </div>
 
   <div class="howto">
-    <div><span class="pg">Pages 2 - 5</span><b>Quick start</b><p>New users only need these pages: setup, a first run, your own data and troubleshooting.</p></div>
+    <div><span class="pg">Pages 2 - 5</span><b>Using the web page</b><p>New users only need these pages: starting the web page, calculating, reading the result and what to do when stuck.</p></div>
     <div><span class="pg">Page 6 -</span><b>Reference</b><p>CRIF rules, the context file, run options, reading results and version selection in detail.</p></div>
     <div><span class="pg">Appendix</span><b>Error codes · Glossary</b><p>Look up an error code from the screen, or a term you have not seen before.</p></div>
   </div>
 
   <div class="toc">
-    <div><div class="p">Quick start</div>
-      <div>Q1. At a glance</div><div>Q2. First run (example data)</div><div>Q3. Calculate your own data</div><div>Q4. Rules and troubleshooting</div></div>
+    <div><div class="p">Using the web page</div>
+      <div>Q1. At a glance</div><div>Q2. Starting the web page</div><div>Q3. Calculating on the web page</div><div>Q4. Reading the result, and when you are stuck</div></div>
     <div><div class="p">Reference</div>
       <div>1. Installation and environment</div><div>2. Writing the CRIF file</div><div>3. Writing the context file</div><div>4. Run command and options</div><div>5. Reading the results</div>
       <div>6. SIMM version selection</div><div>7. Using the engine from Python</div><div>8. Adding a new SIMM version</div><div>9. Notices and limitations</div><div>10. FAQ</div></div>
@@ -156,215 +162,148 @@
 
 <!-- ============================== SUMMARY 1 ============================== -->
 <section class="page">
-  <div class="part"><span class="tag sum">Quick start 1</span><span class="ttl">At a glance</span><span class="desc">Pages 2-5 are enough to run the engine</span></div>
+  <div class="part"><span class="tag sum">Quick start 1</span><span class="ttl">At a glance</span><span class="desc">Pages 2-5 are enough to use the web page</span></div>
+
+  <p class="lead">Upload a CRIF file in the browser and press Calculate to see the initial margin (SIMM) for every counterparty.</p>
 
   <h3 style="margin-top:0">What does it do?</h3>
   <ul>
-    <li>Give it a <b>sensitivity file (CRIF)</b> for your derivatives and it calculates <b>initial margin (IM)</b> with the ISDA SIMM method, in <b>USD</b>.</li>
-    <li>It checks the input file strictly before calculating. If something is wrong, it does not calculate and tells you <b>what is wrong and on which line</b>.</li>
-    <li>It selects the <b>SIMM version</b> (2.5 to 2.9+2606) by date. Web page: <code>serve</code> (4.1).</li>
+    <li>Give it a <b>sensitivity file (CRIF)</b> for your derivatives and it calculates <b>initial margin (IM)</b> with the ISDA SIMM method and shows it in <b>USD</b>.</li>
+    <li>It checks the file against the rules before calculating. If something is wrong it does not calculate and tells you <b>what is wrong and on which line</b>.</li>
+    <li>It selects the <b>SIMM version</b> (2.5 to 2.9+2606) that applies to the valuation date, and you can pick another one from a list.</li>
+    <li>Everything is calculated <b>on your own computer</b>. Nothing is sent over the internet.</li>
   </ul>
 
-  <h3>How it works</h3>
+  <h3>Steps</h3>
   <div class="flow">
-    <div class="box in">CRIF file<small>sensitivities<br>(CSV)</small></div>
-    <div class="arr">+</div>
-    <div class="box in">Context file<small>direction, rules,<br>currencies (JSON)</small></div>
+    <div class="box in">1 Upload CRIF<small>choose a file<br>or drop it</small></div>
     <div class="arr">→</div>
-    <div class="box">① Validate<small>stops and reports<br>any problem</small></div>
+    <div class="box">2 Choose version<small>automatic or<br>from the list</small></div>
     <div class="arr">→</div>
-    <div class="box">② Version<small>picked by<br>valuation date</small></div>
+    <div class="box">3 Enter settings<small>direction · regulation<br>unit source</small></div>
     <div class="arr">→</div>
-    <div class="box">③ Calculate<small>delta, vega,<br>curvature, ...</small></div>
+    <div class="box">4 Calculate<small>validates, then<br>calculates</small></div>
     <div class="arr">→</div>
-    <div class="box out">Results<small>screen, report<br>Excel</small></div>
+    <div class="box out">Result<small>summary table<br>Excel download</small></div>
   </div>
 
   <h3>What you need</h3>
   <table>
-    <thead><tr><th style="width:24%">Item</th><th style="width:44%">Description</th><th>Where to get it</th></tr></thead>
+    <thead><tr><th style="width:26%">Item</th><th style="width:44%">Description</th><th>Where to get it</th></tr></thead>
     <tbody>
       <tr><td><b>Python 3.11 or later</b></td><td>Runs the engine. No other packages are needed.</td><td>python.org</td></tr>
       <tr><td><b>Engine files</b></td><td>This program.</td><td>Download the ZIP from GitHub (Quick start 2)</td></tr>
-      <tr><td><b>CRIF file</b></td><td>The sensitivities to calculate (CSV).</td><td>Your risk system, or fill in the template</td></tr>
-      <tr><td><b>Context file</b></td><td>Run settings (JSON): direction (collect/post), regulation, currency list and so on.</td><td>Copy and fill in the template (Quick start 3)</td></tr>
+      <tr><td><b>CRIF file</b></td><td>The sensitivities to calculate (CSV, TSV, XLSX).</td><td>Your risk system, or fill in the template (Reference chapter 2)</td></tr>
+      <tr><td><b>Web browser</b></td><td>Edge, Chrome or any other browser.</td><td>Already installed</td></tr>
     </tbody>
   </table>
 
-  <h3>What the results look like</h3>
-<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW                 <span class="m">1</span>
-Portfolio total: 33,496,812.42 USD                                  <span class="m">2</span>
-
-[CP_A] total 14,300,634.89 USD                                      <span class="m">3</span>
-  netting set NS_A1 / CSA CSA_1: 14,300,634.89 (add-on 50,000.00)   <span class="m">4</span>
-    RatesFX: 7,290,168.27                                           <span class="m">5</span>
-      InterestRate: 1,614,228.80  (Delta 1,559,056.99, Vega 21,989.09, Curvature 33,182.72)  <span class="m">6</span></pre>
-  <div class="small">① SIMM version, valuation date, currency and the reference-only flag &nbsp;② total of all counterparties &nbsp;③ counterparty total
-  &nbsp;④ netting set (CSA) total and its add-on &nbsp;⑤ product class &nbsp;⑥ risk class and its components. All amounts are in USD.</div>
-  <p style="margin-top:2mm">Add <code>--report</code> to the run to also get an <b>HTML report</b> to open in a browser: a counterparty SIMM summary with drill-down that you can <b>download as Excel</b> (Quick start 3, Reference 5.5).</p>
-
   <div class="callout warn"><b class="t">Keep in mind</b>
     <ul>
-      <li><b>Results are in USD only.</b> There is no FX conversion: the CRIF <code>AmountUSD</code> values are used as they are.</li>
-      <li><b>No network access.</b> Your data never leaves the machine during a run.</li>
-      <li>Results are <b>for reference (SHADOW)</b>. Validate them independently before relying on them. Using ISDA SIMM for margin calculations may require a licence from ISDA (Reference, section 9).</li>
+      <li><b>Results are in USD only.</b> There is no FX conversion; the CRIF <code>AmountUSD</code> values are used as they are.</li>
+      <li><b>No network access.</b> An uploaded file is used only while it is calculated and is deleted right away.</li>
+      <li>Results are <b>for reference (SHADOW)</b>. Validate them before relying on them. Using ISDA SIMM for margin calculations may require an ISDA licence (Reference chapter 9).</li>
     </ul>
   </div>
 </section>
 
 <!-- ============================== SUMMARY 2 ============================== -->
 <section class="page">
-  <div class="part"><span class="tag sum">Quick start 2</span><span class="ttl">First run</span><span class="desc">About 10 minutes with the example data · Windows</span></div>
+  <div class="part"><span class="tag sum">Quick start 2</span><span class="ttl">Starting the web page</span><span class="desc">Set up once · Windows</span></div>
 
   <div class="step"><div class="n">1</div><div class="b">
     <b class="t">Check that Python is installed</b>
     <p>Open <b>Terminal</b> (or PowerShell) from the Start menu and type:</p>
 <pre class="cmd">python --version</pre>
-    <p>If it shows <span class="ok">Python 3.11.x</span> or later, go to the next step.</p>
-    <div class="callout tip"><b class="t">If you get an error or the Microsoft Store opens</b>Python is not installed. Download it from python.org and install it. If the installer shows <b>"Add python.exe to PATH"</b>, tick it. Open a new terminal after installing.</div>
+    <p>If it shows <span class="ok">Python 3.11.x</span> or later, go on. If you get an error or the Microsoft Store opens, install Python from python.org. Tick <b>"Add python.exe to PATH"</b> in the installer and open a new terminal afterwards.</p>
   </div></div>
 
   <div class="step"><div class="n">2</div><div class="b">
     <b class="t">Download the engine</b>
-    <ol>
-      <li>Go to <b>github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</b> in your browser.</li>
-      <li>Click the green <b>[Code]</b> button, then <b>[Download ZIP]</b>.</li>
-      <li>Unzip it somewhere (for example <code>C:\SIMM</code>). You get a folder named <code>ISDA-SIMM-Calculator-main</code>.</li>
-    </ol>
+    <p>On <b>github.com/moulinnoirai-cell/ISDA-SIMM-Calculator</b> click the green <b>[Code] → [Download ZIP]</b> and unzip it somewhere (for example <code>C:\SIMM</code>). You get a folder named <code>ISDA-SIMM-Calculator-main</code>.</p>
   </div></div>
 
   <div class="step"><div class="n">3</div><div class="b">
-    <b class="t">Open a terminal in the engine folder</b>
-    <p>Open the <code>ISDA-SIMM-Calculator-main</code> folder, right-click an empty area and choose <b>[Open in Terminal]</b>.
-    You should be where the <code>src</code>, <code>examples</code> and <code>crif</code> folders are.</p>
+    <b class="t">Open a terminal in that folder</b>
+    <p>In the folder, right-click an empty area and choose <b>[Open in Terminal]</b>. You should see the <code>src</code>, <code>examples</code> and <code>crif</code> folders there.</p>
   </div></div>
 
   <div class="step"><div class="n">4</div><div class="b">
-    <b class="t">Prepare the terminal</b> <span class="small">(type the first line once every time you open a new terminal)</span>
+    <b class="t">Start the web page</b>
 <pre class="cmd">$env:PYTHONPATH = "src"
-python -m simm versions</pre>
-    <p>If you see the list of versions, you are <span class="ok">ready</span>.</p>
-<pre class="out">2.5       use from COB 2022-12-02  https://www.isda.org/...
-...
-2.9+2606  use from COB 2026-12-04  https://www.isda.org/...</pre>
+python -m simm serve</pre>
+    <p>When these two lines appear, it is <span class="ok">running</span>:</p>
+<pre class="out">ISDA SIMM calculator is running at http://127.0.0.1:8765/
+Open it in a browser on this machine. Press Ctrl+C to stop.</pre>
   </div></div>
 
   <div class="step"><div class="n">5</div><div class="b">
-    <b class="t">Run the example</b>
-<pre class="cmd">python -m simm run `
-  --crif examples\crif_example.csv `
-  --valuation-date 2026-06-30 `
-  --context examples\context.json</pre>
-    <p>If you see this line, it <span class="ok">worked</span>.</p>
-<pre class="out">SIMM 2.8+2506 | valuation 2026-06-30 | USD | SHADOW
-<span class="hl">Portfolio total: 33,496,812.42 USD</span></pre>
-    <div class="callout note"><b class="t">Typing commands</b>A <code>`</code> (backtick) at the end of a line means "continued on the next line". You can paste all lines at once, or type the whole command on one line without the backticks.</div>
-    <p class="small">The valuation date is 2026-06-30, so 2.8+2506 is used: 2.8+2512 applies from 2026-07-10 (Reference, section 6).</p>
+    <b class="t">Open it in the browser</b>
+    <p>Type <code>http://127.0.0.1:8765/</code> into the address bar of Edge or Chrome. When the "ISDA SIMM calculation" page appears, you are ready.</p>
   </div></div>
+
+  <div class="callout note"><b class="t">While you use it, and when you finish</b>
+    <ul>
+      <li><b>Leave the terminal window open.</b> Closing it switches the web page off.</li>
+      <li>To finish, press <code>Ctrl+C</code> in the terminal. Calculated results are discarded then, so save what you need as Excel or an HTML file.</li>
+      <li>Next time you only need steps 3 to 5. In a new terminal, enter <code>$env:PYTHONPATH = "src"</code> first.</li>
+    </ul>
+  </div>
+  <div class="callout tip"><b class="t">If it says the port is in use</b>
+    Start it on another number, for example <code>python -m simm serve --port 8766</code>, and open <code>http://127.0.0.1:8766/</code>. Keep <code>127.0.0.1</code> in the address: it means this computer. The page can be opened from this computer only.</div>
 </section>
 
 <!-- ============================== SUMMARY 3 ============================== -->
 <section class="page">
-  <div class="part"><span class="tag sum">Quick start 3</span><span class="ttl">Calculate your own data</span><span class="desc">Prepare two files, run one command</span></div>
+  <div class="part"><span class="tag sum">Quick start 3</span><span class="ttl">Calculating on the web page</span><span class="desc">From uploading the file to Calculate</span></div>
 
-  <div class="step"><div class="n l">A</div><div class="b">
-    <b class="t">Create the CRIF file</b>
-    <ol>
-      <li>Copy <code>crif\crif_template.csv</code> into the engine folder and rename it <code>my_crif.csv</code>.</li>
-      <li>Open it in Excel. <b>Keep the first line (column names)</b> and fill in your data from the second line. The rules are in <b>Quick start 4</b>.</li>
-      <li>Use <b>[Save As] → "CSV UTF-8 (Comma delimited)"</b>.</li>
-    </ol>
-    <div class="callout tip"><b class="t">Need an example?</b><code>examples\crif_example.csv</code> has an example of every kind of row, add-ons included.</div>
-  </div></div>
+  <img class="shot" src="images/web-input-en.png" alt="Web page: CRIF upload and calculation settings" style="width:62%">
+  <div class="figcap">To practise, press [Try the example CRIF]: synthetic data fills the page for you.</div>
 
-  <div class="step"><div class="n l">B</div><div class="b">
-    <b class="t">Create the context file</b>
-    <p>Copy <code>config\context.template.json</code> into the engine folder, rename it <code>my_context.json</code>, open it in Notepad and fill in:</p>
-    <table>
-      <thead><tr><th style="width:22%">Field</th><th style="width:48%">What to enter</th><th>Example</th></tr></thead>
-      <tbody>
-        <tr><td><code>direction</code></td><td><code>collect</code> (margin you receive) or <code>post</code> (margin you give)</td><td><code>"collect"</code></td></tr>
-        <tr><td><code>regulation</code></td><td>Name of the regulation. Must not be empty.</td><td><code>"REG_A"</code></td></tr>
-        <tr><td><code>legal_entity</code></td><td>Your legal entity</td><td><code>"MY_ENTITY"</code></td></tr>
-        <tr><td><code>csa</code></td><td>Name of the CSA (collateral agreement)</td><td><code>"CSA_1"</code></td></tr>
-        <tr><td><code>currency_codes</code></td><td>Every currency in your CRIF. Add only those missing from the default list.</td><td><code>"USD", "EUR", ...</code></td></tr>
-        <tr><td><code>source</code><br><span class="small">(in unit_declarations)</span></td><td>For each risk type in your CRIF, the evidence that it was produced in that unit. Risk types you do not use may stay empty.</td><td><code>"Risk system spec v3.2, 4.1"</code></td></tr>
-      </tbody>
-    </table>
-<pre class="out">"direction": "collect",
-"regulation": "REG_A",
-"Risk_IRCurve": { "unit": "PV01_PER_1BP", "source": "Risk system spec v3.2, 4.1" },</pre>
-    <div class="callout warn"><b class="t">Note</b>Do not change the <code>unit</code> values. If the <code>source</code> of a risk type you use is empty, the run is blocked. This is deliberate: a wrong unit can distort the result badly.</div>
-  </div></div>
+  <ol class="tasks">
+    <li><div><b class="t">Upload the CRIF file.</b> Click the dashed box to choose a file, or drop it there. The page reads the row count and fills in the <b>valuation date</b>.</div></li>
+    <li><div><b class="t">Check the valuation date and SIMM version.</b> The date must equal the CRIF <code>ValuationDate</code>. <b>Automatic (by valuation date)</b> is enough; the line below the box tells you which version is used. If you agreed another version with your counterparty, pick it from the list (a warning is kept with the result).</div></li>
+    <li><div><b class="t">Enter direction and regulation.</b> Choose <b>Collect</b> or <b>Post</b> and enter the <b>regulation</b>. It must match a value in the CRIF <code>CollectRegulations</code>/<code>PostRegulations</code> column; if the file has that column the values are suggested.</div></li>
+    <li><div><b class="t">Enter the source of the sensitivity units.</b> Name the document or system that defines the PV01, CS01, vega and other units of this CRIF (for example "Risk system specification, section 4.1"). Wrong units change the result a lot, so <b>nothing is calculated while it is empty.</b></div></li>
+    <li><div><b class="t">Press Calculate.</b> If validation passes, the result appears right below. The values you entered are remembered in this browser and filled in next time.</div></li>
+  </ol>
 
-  <div class="step"><div class="n l">C</div><div class="b">
-    <b class="t">Run</b> <span class="small">(in a new terminal, run <code>$env:PYTHONPATH = "src"</code> first)</span>
-<pre class="cmd">python -m simm run `
-  --crif my_crif.csv `
-  --valuation-date 2026-06-30 `
-  --context my_context.json `
-  --output result.json `
-  --report report.html</pre>
-    <p>The summary is printed, and <b><code>result.json</code></b> (full result) and <b><code>report.html</code></b> (the report) are written to the engine folder.
-    <b>Double-click <code>report.html</code></b> to see the SIMM of every counterparty in your browser; the <b>[Download Excel]</b> button saves it as an Excel file.
-    Replace <code>2026-06-30</code> with the <code>ValuationDate</code> of your CRIF.</p>
-  </div></div>
+  <div class="callout note"><b class="t">Only when needed</b>
+    <b>Default scope</b> (legal entity, CSA, netting set) is for CRIF files that lack those columns or leave them empty. Under <b>Advanced options</b> you can upload your own <code>context.json</code> to replace the inputs above, or set the netting set column and the Excel date conversion (Reference 4.1).
+  </div>
 </section>
 
 <!-- ============================== SUMMARY 4 ============================== -->
 <section class="page">
-  <div class="part"><span class="tag sum">Quick start 4</span><span class="ttl">Rules and troubleshooting</span><span class="desc">The most common mistakes</span></div>
+  <div class="part"><span class="tag sum">Quick start 4</span><span class="ttl">Reading the result, and when you are stuck</span><span class="desc">How to read the result and common messages</span></div>
 
-  <h4 style="margin-top:0">Six CRIF rules</h4>
-  <div class="cols">
-    <div>
-      <div class="rule"><span class="k">1</span><div>Dates as <code>2026-06-30</code>, equal to the valuation date you run with.</div></div>
-      <div class="rule"><span class="k">2</span><div>No thousands separators: <code>1000</code> (yes), <code>1,000</code> (no).</div></div>
-      <div class="rule"><span class="k">3</span><div>No spaces before or after a cell value.</div></div>
-    </div>
-    <div>
-      <div class="rule"><span class="k">4</span><div>Only <code>AmountUSD</code> is used. On USD rows <code>Amount</code> must equal <code>AmountUSD</code>.</div></div>
-      <div class="rule"><span class="k">5</span><div>Standard lower-case tenors only: <code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code> (credit: <code>1y 2y 3y 5y 10y</code>)</div></div>
-      <div class="rule"><span class="k">6</span><div>Some cells must be empty depending on the risk type. See the examples below and Reference, section 2.</div></div>
-    </div>
-  </div>
+  <img class="shot" src="images/web-result-en.png" alt="Web page: the result after Calculate" style="width:52%">
 
-  <h4>Common risk type examples</h4>
-  <table class="tight">
-    <colgroup><col style="width:11%"><col style="width:15%"><col style="width:20%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:9%"><col style="width:13%"><col style="width:11%"></colgroup>
-    <thead><tr><th>ProductClass</th><th>RiskType</th><th>Qualifier</th><th>Bucket</th><th>Label1</th><th>Label2</th><th>Amount</th><th>AmountCurrency</th><th>AmountUSD</th></tr></thead>
-    <tbody>
-      <tr><td>RatesFX</td><td><code>Risk_IRCurve</code></td><td>USD</td><td>1</td><td>5y</td><td>OIS</td><td>25000</td><td>USD</td><td>25000</td></tr>
-      <tr><td>RatesFX</td><td><code>Risk_FX</code></td><td>EUR</td><td></td><td></td><td></td><td>900000</td><td>USD</td><td>900000</td></tr>
-      <tr><td>RatesFX</td><td><code>Risk_FXVol</code></td><td>EURUSD</td><td></td><td>1y</td><td></td><td>30000</td><td>USD</td><td>30000</td></tr>
-      <tr><td>Equity</td><td><code>Risk_Equity</code></td><td>ISIN:KR0000000036</td><td>1</td><td></td><td></td><td>200000</td><td>USD</td><td>200000</td></tr>
-      <tr><td>Credit</td><td><code>Risk_CreditQ</code> *</td><td>ISIN:XS0000000016</td><td>3</td><td>5y</td><td></td><td>15000</td><td>USD</td><td>15000</td></tr>
-    </tbody>
-  </table>
-  <div class="small" style="margin-top:-1.5mm">Leave blank cells empty. The first five columns (ValuationDate to IMModel) are omitted here. * Credit rows also need <code>PaymentCurrency</code>.</div>
+  <ul>
+    <li>The <b>Calculation complete</b> line shows the version used, the total SIMM, the number of counterparties and the CRIF rows used.</li>
+    <li>The <b>summary table</b> lists each counterparty's SIMM and share, largest first. Click one to open its netting sets, product classes and risk classes.</li>
+    <li><b>[Download Excel]</b> saves .xlsx and <b>[Save as HTML file]</b> keeps the report. Both hold counterparty names and amounts: handle them like the CRIF.</li>
+  </ul>
 
-  <h4>When you get stuck</h4>
+  <h4>When validation blocks the run</h4>
+  <p>Instead of a result you get a red notice and a table of issues (severity, code, row, field, message). <code>row:5</code> is line 5 of the CSV (row 5 in Excel). Fix it as below and press Calculate again. Other codes are in Appendix A; the rules for writing a CRIF are in Reference chapter 2.</p>
   <table>
-    <thead><tr><th style="width:34%">Message on the screen</th><th>What to do</th></tr></thead>
+    <thead><tr><th style="width:32%">Code or message</th><th>How to fix it</th></tr></thead>
     <tbody>
-      <tr><td><code>No module named simm</code></td><td>Check that the terminal is open in the engine folder and run <code>$env:PYTHONPATH = "src"</code> again.</td></tr>
-      <tr><td><code>DATE_MISMATCH</code></td><td>Make the CRIF date and <code>--valuation-date</code> the same.</td></tr>
-      <tr><td><code>UNIT_EVIDENCE_REQUIRED</code></td><td>Fill in the <code>source</code> of that risk type in the context file.</td></tr>
-      <tr><td><code>SCOPE_REQUIRED</code></td><td>Fill in <code>legal_entity</code> and <code>csa</code> in the context file.</td></tr>
-      <tr><td><code>DIRECTION_REQUIRED</code></td><td>Set <code>direction</code> to <code>"collect"</code> or <code>"post"</code>.</td></tr>
-      <tr><td><code>INVALID_AMOUNT</code></td><td>Remove commas or fill empty amount cells.</td></tr>
-      <tr><td><code>WHITESPACE</code></td><td>Remove spaces around the cell values on that line.</td></tr>
-      <tr><td><code>INVALID_TENOR</code></td><td>Use a standard tenor in Label1 (rule 5).</td></tr>
-      <tr><td><code>INVALID_CURRENCY</code></td><td>Add the currency to <code>currency_codes</code> in the context file.</td></tr>
-      <tr><td><code>Inconsistent CSV field count</code></td><td>Lines have different numbers of cells. Put values that contain commas in double quotes.</td></tr>
+      <tr><td><code>DATE_MISMATCH</code></td><td>Make the valuation date box equal to the CRIF <code>ValuationDate</code>.</td></tr>
+      <tr><td><code>SCOPE_REQUIRED</code></td><td>A CRIF column is empty. Fill it, or enter legal entity, CSA and netting set under [Default scope].</td></tr>
+      <tr><td><code>INVALID_AMOUNT</code></td><td>Remove the comma or fill the empty amount cell.</td></tr>
+      <tr><td><code>INVALID_TENOR</code></td><td>Change Label1 to a standard tenor (<code>2w 1m 3m 6m 1y 2y 3y 5y 10y 15y 20y 30y</code>).</td></tr>
+      <tr><td><code>INVALID_CURRENCY</code></td><td>The currency is not in the default list. Add it to your own <code>context.json</code> and upload it under [Advanced options] (Reference chapter 3).</td></tr>
+      <tr><td>Unsupported file type</td><td>Only CSV, TSV, CRIF and single-sheet XLSX can be uploaded. XLSX needs <code>pip install openpyxl</code>.</td></tr>
+      <tr><td>Could not reach the server</td><td>Check that <code>python -m simm serve</code> is still running in the terminal and that the address is right (Quick start 2).</td></tr>
     </tbody>
   </table>
-  <div class="callout note"><b class="t">Reading an error message</b><code>CRITICAL DATE_MISMATCH row:5</code> means "the date on line 5 of the CSV file (Excel row 5) is different". Only the first 20 issues are shown; add <code>--output issues.json</code> to the command to get all of them. Other error codes are in <b>Appendix A</b>.</div>
 </section>
 
 <!-- ============================== DETAIL 1 ============================== -->
 <section class="page">
-  <div class="part"><span class="tag">Reference</span><span class="ttl">Everything the quick start does not cover, in detail</span></div>
+  <div class="part"><span class="tag">Reference</span><span class="ttl">Everything the web page quick start does not cover, in detail</span></div>
   <h2>1. Installation and environment</h2>
 
   <h3 style="margin-top:2mm">1.1 Requirements</h3>
@@ -548,19 +487,8 @@ python -m simm versions</pre>
   <div class="callout note"><b class="t">Credential guard</b>The run is refused if the context file has a field name containing <code>password</code>, <code>token</code>, <code>secret</code>, <code>api_key</code>, <code>cookie</code> or <code>credential</code>.</div>
 
   <h2 style="margin-top:8mm">4. Running: web page and command line</h2>
-  <h3>4.1 Running from the web page (<code>serve</code>)</h3>
-  <p>You can upload the CRIF in a browser instead of remembering command options. Enter the command below in the terminal, then open <code>http://127.0.0.1:8765/</code> in a browser (Edge, Chrome, ...). Press <code>Ctrl+C</code> in the terminal to stop.</p>
-<pre class="cmd">$env:PYTHONPATH = "src"
-python -m simm serve</pre>
-  <img class="shot" src="images/web-input-en.png" alt="Web page: CRIF upload and calculation settings">
-  <ul>
-    <li><b>1. Upload the CRIF:</b> click the box to choose a file, or drop it there. CSV, TSV, CRIF and XLSX (single sheet) are accepted. After the upload the page reads the row count and fills in the <b>valuation date</b> and suggests the <b>regulation</b>. [Try the example CRIF] loads the synthetic data in <code>examples\</code>.</li>
-    <li><b>2. Choose the SIMM version:</b> the default <b>Automatic (by valuation date)</b> follows the schedule in section 6 and shows which version applies, for example "→ 2.9+2606 applies to this valuation date". Choosing another version from the list calculates with it, and a warning appears in the result when it differs from the schedule.</li>
-    <li><b>3. Enter the settings:</b> direction (collect / post), regulation and the source of the sensitivity units. The values are remembered in this browser. Default legal entity, CSA and netting set are optional under [Default scope].</li>
-    <li><b>4. Press [Calculate]:</b> when it finishes, the HTML report of 5.5 appears below as is (counterparty summary, drill-down, Excel download), with links to open it in a new tab or save it as an HTML file.</li>
-    <li><b>If validation blocks the run:</b> instead of a report you get a red notice and a table of issues (severity, code, row, field, message). Look the code up in Appendix A, fix the CRIF or the settings and press [Calculate] again.</li>
-  </ul>
-  <img class="shot" src="images/web-result-en.png" alt="Web page: the report after pressing Calculate">
+  <h3>4.1 Web page inputs and options (<code>serve</code>)</h3>
+  <p>The steps for starting and using the web page are in Quick start 2-4. This section shows how the inputs of the page map to the context file, and the options you can start it with.</p>
   <table>
     <thead><tr><th style="width:34%">Page input</th><th>Corresponding item of the context file (chapter 3)</th></tr></thead>
     <tbody>

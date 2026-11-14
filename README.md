@@ -3,7 +3,7 @@
 ## 요약
 
 ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입니다.
-- **사용설명서:** [`docs`](docs) 폴더를 확인하세요. 한국어 [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)와 영어 [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 요약편(2~5쪽)만 보고도 실행할 수 있습니다. 웹 화면(`python -m simm serve`) 사용법은 상세편 4.1에 있습니다.
+- **사용설명서:** [`docs`](docs) 폴더를 확인하세요. 한국어 [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)와 영어 [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 웹 화면 사용법(2~5쪽)만 보고도 실행할 수 있습니다. 화면 입력 항목과 `serve` 옵션은 상세편 4.1에 있습니다.
 - **지원 범위:** 방법론 2.5~2.9+2606 버전입니다. 2.9+2606은 ISDA가 2026-10-30에 공지했고 2026-12-04 COB부터 적용됩니다.
 - **웹 화면:** `python -m simm serve`를 실행하고 브라우저에서 `http://127.0.0.1:8765/`를 열면, CRIF 파일을 올리고 SIMM 버전을 고른 뒤 **[산출]** 버튼을 눌러 결과를 바로 볼 수 있습니다. 결과는 아래 HTML 보고서와 같고, 이 컴퓨터 안에서만 처리됩니다.
 - **계산 방식:** CRIF 파일을 엄격히 검증한 뒤 평가일에 맞는 버전을 자동 선택해 USD로 계산합니다.
@@ -20,7 +20,7 @@ ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입�
 ## Summary
 
 A Python calculation engine for the ISDA Standard Initial Margin Model (ISDA SIMM®) for uncleared OTC derivatives.
-- **User guides:** see the [`docs`](docs) folder. The English [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and the Korean [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF) cover installation, running and troubleshooting. New users only need the quick start (pages 2-5). The web page (`python -m simm serve`) is described in Reference 4.1.
+- **User guides:** see the [`docs`](docs) folder. The English [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and the Korean [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF) cover installation, running and troubleshooting. New users only need the web page quick start (pages 2-5). The page inputs and `serve` options are in Reference 4.1.
 - **Coverage:** methodology versions 2.5 to 2.9+2606. ISDA announced 2.9+2606 on 2026-10-30; it applies from COB 2026-12-04.
 - **Web page:** run `python -m simm serve` and open `http://127.0.0.1:8765/` in a browser to upload a CRIF file, choose the SIMM version and press **Calculate** to see the result. The result is the HTML report described below, and everything is processed on this computer.
 - **Method:** validates the CRIF file strictly, selects the SIMM version from the valuation date and calculates in USD.
