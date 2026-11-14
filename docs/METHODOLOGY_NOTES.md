@@ -5,10 +5,11 @@ Section and paragraph numbers refer to the ISDA SIMM methodology document of the
 
 ## Versions
 
-- **Supported versions:** 2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506 and 2.8+2512. The formula sections (B and C) of these documents are
+- **Supported versions:** 2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506, 2.8+2512 and 2.9+2606. The formula sections (B and C) of these documents are
   textually identical (word, formula-symbol and page-image comparison), so one engine serves all of them. Only the parameter packages differ.
 - **Version selection:** [`parameters/version_schedule.json`](../parameters/version_schedule.json) selects the version by valuation date,
   using ISDA's "use from close of business (COB)" date for each release.
+- **2.9+2606:** announced by ISDA on 2026-10-30 (primary calibration with data up to 2026-06-30), effective 2026-12-05, used from COB 2026-12-04. Sections A-C of its methodology PDF are identical to 2.8+2512 when whitespace is ignored (compared on 2026-11-14), so it uses the same engine formulas under methodology id `simm_2_9`. The parameters, the regular interest-rate currency list (CNY added) and the FX high-volatility list (longer; KRW now high) changed.
 - **Outside the schedule:** dates before 2022-12-02 are rejected. Dates after `verified_through` are calculated with the latest version and
   flagged, because a newer ISDA release may exist.
 
@@ -41,6 +42,7 @@ Section and paragraph numbers refer to the ISDA SIMM methodology document of the
   - Each package is transcribed from the public ISDA PDF linked in its `manifest.json`.
   - 2.8+2512 was transcribed twice independently: 1,037 of 1,037 values matched.
   - 2.5, 2.6, 2.8+2506 and 2.8+2512 also match an independent open-source transcription value by value (1,024 values each).
+  - 2.9+2606 was transcribed once, by `tools/transcribe_simm_2_9.py`, which parses the PDF text and refuses to write unless the risk-weight rows, the correlation matrices, the FX tables and the high-volatility currencies, re-rendered as the PDF prints them, are found in the PDF text. Matrices are also checked for symmetry and a unit diagonal when loaded. The whole package was then parsed a second time from a different text extractor (pdfium instead of pypdf): all 1,093 values were identical. Spot values were read against the rendered PDF pages (`tests/test_simm_2_9.py`); for example the Interest Rate "High volatility" delta concentration threshold is printed as 17 USD mm/bp in 2.9+2606 (71 in 2.8+2512), so that change is real. It has **not** been compared with an independent third-party transcription.
 - **Formulas.**
   - An independent floating-point re-implementation of sections B-C was compared on 324 synthetic portfolios covering every risk class
     and component. No formula difference was found.

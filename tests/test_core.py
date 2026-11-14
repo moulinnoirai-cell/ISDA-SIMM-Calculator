@@ -99,7 +99,7 @@ class ParameterTests(unittest.TestCase):
         with self.assertRaises((ValueError,FileNotFoundError)):ParameterPackage('2.4')
 
     def test_historical_packages_load(self):
-        for version,effective in [('2.5','2022-12-03'),('2.5A','2023-07-15'),('2.6','2023-12-02'),('2.7','2024-12-07'),('2.7+2412','2025-07-12'),('2.8+2506','2025-12-06')]:
+        for version,effective in [('2.5','2022-12-03'),('2.5A','2023-07-15'),('2.6','2023-12-02'),('2.7','2024-12-07'),('2.7+2412','2025-07-12'),('2.8+2506','2025-12-06'),('2.9+2606','2026-12-05')]:
             with self.subTest(version=version):
                 package=ParameterPackage(version)
                 self.assertEqual(package.manifest['sha256'],package.hash)

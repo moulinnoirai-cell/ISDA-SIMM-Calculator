@@ -3,8 +3,9 @@
 ## 요약
 
 ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입니다.
-- **사용설명서:** [`docs`](docs) 폴더를 확인하세요. 한국어 [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)와 영어 [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 요약편(2~5쪽)만 보고도 실행할 수 있습니다.
-- **지원 범위:** 방법론 2.5~2.8+2512 버전입니다.
+- **사용설명서:** [`docs`](docs) 폴더를 확인하세요. 한국어 [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF)와 영어 [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF)에 설치부터 실행, 오류 해결까지 정리했습니다. 처음이라면 웹 화면 사용법(2~5쪽)만 보고도 실행할 수 있습니다. 화면 입력 항목과 `serve` 옵션은 상세편 4.1에 있습니다.
+- **지원 범위:** 방법론 2.5~2.9+2606 버전입니다. 2.9+2606은 ISDA가 2026-10-30에 공지했고 2026-12-04 COB부터 적용됩니다.
+- **웹 화면:** `python -m simm serve`를 실행하고 브라우저에서 `http://127.0.0.1:8765/`를 열면, CRIF 파일을 올리고 SIMM 버전을 고른 뒤 **[산출]** 버튼을 눌러 결과를 바로 볼 수 있습니다. 결과는 아래 HTML 보고서와 같고, 이 컴퓨터 안에서만 처리됩니다.
 - **계산 방식:** CRIF 파일을 엄격히 검증한 뒤 평가일에 맞는 버전을 자동 선택해 USD로 계산합니다.
 - **산출 결과:** 거래상대방·Netting Set·상품·위험군·구성요소(Delta, Vega, Curvature, BaseCorr)별 증거금을 냅니다.
 - **거래상대방 요약 화면:** 실행할 때 `--report report.html`을 붙이면 HTML 보고서가 만들어집니다. 브라우저에서 거래상대방별 SIMM과 비중을 한눈에 보고, 거래상대방을 누르면 Netting Set·상품군·위험군별 상세 내역이 펼쳐지며, **[엑셀 다운로드]** 버튼으로 결과를 엑셀(.xlsx)로 받을 수 있습니다. 인터넷 없이 열리는 파일 하나이고, 한국어와 영어를 바꿀 수 있습니다.
@@ -19,8 +20,9 @@ ISDA SIMM(비청산 장외파생상품 개시증거금) Python 산출엔진입�
 ## Summary
 
 A Python calculation engine for the ISDA Standard Initial Margin Model (ISDA SIMM®) for uncleared OTC derivatives.
-- **User guides:** see the [`docs`](docs) folder. The English [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and the Korean [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF) cover installation, running and troubleshooting. New users only need the quick start (pages 2-5).
-- **Coverage:** methodology versions 2.5 to 2.8+2512.
+- **User guides:** see the [`docs`](docs) folder. The English [ISDA-SIMM Calculation Engine User Guide.PDF](docs/ISDA-SIMM%20Calculation%20Engine%20User%20Guide.PDF) and the Korean [ISDA-SIMM 산출엔진 사용설명서.PDF](docs/ISDA-SIMM%20산출엔진%20사용설명서.PDF) cover installation, running and troubleshooting. New users only need the web page quick start (pages 2-5). The page inputs and `serve` options are in Reference 4.1.
+- **Coverage:** methodology versions 2.5 to 2.9+2606. ISDA announced 2.9+2606 on 2026-10-30; it applies from COB 2026-12-04.
+- **Web page:** run `python -m simm serve` and open `http://127.0.0.1:8765/` in a browser to upload a CRIF file, choose the SIMM version and press **Calculate** to see the result. The result is the HTML report described below, and everything is processed on this computer.
 - **Method:** validates the CRIF file strictly, selects the SIMM version from the valuation date and calculates in USD.
 - **Output:** initial margin by counterparty, netting set, product class, risk class and component (delta, vega, curvature, base correlation).
 - **Counterparty summary screen:** add `--report report.html` to get an HTML report showing the SIMM and share of every counterparty, with a drill-down to netting sets, product classes and risk classes and a **Download Excel** button (.xlsx). It is a single file that opens offline, in Korean or English.
@@ -65,6 +67,23 @@ Portfolio total: 33,496,812.42 USD
     ...
 ```
 
+### Web page: upload, choose the version, Calculate
+
+```bash
+python -m simm serve        # then open http://127.0.0.1:8765/
+```
+
+1. **Upload** a CSV, TSV, CRIF or single-sheet XLSX file (click the box or drop the file). The page reads the row count and fills in the valuation date.
+2. **Choose the SIMM version.** The default, *Automatic*, follows the schedule below; any listed version can be picked, and a warning is shown when it differs from the schedule.
+3. **Enter** direction, regulation and the source of the sensitivity units (an uploaded `context.json` can replace these inputs), then press **Calculate**.
+4. The **result** (the HTML report with counterparty summary, drill-down and Excel download) appears below. If validation blocks the run, the issues are listed instead and nothing is calculated.
+
+![Web page: upload, version and settings](docs/images/web-input-en.png)
+
+![Web page: result after Calculate](docs/images/web-result-en.png)
+
+The server listens on `127.0.0.1` only and refuses requests from other origins; uploaded files exist only as temporary files during the request, and the latest 8 reports are kept in memory until you stop the server (`Ctrl+C`). Options: `--port 8765`, `--open`; `--host` with `--allow-remote` is possible but not recommended, because anyone who can reach the port can upload CRIF files and read results. The page uses the same calculation as `python -m simm run`; [`src/simm/webapp.py`](src/simm/webapp.py) and [`src/simm/service.py`](src/simm/service.py) hold the code.
+
 ### HTML report
 
 `--report report.html` writes one self-contained HTML file. It loads nothing from the network and opens in any browser:
@@ -108,6 +127,7 @@ Exit codes: 0 success, 1 error, 2 validation blocked (the issues are listed).
 | 2.7+2412 | 2025-07-11 |
 | 2.8+2506 | 2025-12-05 |
 | 2.8+2512 | 2026-07-10 |
+| 2.9+2606 | 2026-12-04 |
 
 Dates after the schedule's `verified_through` date are flagged until the schedule is re-checked against new ISDA releases. Adding a
 version means adding a `parameters/simm_<version>/` package and a schedule entry.
@@ -115,7 +135,7 @@ version means adding a `parameters/simm_<version>/` package and a schedule entry
 ## Validation status
 
 The validation evidence and its limits are summarised in [`docs/METHODOLOGY_NOTES.md`](docs/METHODOLOGY_NOTES.md).
-- **Parameters:** cross-checked by independent transcriptions.
+- **Parameters:** 2.5 to 2.8+2512 are cross-checked by independent transcriptions. 2.9+2606 was transcribed by [`tools/transcribe_simm_2_9.py`](tools/transcribe_simm_2_9.py) from the ISDA PDF, with a round-trip check against the PDF text and a second parse of the PDF with a different text extractor (all 1,093 values identical). It has not been compared with a third-party transcription.
 - **Formulas:** cross-checked against an independent re-implementation on synthetic portfolios.
 - **Not verified:** ISDA's official unit tests were not run, and vega, curvature, credit, equity and commodity have synthetic checks only.
 

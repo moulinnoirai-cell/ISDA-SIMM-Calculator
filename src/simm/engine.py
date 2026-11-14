@@ -1,4 +1,4 @@
-"""ISDA SIMM formula engine for methodology versions 2.5 to 2.8+2512 (identical formula sections). Decimal arithmetic."""
+"""ISDA SIMM formula engine for methodology versions 2.5 to 2.9+2606 (identical formula sections). Decimal arithmetic."""
 from collections import defaultdict
 from dataclasses import dataclass, asdict
 from decimal import localcontext

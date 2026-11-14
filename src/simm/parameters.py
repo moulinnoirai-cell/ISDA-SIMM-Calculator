@@ -4,8 +4,9 @@ import hashlib, json, re
 
 ROOT = Path(__file__).resolve().parents[2]
 # Sections B-C (formulas) of SIMM 2.5, 2.5A, 2.6, 2.7, 2.7+2412, 2.8+2506 and 2.8+2512 are textually identical
-# (word, formula-glyph and page-image comparison, 2026-10-06), so one engine plugin serves these packages.
-SUPPORTED_METHODOLOGIES = {'simm_2_5', 'simm_2_6', 'simm_2_7', 'simm_2_8'}
+# (word, formula-glyph and page-image comparison, 2026-10-06), and 2.9+2606 matches 2.8+2512 word for word
+# (whitespace-insensitive text comparison, 2026-11-14), so one engine plugin serves these packages.
+SUPPORTED_METHODOLOGIES = {'simm_2_5', 'simm_2_6', 'simm_2_7', 'simm_2_8', 'simm_2_9'}
 
 class ParameterPackage:
     def __init__(self, version='2.8+2512', root=ROOT, data=None):
